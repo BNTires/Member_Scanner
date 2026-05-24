@@ -232,7 +232,7 @@ body { font-family:'Helvetica Neue',Arial,sans-serif; background:#f0f4f8; min-he
 // ══════════════════════════════════════════
 //  CONFIG — paste your GAS API URL here
 // ══════════════════════════════════════════
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbwz5wKSpRTCxdTFo8kMTi_aqutgXdCxhFYbf05R1ojtlA6YQHNiVZrLOojI_0pod_-_tw/exec";
+var GAS_API_URL = "YOUR_GAS_API_URL_HERE";
 
 var BRANDS = [
   { id:"atlas", name:"Atlas", url:"https://members.llit-eservice.com/register/year/atlas/", active:true },
@@ -338,7 +338,7 @@ function handleQR(raw) {
   document.getElementById("loading-text").textContent = "กำลังค้นหา " + carId + "...";
   show("s-loading");
 
-  fetch(GAS_API_URL + "?action=lookup&carId=" + encodeURIComponent(carId))
+  fetch(GAS_API_URL + "?carId=" + encodeURIComponent(carId))
     .then(function(res) { return res.json(); })
     .then(function(result) {
       if (result.error) {
