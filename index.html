@@ -232,7 +232,7 @@ body { font-family:'Helvetica Neue',Arial,sans-serif; background:#f0f4f8; min-he
 // ══════════════════════════════════════════
 //  CONFIG — paste your GAS API URL here
 // ══════════════════════════════════════════
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxxNnWSr1ZrZfbf3ufBn1FCWFUJn75EAzq5nCDnB2pF0XPiA1x2lTc-uHESp3-ylnkqxA/exec";
+var GAS_API_URL = "https://script.google.com/macros/s/AKfycbwZLpxWxyP9CbT26Ggo5B0zo1h3KFkatAsQdbknLn_tXWnWaj_XYVEDwCs45b7LjQV98A/exec";
 
 var BRANDS = [
   { id:"atlas", name:"Atlas", url:"https://members.llit-eservice.com/register/year/atlas/", active:true },
@@ -332,33 +332,44 @@ function setStatus(msg, active) {
   if (active) dot.classList.add("on"); else dot.classList.remove("on");
 }
 
-// ── QR Handler — calls GAS API ──
+// ── QR Handler — calls GAS API via JSONP (bypasses CORS) ──
 function handleQR(raw) {
   var carId = raw.trim().toUpperCase();
   document.getElementById("loading-text").textContent = "กำลังค้นหา " + carId + "...";
   show("s-loading");
 
-  fetch(GAS_API_URL + "?carId=" + encodeURIComponent(carId))
-    .then(function(res) { return res.json(); })
-    .then(function(result) {
-      if (result.error) {
-        document.getElementById("error-msg").textContent = result.error;
-        show("s-error");
-        return;
-      }
-      lookupResult = result;
-      document.getElementById("c-name").textContent     = result.fullName;
-      document.getElementById("c-phone").textContent    = result.phone;
-      document.getElementById("c-memberid").textContent = result.memberId;
-      document.getElementById("c-carid").textContent    = result.carId;
-      document.getElementById("c-car").textContent      = result.carBrand + " " + result.carModel;
-      document.getElementById("c-plate").textContent    = result.plate;
-      show("s-confirm");
-    })
-    .catch(function(e) {
-      document.getElementById("error-msg").textContent = "เชื่อมต่อ API ไม่ได้: " + e.message;
+  // Use JSONP to bypass CORS restriction on GAS
+  var callbackName = "gasCallback_" + Date.now();
+  var script = document.createElement("script");
+  var timeout = setTimeout(function() {
+    document.getElementById("error-msg").textContent = "หมดเวลาเชื่อมต่อ — ลองใหม่";
+    show("s-error");
+    delete window[callbackName];
+    document.body.removeChild(script);
+  }, 10000);
+
+  window[callbackName] = function(result) {
+    clearTimeout(timeout);
+    delete window[callbackName];
+    document.body.removeChild(script);
+
+    if (result.error) {
+      document.getElementById("error-msg").textContent = result.error;
       show("s-error");
-    });
+      return;
+    }
+    lookupResult = result;
+    document.getElementById("c-name").textContent     = result.fullName;
+    document.getElementById("c-phone").textContent    = result.phone;
+    document.getElementById("c-memberid").textContent = result.memberId;
+    document.getElementById("c-carid").textContent    = result.carId;
+    document.getElementById("c-car").textContent      = result.carBrand + " " + result.carModel;
+    document.getElementById("c-plate").textContent    = result.plate;
+    show("s-confirm");
+  };
+
+  script.src = GAS_API_URL + "?carId=" + encodeURIComponent(carId) + "&callback=" + callbackName;
+  document.body.appendChild(script);
 }
 
 // ── Open warranty form ──
@@ -373,4 +384,5 @@ function openWarrantyForm() {
 }
 </script>
 </body>
+</html>
 </html>
