@@ -227,7 +227,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 
 <script>
 // ══ CONFIG — update GAS_API_URL after new deployment ══
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbzJXAfFpi2E4MF869_bl2EossH4ieqMEtV8ip5oRWkOwU7wFZEvrNT6TE6InrvnoSuD-A/exec";
+var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxc-flUuIKDH-mIh3vA6KDKGuknQ2NGN0CWmLzVbvsdgFkZIOUruzKymtN5aNgUixLnyg/exec";
 
 var BRANDS = [
   { id:"atlas",  name:"Atlas",   url:"https://members.llit-eservice.com/register/year/atlas/", active:true  },
@@ -424,7 +424,10 @@ async function handleReceiptPhoto(input){
   }
 }
 
-// ── Open warranty form ──
+// ── Open warranty form — send to desktop ──
+var waitingTimer = null;
+var waitingElapsed = 0;
+
 function openWarrantyForm(){
   if(!lookupResult||!selectedBrand||!receiptReady) return;
   var p=Object.assign({},lookupResult.params);
@@ -432,7 +435,65 @@ function openWarrantyForm(){
   if(uploadedFileId) p.receipt_file_id=uploadedFileId;
   var qs=Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
     .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
-  window.open(selectedBrand.url+"?"+qs,"_blank");
+  var warrantyUrl = selectedBrand.url+"?"+qs;
+
+  // Save URL to GAS for desktop to pick up
+  document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
+  show("s-waiting");
+  waitingElapsed=0;
+
+  jsonp(
+    GAS_API_URL+"?action=pushUrl"+
+    "&carId="+encodeURIComponent(currentCarId)+
+    "&url="+encodeURIComponent(warrantyUrl),
+    function(result){
+      if(result.ok){
+        // Start polling for desktop confirmation
+        document.getElementById("waiting-text").textContent="รอให้คอมพิวเตอร์เปิดฟอร์ม...";
+        pollDesktop();
+      } else {
+        showWaitingError("ส่ง URL ไม่สำเร็จ: "+(result.error||""));
+      }
+    },
+    function(err){ showWaitingError("เชื่อมต่อ GAS ไม่ได้: "+err); }
+  );
+}
+
+function pollDesktop(){
+  waitingTimer=setInterval(function(){
+    waitingElapsed+=3;
+    document.getElementById("waiting-text").textContent=
+      "รอให้คอมพิวเตอร์เปิดฟอร์ม... ("+waitingElapsed+"s)";
+
+    // Timeout after 30 seconds
+    if(waitingElapsed>=30){
+      clearInterval(waitingTimer);
+      showWaitingError("หมดเวลา — ตรวจสอบว่าเปิด Desktop Opener บนคอมพิวเตอร์แล้ว");
+      return;
+    }
+
+    jsonp(
+      GAS_API_URL+"?action=checkOpened&carId="+encodeURIComponent(currentCarId),
+      function(result){
+        if(result.opened){
+          clearInterval(waitingTimer);
+          show("s-sent");
+        }
+      },
+      function(){}  // silent fail, keep polling
+    );
+  }, 3000);
+}
+
+function cancelWaiting(){
+  clearInterval(waitingTimer);
+  show("s-confirm");
+}
+
+function showWaitingError(msg){
+  clearInterval(waitingTimer);
+  document.getElementById("error-msg").textContent=msg;
+  show("s-error");
 }
 </script>
 
@@ -443,5 +504,39 @@ if('serviceWorker' in navigator){
     .catch(function(e){ console.log('SW error:', e); });
 }
 </script>
+
+<!-- Screen 7: Waiting for desktop -->
+<div class="screen" id="s-waiting">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">กำลังเปิดบนคอมพิวเตอร์</div>
+    <div class="hdr-sub">รอสักครู่...</div>
+  </div>
+  <div class="loading-wrap">
+    <div class="spinner"></div>
+    <div class="loading-text" id="waiting-text">รอให้คอมพิวเตอร์เปิดฟอร์ม...</div>
+    <div style="font-size:12px;color:#aaa;margin-top:8px;text-align:center;padding:0 32px" id="waiting-sub">
+      ตรวจสอบให้แน่ใจว่าเปิดหน้า Desktop Opener บนคอมพิวเตอร์แล้ว
+    </div>
+  </div>
+  <div style="padding:16px">
+    <button class="cancel-btn" id="waiting-cancel" onclick="cancelWaiting()">ยกเลิก</button>
+  </div>
+</div>
+
+<!-- Screen 8: Success sent to desktop -->
+<div class="screen" id="s-sent">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">ส่งไปยังคอมพิวเตอร์แล้ว ✓</div>
+  </div>
+  <div class="center-wrap">
+    <div class="big-icon" style="background:#dcfce7">✅</div>
+    <div class="center-title" style="color:#166534">เปิดฟอร์มบนคอมพิวเตอร์แล้ว!</div>
+    <div class="center-desc">Extension กำลังกรอกข้อมูลอัตโนมัติ<br>กรุณากรอกรุ่นยางบนคอมพิวเตอร์</div>
+    <button class="btn-primary" onclick="show('s-brands')">← ลงทะเบียนรายถัดไป</button>
+  </div>
+</div>
+
 </body>
 </html>
