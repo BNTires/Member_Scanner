@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tyre Warranty — Desktop Opener</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.card{background:white;border-radius:16px;padding:32px;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.1);text-align:center}
+.logo{width:80px;height:80px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 16px}
+h1{font-size:20px;font-weight:700;color:#1a0000;margin-bottom:6px}
+.sub{font-size:13px;color:#888;margin-bottom:24px}
+.status-box{background:#f5f5f5;border-radius:12px;padding:16px;margin-bottom:20px}
+.status-dot{width:12px;height:12px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:8px;animation:pulse 1s ease-in-out infinite;vertical-align:middle}
+.status-dot.idle{background:#94a3b8;animation:none}
+.status-dot.error{background:#ef4444;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.status-text{font-size:14px;color:#333;font-weight:500;vertical-align:middle}
+.log{background:#1a1a1a;border-radius:8px;padding:12px;text-align:left;max-height:160px;overflow-y:auto;margin-bottom:20px}
+.log-line{font-size:11px;color:#4ade80;font-family:monospace;line-height:1.6}
+.log-line.err{color:#f87171}
+.log-line.info{color:#93c5fd}
+.btn{background:#b40000;color:white;border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:8px}
+.btn:hover{background:#cc0000}
+.btn:disabled{background:#ccc;cursor:not-allowed}
+.btn-outline{background:white;color:#b40000;border:2px solid #b40000;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;width:100%}
+.history{margin-top:20px;text-align:left}
+.history h3{font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.history-item{background:#f5f5f5;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:13px;color:#333}
+.history-item span{color:#888;font-size:11px;display:block;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🖥️</div>
+  <h1>Desktop Opener</h1>
+  <div class="sub">Tyre Warranty — B.N. Tires &amp; Max<br>เปิดหน้านี้ทิ้งไว้บนคอมพิวเตอร์</div>
+
+  <div class="status-box">
+    <span class="status-dot idle" id="status-dot"></span>
+    <span class="status-text" id="status-text">กดเริ่มเพื่อเริ่มรับฟอร์ม</span>
+  </div>
+
+  <div class="log" id="log"></div>
+
+  <button class="btn" id="start-btn" onclick="startListening()">▶ เริ่มรับฟอร์มจากโทรศัพท์</button>
+  <button class="btn-outline" id="stop-btn" onclick="stopListening()" disabled>⏹ หยุด</button>
+
+  <div class="history" id="history-wrap" style="display:none">
+    <h3>ประวัติล่าสุด</h3>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<script>
+// ══ CONFIG ══
+var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxxNnWSr1ZrZfbf3ufBn1FCWFUJn75EAzq5nCDnB2pF0XPiA1x2lTc-uHESp3-ylnkqxA/exec";
+var POLL_INTERVAL = 3000; // 3 seconds
+
+var pollTimer   = null;
+var isListening = false;
+var history     = [];
+
+function log(msg, type) {
+  var div = document.getElementById("log");
+  var line = document.createElement("div");
+  line.className = "log-line " + (type||"");
+  var time = new Date().toLocaleTimeString("th-TH");
+  line.textContent = "["+time+"] "+msg;
+  div.appendChild(line);
+  div.scrollTop = div.scrollHeight;
+}
+
+function setStatus(msg, state) {
+  document.getElementById("status-text").textContent = msg;
+  var dot = document.getElementById("status-dot");
+  dot.className = "status-dot " + (state||"");
+}
+
+function jsonp(url, onSuccess, onError) {
+  var cb = "cb_"+Date.now();
+  var s  = document.createElement("script");
+  var t  = setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); }, 10000);
+  window[cb] = function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
+  s.src = url + (url.indexOf("?")>=0?"&":"?") + "callback="+cb;
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
+  document.body.appendChild(s);
+}
+
+function startListening() {
+  if(isListening) return;
+  isListening = true;
+  document.getElementById("start-btn").disabled = true;
+  document.getElementById("stop-btn").disabled  = false;
+  setStatus("กำลังรอฟอร์มจากโทรศัพท์...", "");
+  log("เริ่มรับฟอร์ม — รอโทรศัพท์ส่งข้อมูล", "info");
+  poll();
+  pollTimer = setInterval(poll, POLL_INTERVAL);
+}
+
+function stopListening() {
+  isListening = false;
+  clearInterval(pollTimer);
+  document.getElementById("start-btn").disabled = false;
+  document.getElementById("stop-btn").disabled  = true;
+  setStatus("หยุดรับฟอร์มแล้ว", "idle");
+  log("หยุดรับฟอร์ม");
+}
+
+function poll() {
+  jsonp(
+    GAS_API_URL + "?action=popUrl",
+    function(result) {
+      if(result.ok && result.url) {
+        handleNewUrl(result.url, result.carId);
+      }
+    },
+    function(err) {
+      log("เชื่อมต่อ GAS ไม่ได้: "+err, "err");
+    }
+  );
+}
+
+function handleNewUrl(url, carId) {
+  log("📋 ได้รับฟอร์มสำหรับ: "+(carId||"unknown"), "info");
+  log("🔗 กำลังเปิด Atlas...");
+  setStatus("กำลังเปิดฟอร์ม — "+carId, "");
+
+  // Open Atlas in new tab
+  window.open(url, "_blank");
+
+  // Tell GAS it's been opened
+  jsonp(
+    GAS_API_URL + "?action=confirmOpened&carId="+encodeURIComponent(carId||""),
+    function(r) {
+      log("✅ แจ้งโทรศัพท์สำเร็จ", "");
+      setStatus("กำลังรอฟอร์มถัดไป...", "");
+
+      // Add to history
+      history.unshift({ carId: carId, time: new Date().toLocaleTimeString("th-TH") });
+      renderHistory();
+    },
+    function(err){ log("แจ้งโทรศัพท์ไม่ได้: "+err, "err"); }
+  );
+}
+
+function renderHistory() {
+  if(history.length===0) return;
+  document.getElementById("history-wrap").style.display="block";
+  var list = document.getElementById("history-list");
+  list.innerHTML = "";
+  history.slice(0,5).forEach(function(h) {
+    var div = document.createElement("div");
+    div.className = "history-item";
+    div.innerHTML = "🚗 "+h.carId+'<span>'+h.time+'</span>';
+    list.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
