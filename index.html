@@ -7,34 +7,34 @@
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f0f4f8;min-height:100vh}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh}
 .screen{display:none;flex-direction:column;min-height:100vh}
 .screen.active{display:flex}
-.hdr{background:#1a3a5c;color:white;padding:16px;text-align:center;flex-shrink:0}
+.hdr{background:#b40000;color:white;padding:16px;text-align:center;flex-shrink:0}
 .hdr-shop{font-size:10px;letter-spacing:2px;opacity:.6;margin-bottom:3px;text-transform:uppercase}
 .hdr-title{font-size:20px;font-weight:700}
 .hdr-sub{font-size:12px;opacity:.55;margin-top:3px}
 .content{padding:16px;flex:1}
-.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#7a8fa8;margin-bottom:10px;text-transform:uppercase}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#888888;margin-bottom:10px;text-transform:uppercase}
 .brand-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.brand-card{background:white;border-radius:14px;padding:20px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1.5px solid #e8edf2;-webkit-tap-highlight-color:transparent}
-.brand-card.active{background:#1a3a5c;border-color:#2e6da4;cursor:pointer}
+.brand-card{background:white;border-radius:14px;padding:20px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1.5px solid #e0e0e0;-webkit-tap-highlight-color:transparent}
+.brand-card.active{background:#b40000;border-color:#cc0000;cursor:pointer}
 .brand-card.active:active{transform:scale(.97)}
 .brand-card.inactive{opacity:.45;cursor:not-allowed}
 .brand-name{font-size:16px;font-weight:700;color:white}
 .brand-name.muted{color:#8a9dae}
 .brand-tap{font-size:11px;color:rgba(255,255,255,.65)}
-.brand-soon{font-size:11px;background:#f0f4f8;color:#8a9dae;padding:3px 10px;border-radius:20px}
+.brand-soon{font-size:11px;background:#f5f5f5;color:#8a9dae;padding:3px 10px;border-radius:20px}
 .center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;text-align:center}
-.big-icon{width:80px;height:80px;border-radius:50%;background:#ddeaf7;display:flex;align-items:center;justify-content:center;font-size:38px}
-.center-title{font-size:20px;font-weight:700;color:#1a2d40}
-.center-desc{font-size:14px;color:#5a7a96;line-height:1.7}
-.note-text{font-size:12px;color:#9aaab8;line-height:1.6}
-.back-link{font-size:13px;color:#2e6da4;cursor:pointer;text-decoration:underline}
-.btn-primary{background:#1a3a5c;color:white;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:280px}
+.big-icon{width:80px;height:80px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:38px}
+.center-title{font-size:20px;font-weight:700;color:#1a0000}
+.center-desc{font-size:14px;color:#555555;line-height:1.7}
+.note-text{font-size:12px;color:#aaaaaa;line-height:1.6}
+.back-link{font-size:13px;color:#cc0000;cursor:pointer;text-decoration:underline}
+.btn-primary{background:#b40000;color:white;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:280px}
 .btn-primary:active{opacity:.85}
-.btn-secondary{background:white;color:#1a3a5c;border:2px solid #1a3a5c;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:280px;margin-top:4px}
-.scan-hdr{background:#1a3a5c;color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.btn-secondary{background:white;color:#b40000;border:2px solid #b40000;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:280px;margin-top:4px}
+.scan-hdr{background:#b40000;color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
 .back-btn{background:rgba(255,255,255,.15);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .scan-brand{font-size:17px;font-weight:700}
 .scan-sub{font-size:12px;opacity:.6;margin-top:1px}
@@ -51,43 +51,47 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f0f4f8;min-height
 .scan-line{position:absolute;left:4px;right:4px;height:2px;background:rgba(255,255,255,.75);animation:sweep 2s ease-in-out infinite}
 @keyframes sweep{0%{top:4px}50%{top:calc(100% - 6px)}100%{top:4px}}
 .cam-hint{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:white;text-align:center;font-size:13px;padding:12px 16px}
-.status-bar{background:#1a3a5c;color:white;padding:12px 16px;font-size:13px;flex-shrink:0;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px}
+.status-bar{background:#b40000;color:white;padding:12px 16px;font-size:13px;flex-shrink:0;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px}
 .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0}
 .dot.on{background:#4ade80;animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .retry-btn{display:none;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer;margin-left:8px}
 .loading-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#1a3a5c;border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#b40000;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:15px;color:#5a7a96}
+.loading-text{font-size:15px;color:#555555}
 .confirm-wrap{flex:1;padding:16px;overflow-y:auto}
-.member-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e8edf2}
-.member-card h3{font-size:13px;font-weight:700;color:#7a8fa8;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.member-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
+.member-card h3{font-size:13px;font-weight:700;color:#888888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
 .info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:14px}
 .info-row:last-child{border-bottom:none}
 .info-label{color:#8a9dae;flex-shrink:0;margin-right:12px}
-.info-value{color:#1a2d40;font-weight:500;text-align:right}
-.confirm-brand{background:#1a3a5c;color:white;border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.info-value{color:#1a0000;font-weight:500;text-align:right}
+.confirm-brand{background:#b40000;color:white;border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
 .confirm-brand-name{font-size:18px;font-weight:700}
 .confirm-brand-sub{font-size:12px;opacity:.65;margin-top:2px}
-.action-btn{background:#1a3a5c;color:white;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px}
+.action-btn{background:#b40000;color:white;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px}
 .action-btn:active{opacity:.85}
 .action-btn:disabled{background:#94a3b8;cursor:not-allowed}
-.cancel-btn{background:white;color:#5a7a96;border:1.5px solid #e8edf2;border-radius:12px;padding:14px;font-size:15px;cursor:pointer;width:100%}
-
-/* Receipt upload */
-.receipt-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e8edf2}
-.receipt-card h3{font-size:13px;font-weight:700;color:#7a8fa8;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.cancel-btn{background:white;color:#555555;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px;font-size:15px;cursor:pointer;width:100%}
+.receipt-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
+.receipt-card h3{font-size:13px;font-weight:700;color:#888888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
 .receipt-upload-area{border:2px dashed #cbd5e1;border-radius:12px;padding:24px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
 .receipt-upload-area.has-photo{border-color:#22c55e;background:#f0fdf4}
 .receipt-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .receipt-preview{width:100%;max-height:200px;object-fit:contain;border-radius:8px;display:none;margin-top:8px}
 .receipt-status{font-size:13px;margin-top:8px}
 .receipt-status.ok{color:#16a34a;font-weight:600}
-.receipt-status.uploading{color:#2563eb}
+.receipt-status.uploading{color:#cc0000}
 .receipt-status.error{color:#dc2626}
-.footer{text-align:center;padding:14px;font-size:11px;color:#9aaab8;flex-shrink:0}
+.footer{text-align:center;padding:14px;font-size:11px;color:#aaaaaa;flex-shrink:0}
 </style>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tyre Warranty">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#b40000">
 </head>
 <body>
 
@@ -173,8 +177,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f0f4f8;min-height
         <div class="confirm-brand-sub">แบรนด์ที่จะลงทะเบียน</div>
       </div>
     </div>
-
-    <!-- Receipt Photo Upload -->
     <div class="receipt-card">
       <h3>📎 ภาพใบเสร็จ</h3>
       <div class="receipt-upload-area" id="receipt-area">
@@ -188,7 +190,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f0f4f8;min-height
       </div>
       <div class="receipt-status" id="receipt-status"></div>
     </div>
-
     <div class="member-card">
       <h3>ข้อมูลสมาชิก</h3>
       <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="c-name"></span></div>
@@ -201,7 +202,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f0f4f8;min-height
       <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="c-car"></span></div>
       <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="c-plate"></span></div>
     </div>
-
     <button class="action-btn" id="open-form-btn" onclick="openWarrantyForm()" disabled>
       📎 กรุณาถ่ายรูปใบเสร็จก่อน
     </button>
@@ -226,7 +226,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f0f4f8;min-height
 
 <script>
 // ══ CONFIG ══
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbwJuWWLUZl1ZCbzw3MvldIHPtXf2EIRwDaUGH1tt3hfoU6PyIVGz25ILudvPEh6qrbqSQ/exec";
+var GAS_API_URL     = "https://script.google.com/macros/s/AKfycbw20Yw1Ayzibo4ir_2YIlNcpBYCu_5W-XZU38moFTog7wWrwc4cGUxG00StRH8ljewj-A/exec";
+var DRIVE_FOLDER_ID = "1RcviUSbPfLA5F8qM9dbTixchxdMJA0Zl";
+var SA_EMAIL        = "bntires-drive@sage-cycling-441803-v7.iam.gserviceaccount.com";
+var SA_PRIVATE_KEY  = "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCnLbGDhXCE99EI\nTbpxx25Zqe/Cm2WEn47fgbSI1vlSGUy2A/Sh6lCeqxFyFBsQS/F1SxkClPUfrSzn\nb/GxpnxUx1Z2cH2aM21QJpWRwXqCyLda8NFSrhaUGXJG4ALUQ0GpqOEBNJQ91O2r\nDVY/ggSoZ83JTtMS0j7JQn3Y2dMFZfB0yigl/MPUcNB1TF2g53ZVkmaRTRnFq000\n/5maWw1AqjPzU1xqc3zJLb5hkWKB8PXiY4IdguvWil1NqsPq73S7f25skEXePlNI\nGMazGh8SmD7IUQbBJJgHOeWf4x/gHP5IU7IJoSqfx6c5axXS3rc3KdzWb18cm6Hn\nQ6Ma8CZVAgMBAAECggEAKTbb2jGBu5ovq5UkB4xTwWGidO7kAGXormPW2txqo0mO\n7pl7jBZM0U0ZtC7OPD6ItLKyo/8OjkRee2EO7A2//ZOWFoVlhagzhQy6F3CkMA1l\nHJOdez1lXhYG5P+xWtyI2deDPw2UFUlC3YZgcrAuT0kmA8C9yxhPd8T/awBKZHwm\nryGObNzPNr5e0iaByPBor+LwJxhATlz/P+Opkjqa+QjR7tzFuP28JahqpKssfUrV\nymykr04sFM7vtiB2W1bJvlI3KCIAKB4jGNxPQO8smpVx/tPqnGkWrxaEnnCVenM8\nCmGy2zYDucoepg6s7DM1NTzxBhMpat4nu5g7aYDKwQKBgQDcQ+vTUnPmMdkmnXCX\n0XVXWWCXRvk79LyNRXuzyqUDaeeMQPO9wGQ8g3pfhVI+rQr9XYKdFDNJlFdVwIEC\nak2PsvJaUJCUROzrs6HVzKXk1hA1VCcFA89EHTjcsrIpyOG5lOlYNjXIqIf9pHGV\nViStPIjErKQid9vsYlfAzKWFQQKBgQDCTPcirMhTqntXA6sE9OFEIeo/BvMBR2Ur\n+ZgJesvRXa2L39pI4WfxpfPivCnz+BWcWI3FclkrktpXkAMtljXvXMpbyiBaaD78\nUZzwXZSBs0Bju6IhhN4H8IdlLvGfhLIZrzV1D3wt3AOTecWdU6CU9FEVAogVOaov\nsb0pYLY4FQKBgQCIbwHZ6Y6knWfWRVsCjtlR+6iay3mBq7xG/Sz8Vp8TmDu2Yl0X\nwd3UpdPc6uXgsKrH+W34AhUqlFnsYcsHRfU49yyqyJBlZrQh4yhxF8wCDJ4JilCJ\nCK0PkdIw0fcNbsJyg0xuOVXjLpDdiUhZqfwZ2g8VU6JvPzLYHqogYCJ+gQKBgQCf\nDkRNBWZkXy3iuGT6hMAXdy/78mNhS6G9ku/r6rMIrAgSdeiKOsNNZQ22MVSinBaM\ny00bMhVe/zNv9Ls1ST7TuIELDPbZK3dMND8l4WVdm3B9dC8wA0WC+FrN8NTpQcZO\nEkjPkCKWpAHlawzjUn8lEK+DZHQj8/WmX3i7c6kXVQKBgQCPZyX6At4qrsjJ/9Hy\nPAs7ZIHbJqNX0a4oOA7WwmU/Vxutuma9miqySc/ZzOBcMbxKOyQvdqhUY6R1ahhC\nTd9YShyoRdWLajYmZnPZ0b2cbhEc3qKTzn7v9a/ucKGv4ShbHZ3sDh42k/j1SeDf\nQ+N5kL1FhGIyvwgn+ZhMuJlJ/g==\n-----END PRIVATE KEY-----\n";
 
 var BRANDS = [
   { id:"atlas", name:"Atlas", url:"https://members.llit-eservice.com/register/year/atlas/", active:true },
@@ -235,24 +238,25 @@ var BRANDS = [
   { id:"d", name:"Brand D", active:false }
 ];
 
-var selectedBrand  = null;
-var lookupResult   = null;
-var stream         = null;
-var scanTimer      = null;
-var receiptReady   = false;
-var currentCarId   = null;
+var selectedBrand = null;
+var lookupResult  = null;
+var stream        = null;
+var scanTimer     = null;
+var receiptReady  = false;
+var currentCarId  = null;
+var uploadedFileId = null;
 
 // ── Build brand grid ──
 (function(){
   var grid = document.getElementById("brand-grid");
   BRANDS.forEach(function(b){
     var el = document.createElement("div");
-    el.className = "brand-card " + (b.active ? "active" : "inactive");
+    el.className = "brand-card "+(b.active?"active":"inactive");
     el.innerHTML =
-      '<div style="font-size:28px">🔘</div>' +
-      '<div class="brand-name ' + (b.active?"":"muted") + '">' + b.name + '</div>' +
-      (b.active ? '<div class="brand-tap">แตะเพื่อสแกน QR →</div>' : '<div class="brand-soon">เร็วๆ นี้</div>');
-    if(b.active) el.addEventListener("click", function(){ pickBrand(b); });
+      '<div style="font-size:28px">🔘</div>'+
+      '<div class="brand-name '+(b.active?"":"muted")+'">'+b.name+'</div>'+
+      (b.active?'<div class="brand-tap">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
+    if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
     grid.appendChild(el);
   });
 })();
@@ -261,54 +265,47 @@ function show(id){
   document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
   document.getElementById(id).classList.add("active");
 }
-
 function pickBrand(brand){
-  selectedBrand = brand;
-  document.getElementById("perm-brand-name").textContent    = brand.name;
-  document.getElementById("scan-brand-label").textContent   = brand.name;
-  document.getElementById("confirm-brand-name").textContent = brand.name;
+  selectedBrand=brand;
+  document.getElementById("perm-brand-name").textContent=brand.name;
+  document.getElementById("scan-brand-label").textContent=brand.name;
+  document.getElementById("confirm-brand-name").textContent=brand.name;
   show("s-permission");
 }
-
 function goBack(){ stopCamera(); show("s-brands"); }
 
 // ── Camera ──
 async function openCamera(){
-  document.getElementById("retry-btn").style.display = "none";
-  setStatus("กำลังเปิดกล้อง...", true);
-  show("s-scanner");
-  stopCamera();
+  document.getElementById("retry-btn").style.display="none";
+  setStatus("กำลังเปิดกล้อง...",true);
+  show("s-scanner"); stopCamera();
   try {
-    try { stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
-    catch(e){ stream = await navigator.mediaDevices.getUserMedia({video:true}); }
-    var vid = document.getElementById("preview");
-    vid.srcObject = stream;
-    await vid.play();
-    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ", true);
-    scanTimer = setInterval(tick, 250);
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
+    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
+    var vid=document.getElementById("preview");
+    vid.srcObject=stream; await vid.play();
+    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
+    scanTimer=setInterval(tick,250);
   } catch(err){
-    var denied = err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
-    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message, false);
-    document.getElementById("retry-btn").style.display = "inline-block";
+    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
+    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
+    document.getElementById("retry-btn").style.display="inline-block";
   }
 }
-
 function stopCamera(){
   clearInterval(scanTimer); scanTimer=null;
   if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
 }
-
 function tick(){
-  var vid = document.getElementById("preview");
-  if(vid.readyState !== vid.HAVE_ENOUGH_DATA) return;
-  var cvs = document.getElementById("canvas");
+  var vid=document.getElementById("preview");
+  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
+  var cvs=document.getElementById("canvas");
   cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
   var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
   var img=ctx.getImageData(0,0,cvs.width,cvs.height);
   var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
   if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
 }
-
 function setStatus(msg,active){
   document.getElementById("scan-status-text").textContent=msg;
   var dot=document.getElementById("scan-dot");
@@ -321,34 +318,25 @@ function handleQR(raw){
   currentCarId=carId;
   document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
   show("s-loading");
-
   var cbName="gasCallback_"+Date.now();
   var script=document.createElement("script");
   var timeout=setTimeout(function(){
     document.getElementById("error-msg").textContent="หมดเวลาเชื่อมต่อ — ลองใหม่";
-    show("s-error");
-    delete window[cbName];
+    show("s-error"); delete window[cbName];
     if(script.parentNode) document.body.removeChild(script);
   },10000);
-
   window[cbName]=function(result){
-    clearTimeout(timeout);
-    delete window[cbName];
+    clearTimeout(timeout); delete window[cbName];
     if(script.parentNode) document.body.removeChild(script);
-    if(result.error){
-      document.getElementById("error-msg").textContent=result.error;
-      show("s-error"); return;
-    }
+    if(result.error){ document.getElementById("error-msg").textContent=result.error; show("s-error"); return; }
     lookupResult=result;
-    document.getElementById("c-name").textContent    = result.fullName;
-    document.getElementById("c-phone").textContent   = result.phone;
-    document.getElementById("c-memberid").textContent= result.memberId;
-    document.getElementById("c-carid").textContent   = result.carId;
-    document.getElementById("c-car").textContent     = result.carBrand+" "+result.carModel;
-    document.getElementById("c-plate").textContent   = result.plate;
-
-    // Reset receipt state
-    receiptReady=false;
+    document.getElementById("c-name").textContent=result.fullName;
+    document.getElementById("c-phone").textContent=result.phone;
+    document.getElementById("c-memberid").textContent=result.memberId;
+    document.getElementById("c-carid").textContent=result.carId;
+    document.getElementById("c-car").textContent=result.carBrand+" "+result.carModel;
+    document.getElementById("c-plate").textContent=result.plate;
+    receiptReady=false; uploadedFileId=null;
     document.getElementById("receipt-area").classList.remove("has-photo");
     document.getElementById("receipt-preview").style.display="none";
     document.getElementById("receipt-placeholder").style.display="block";
@@ -357,16 +345,51 @@ function handleQR(raw){
     document.getElementById("open-form-btn").disabled=true;
     document.getElementById("open-form-btn").textContent="📎 กรุณาถ่ายรูปใบเสร็จก่อน";
     document.getElementById("receipt-input").value="";
-
     show("s-confirm");
   };
-
   script.src=GAS_API_URL+"?carId="+encodeURIComponent(carId)+"&callback="+cbName;
   document.body.appendChild(script);
 }
 
-// ── Receipt Photo Handler ──
-function handleReceiptPhoto(input){
+// ── Get Google OAuth token from Service Account using JWT ──
+async function getAccessToken(){
+  const now   = Math.floor(Date.now()/1000);
+  const header  = { alg:"RS256", typ:"JWT" };
+  const payload = {
+    iss: SA_EMAIL,
+    scope: "https://www.googleapis.com/auth/drive.file",
+    aud: "https://oauth2.googleapis.com/token",
+    exp: now+3600, iat: now
+  };
+  const b64 = obj => btoa(JSON.stringify(obj)).replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
+  const unsigned = b64(header)+"."+b64(payload);
+
+  // Import private key
+  const pemBody = SA_PRIVATE_KEY.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\n/g,"");
+  const der     = Uint8Array.from(atob(pemBody), c=>c.charCodeAt(0));
+  const key     = await crypto.subtle.importKey("pkcs8", der.buffer,
+    { name:"RSASSA-PKCS1-v1_5", hash:"SHA-256" }, false, ["sign"]);
+
+  // Sign
+  const sig = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key,
+    new TextEncoder().encode(unsigned));
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
+    .replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
+  const jwt = unsigned+"."+sigB64;
+
+  // Exchange JWT for access token
+  const res = await fetch("https://oauth2.googleapis.com/token",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion="+jwt
+  });
+  const data = await res.json();
+  if(!data.access_token) throw new Error("Token error: "+JSON.stringify(data));
+  return data.access_token;
+}
+
+// ── Upload receipt directly to Google Drive ──
+async function handleReceiptPhoto(input){
   if(!input.files||!input.files[0]) return;
   var file=input.files[0];
   var statusEl=document.getElementById("receipt-status");
@@ -382,56 +405,91 @@ function handleReceiptPhoto(input){
   };
   reader.readAsDataURL(file);
 
-  // Upload to GAS/Drive
   statusEl.className="receipt-status uploading";
   statusEl.textContent="⏳ กำลังอัพโหลดรูปใบเสร็จ...";
   document.getElementById("open-form-btn").disabled=true;
 
-  var reader2=new FileReader();
-  reader2.onload=function(e){
-    var base64=e.target.result.split(",")[1];
-    fetch(GAS_API_URL, {
+  try {
+    // Get OAuth token
+    var token = await getAccessToken();
+
+    // Delete old file with same name if exists
+    var filename = currentCarId+".jpg";
+    var searchRes = await fetch(
+      "https://www.googleapis.com/drive/v3/files?q=name%3D'"+filename+"'+and+'"+DRIVE_FOLDER_ID+"'+in+parents&fields=files(id)",
+      { headers:{ Authorization:"Bearer "+token } }
+    );
+    var searchData = await searchRes.json();
+    if(searchData.files && searchData.files.length>0){
+      await fetch("https://www.googleapis.com/drive/v3/files/"+searchData.files[0].id,
+        { method:"DELETE", headers:{ Authorization:"Bearer "+token } });
+    }
+
+    // Upload new file using multipart
+    var metadata = JSON.stringify({ name:filename, parents:[DRIVE_FOLDER_ID] });
+    var boundary = "boundary_bntires";
+    var body =
+      "--"+boundary+"\r\nContent-Type: application/json\r\n\r\n"+metadata+"\r\n"+
+      "--"+boundary+"\r\nContent-Type: "+file.type+"\r\n\r\n";
+
+    var bodyStart = new TextEncoder().encode(body);
+    var bodyEnd   = new TextEncoder().encode("\r\n--"+boundary+"--");
+    var fileBytes = await file.arrayBuffer();
+    var combined  = new Uint8Array(bodyStart.length+fileBytes.byteLength+bodyEnd.length);
+    combined.set(bodyStart,0);
+    combined.set(new Uint8Array(fileBytes),bodyStart.length);
+    combined.set(bodyEnd,bodyStart.length+fileBytes.byteLength);
+
+    var uploadRes = await fetch(
+      "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id",
+      { method:"POST", headers:{
+          Authorization:"Bearer "+token,
+          "Content-Type":"multipart/related; boundary="+boundary
+        }, body:combined }
+    );
+    var uploadData = await uploadRes.json();
+    if(!uploadData.id) throw new Error("Upload failed: "+JSON.stringify(uploadData));
+
+    // Make file readable by anyone with link (for Extension to fetch)
+    await fetch("https://www.googleapis.com/drive/v3/files/"+uploadData.id+"/permissions",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        carId:   currentCarId,
-        imageData: base64,
-        mimeType:  file.type
-      })
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(result){
-      if(result.ok){
-        receiptReady=true;
-        areaEl.classList.add("has-photo");
-        statusEl.className="receipt-status ok";
-        statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
-        document.getElementById("open-form-btn").disabled=false;
-        document.getElementById("open-form-btn").textContent="🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
-      } else {
-        statusEl.className="receipt-status error";
-        statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+(result.error||"ลองใหม่");
-      }
-    })
-    .catch(function(err){
-      statusEl.className="receipt-status error";
-      statusEl.textContent="❌ เชื่อมต่อไม่ได้: "+err.message;
+      headers:{ Authorization:"Bearer "+token, "Content-Type":"application/json" },
+      body:JSON.stringify({ role:"reader", type:"anyone" })
     });
-  };
-  reader2.readAsDataURL(file);
+
+    uploadedFileId=uploadData.id;
+    receiptReady=true;
+    areaEl.classList.add("has-photo");
+    statusEl.className="receipt-status ok";
+    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
+    document.getElementById("open-form-btn").disabled=false;
+    document.getElementById("open-form-btn").textContent="🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
+
+  } catch(err){
+    statusEl.className="receipt-status error";
+    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
+  }
 }
 
 // ── Open Warranty Form ──
 function openWarrantyForm(){
   if(!lookupResult||!selectedBrand||!receiptReady) return;
-  var p=lookupResult.params;
-  // Add carId so Extension knows which receipt to fetch
+  var p=Object.assign({},lookupResult.params);
   p.car_id=currentCarId;
+  if(uploadedFileId) p.receipt_file_id=uploadedFileId;
   var qs=Object.keys(p)
     .filter(function(k){ return p[k]!==""&&p[k]!==null; })
     .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); })
     .join("&");
   window.open(selectedBrand.url+"?"+qs,"_blank");
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/Member_Scanner/sw.js')
+    .then(function(){ console.log('SW registered'); })
+    .catch(function(e){ console.log('SW error:', e); });
 }
 </script>
 </body>
