@@ -226,10 +226,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 
 <script>
 // ══ CONFIG ══
-var GAS_API_URL     = "https://script.google.com/macros/s/AKfycbw20Yw1Ayzibo4ir_2YIlNcpBYCu_5W-XZU38moFTog7wWrwc4cGUxG00StRH8ljewj-A/exec";
-var DRIVE_FOLDER_ID = "1RcviUSbPfLA5F8qM9dbTixchxdMJA0Zl";
-var SA_EMAIL        = "bntires-drive@sage-cycling-441803-v7.iam.gserviceaccount.com";
-var SA_PRIVATE_KEY  = "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCnLbGDhXCE99EI\nTbpxx25Zqe/Cm2WEn47fgbSI1vlSGUy2A/Sh6lCeqxFyFBsQS/F1SxkClPUfrSzn\nb/GxpnxUx1Z2cH2aM21QJpWRwXqCyLda8NFSrhaUGXJG4ALUQ0GpqOEBNJQ91O2r\nDVY/ggSoZ83JTtMS0j7JQn3Y2dMFZfB0yigl/MPUcNB1TF2g53ZVkmaRTRnFq000\n/5maWw1AqjPzU1xqc3zJLb5hkWKB8PXiY4IdguvWil1NqsPq73S7f25skEXePlNI\nGMazGh8SmD7IUQbBJJgHOeWf4x/gHP5IU7IJoSqfx6c5axXS3rc3KdzWb18cm6Hn\nQ6Ma8CZVAgMBAAECggEAKTbb2jGBu5ovq5UkB4xTwWGidO7kAGXormPW2txqo0mO\n7pl7jBZM0U0ZtC7OPD6ItLKyo/8OjkRee2EO7A2//ZOWFoVlhagzhQy6F3CkMA1l\nHJOdez1lXhYG5P+xWtyI2deDPw2UFUlC3YZgcrAuT0kmA8C9yxhPd8T/awBKZHwm\nryGObNzPNr5e0iaByPBor+LwJxhATlz/P+Opkjqa+QjR7tzFuP28JahqpKssfUrV\nymykr04sFM7vtiB2W1bJvlI3KCIAKB4jGNxPQO8smpVx/tPqnGkWrxaEnnCVenM8\nCmGy2zYDucoepg6s7DM1NTzxBhMpat4nu5g7aYDKwQKBgQDcQ+vTUnPmMdkmnXCX\n0XVXWWCXRvk79LyNRXuzyqUDaeeMQPO9wGQ8g3pfhVI+rQr9XYKdFDNJlFdVwIEC\nak2PsvJaUJCUROzrs6HVzKXk1hA1VCcFA89EHTjcsrIpyOG5lOlYNjXIqIf9pHGV\nViStPIjErKQid9vsYlfAzKWFQQKBgQDCTPcirMhTqntXA6sE9OFEIeo/BvMBR2Ur\n+ZgJesvRXa2L39pI4WfxpfPivCnz+BWcWI3FclkrktpXkAMtljXvXMpbyiBaaD78\nUZzwXZSBs0Bju6IhhN4H8IdlLvGfhLIZrzV1D3wt3AOTecWdU6CU9FEVAogVOaov\nsb0pYLY4FQKBgQCIbwHZ6Y6knWfWRVsCjtlR+6iay3mBq7xG/Sz8Vp8TmDu2Yl0X\nwd3UpdPc6uXgsKrH+W34AhUqlFnsYcsHRfU49yyqyJBlZrQh4yhxF8wCDJ4JilCJ\nCK0PkdIw0fcNbsJyg0xuOVXjLpDdiUhZqfwZ2g8VU6JvPzLYHqogYCJ+gQKBgQCf\nDkRNBWZkXy3iuGT6hMAXdy/78mNhS6G9ku/r6rMIrAgSdeiKOsNNZQ22MVSinBaM\ny00bMhVe/zNv9Ls1ST7TuIELDPbZK3dMND8l4WVdm3B9dC8wA0WC+FrN8NTpQcZO\nEkjPkCKWpAHlawzjUn8lEK+DZHQj8/WmX3i7c6kXVQKBgQCPZyX6At4qrsjJ/9Hy\nPAs7ZIHbJqNX0a4oOA7WwmU/Vxutuma9miqySc/ZzOBcMbxKOyQvdqhUY6R1ahhC\nTd9YShyoRdWLajYmZnPZ0b2cbhEc3qKTzn7v9a/ucKGv4ShbHZ3sDh42k/j1SeDf\nQ+N5kL1FhGIyvwgn+ZhMuJlJ/g==\n-----END PRIVATE KEY-----\n";
+var GAS_API_URL     = "https://script.google.com/macros/s/AKfycbxPWFt6I-9G7G1ffsYcQncuKCLM7PPX3HEtRzh8kj9n_mMgrCvFm5MK91T0SQIoaAVLtg/exec";
 
 var BRANDS = [
   { id:"atlas", name:"Atlas", url:"https://members.llit-eservice.com/register/year/atlas/", active:true },
@@ -351,43 +348,6 @@ function handleQR(raw){
   document.body.appendChild(script);
 }
 
-// ── Get Google OAuth token from Service Account using JWT ──
-async function getAccessToken(){
-  const now   = Math.floor(Date.now()/1000);
-  const header  = { alg:"RS256", typ:"JWT" };
-  const payload = {
-    iss: SA_EMAIL,
-    scope: "https://www.googleapis.com/auth/drive.file",
-    aud: "https://oauth2.googleapis.com/token",
-    exp: now+3600, iat: now
-  };
-  const b64 = obj => btoa(JSON.stringify(obj)).replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
-  const unsigned = b64(header)+"."+b64(payload);
-
-  // Import private key
-  const pemBody = SA_PRIVATE_KEY.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\n/g,"");
-  const der     = Uint8Array.from(atob(pemBody), c=>c.charCodeAt(0));
-  const key     = await crypto.subtle.importKey("pkcs8", der.buffer,
-    { name:"RSASSA-PKCS1-v1_5", hash:"SHA-256" }, false, ["sign"]);
-
-  // Sign
-  const sig = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key,
-    new TextEncoder().encode(unsigned));
-  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
-    .replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
-  const jwt = unsigned+"."+sigB64;
-
-  // Exchange JWT for access token
-  const res = await fetch("https://oauth2.googleapis.com/token",{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion="+jwt
-  });
-  const data = await res.json();
-  if(!data.access_token) throw new Error("Token error: "+JSON.stringify(data));
-  return data.access_token;
-}
-
 // ── Upload receipt directly to Google Drive ──
 async function handleReceiptPhoto(input){
   if(!input.files||!input.files[0]) return;
@@ -410,64 +370,64 @@ async function handleReceiptPhoto(input){
   document.getElementById("open-form-btn").disabled=true;
 
   try {
-    // Get OAuth token
-    var token = await getAccessToken();
-
-    // Delete old file with same name if exists
-    var filename = currentCarId+".jpg";
-    var searchRes = await fetch(
-      "https://www.googleapis.com/drive/v3/files?q=name%3D'"+filename+"'+and+'"+DRIVE_FOLDER_ID+"'+in+parents&fields=files(id)",
-      { headers:{ Authorization:"Bearer "+token } }
-    );
-    var searchData = await searchRes.json();
-    if(searchData.files && searchData.files.length>0){
-      await fetch("https://www.googleapis.com/drive/v3/files/"+searchData.files[0].id,
-        { method:"DELETE", headers:{ Authorization:"Bearer "+token } });
-    }
-
-    // Upload new file using multipart
-    var metadata = JSON.stringify({ name:filename, parents:[DRIVE_FOLDER_ID] });
-    var boundary = "boundary_bntires";
-    var body =
-      "--"+boundary+"\r\nContent-Type: application/json\r\n\r\n"+metadata+"\r\n"+
-      "--"+boundary+"\r\nContent-Type: "+file.type+"\r\n\r\n";
-
-    var bodyStart = new TextEncoder().encode(body);
-    var bodyEnd   = new TextEncoder().encode("\r\n--"+boundary+"--");
-    var fileBytes = await file.arrayBuffer();
-    var combined  = new Uint8Array(bodyStart.length+fileBytes.byteLength+bodyEnd.length);
-    combined.set(bodyStart,0);
-    combined.set(new Uint8Array(fileBytes),bodyStart.length);
-    combined.set(bodyEnd,bodyStart.length+fileBytes.byteLength);
-
-    var uploadRes = await fetch(
-      "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id",
-      { method:"POST", headers:{
-          Authorization:"Bearer "+token,
-          "Content-Type":"multipart/related; boundary="+boundary
-        }, body:combined }
-    );
-    var uploadData = await uploadRes.json();
-    if(!uploadData.id) throw new Error("Upload failed: "+JSON.stringify(uploadData));
-
-    // Make file readable by anyone with link (for Extension to fetch)
-    await fetch("https://www.googleapis.com/drive/v3/files/"+uploadData.id+"/permissions",{
-      method:"POST",
-      headers:{ Authorization:"Bearer "+token, "Content-Type":"application/json" },
-      body:JSON.stringify({ role:"reader", type:"anyone" })
+    // Convert image to base64
+    var base64 = await new Promise(function(resolve, reject) {
+      var r = new FileReader();
+      r.onload = function(e) { resolve(e.target.result.split(",")[1]); };
+      r.onerror = reject;
+      r.readAsDataURL(file);
     });
 
-    uploadedFileId=uploadData.id;
-    receiptReady=true;
+    // Send to GAS as no-cors POST — GAS saves to Drive as your account
+    // We use no-cors so we don't need CORS headers — fire and forget
+    // Then poll GAS via JSONP to confirm upload
+    var payload = JSON.stringify({
+      carId:     currentCarId,
+      imageData: base64,
+      mimeType:  file.type || "image/jpeg"
+    });
+
+    // Use fetch with no-cors to avoid CORS error
+    // GAS will save the file even though we can't read the response
+    await fetch(GAS_API_URL, {
+      method:  "POST",
+      mode:    "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body:    payload
+    });
+
+    // Poll GAS via JSONP to confirm file was saved and get file ID
+    var fileId = await new Promise(function(resolve, reject) {
+      var cbName  = "uploadCheck_"+Date.now();
+      var script  = document.createElement("script");
+      var timeout = setTimeout(function() {
+        delete window[cbName];
+        if(script.parentNode) document.body.removeChild(script);
+        reject(new Error("หมดเวลารอยืนยัน"));
+      }, 15000);
+
+      window[cbName] = function(result) {
+        clearTimeout(timeout);
+        delete window[cbName];
+        if(script.parentNode) document.body.removeChild(script);
+        if(result.ok && result.fileId) resolve(result.fileId);
+        else reject(new Error(result.error || "ไม่พบไฟล์"));
+      };
+      script.src = GAS_API_URL+"?action=checkReceipt&carId="+encodeURIComponent(currentCarId)+"&callback="+cbName;
+      document.body.appendChild(script);
+    });
+
+    uploadedFileId = fileId;
+    receiptReady   = true;
     areaEl.classList.add("has-photo");
-    statusEl.className="receipt-status ok";
-    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
-    document.getElementById("open-form-btn").disabled=false;
-    document.getElementById("open-form-btn").textContent="🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
+    statusEl.className    = "receipt-status ok";
+    statusEl.textContent  = "✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
+    document.getElementById("open-form-btn").disabled    = false;
+    document.getElementById("open-form-btn").textContent = "🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
 
   } catch(err){
-    statusEl.className="receipt-status error";
-    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
+    statusEl.className   = "receipt-status error";
+    statusEl.textContent = "❌ อัพโหลดไม่สำเร็จ: "+err.message;
   }
 }
 
