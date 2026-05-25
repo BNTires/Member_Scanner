@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>ลงทะเบียนรับประกันยาง — B.N. Tires & Max</title>
+<title>Tyre Warranty</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tyre Warranty">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#b40000">
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -11,33 +17,34 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 .screen{display:none;flex-direction:column;min-height:100vh}
 .screen.active{display:flex}
 .hdr{background:#b40000;color:white;padding:16px;text-align:center;flex-shrink:0}
-.hdr-shop{font-size:10px;letter-spacing:2px;opacity:.6;margin-bottom:3px;text-transform:uppercase}
+.hdr-shop{font-size:10px;letter-spacing:2px;opacity:.7;margin-bottom:3px;text-transform:uppercase}
 .hdr-title{font-size:20px;font-weight:700}
-.hdr-sub{font-size:12px;opacity:.55;margin-top:3px}
+.hdr-sub{font-size:12px;opacity:.6;margin-top:3px}
 .content{padding:16px;flex:1}
-.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#888888;margin-bottom:10px;text-transform:uppercase}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#888;margin-bottom:10px;text-transform:uppercase}
 .brand-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .brand-card{background:white;border-radius:14px;padding:20px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1.5px solid #e0e0e0;-webkit-tap-highlight-color:transparent}
 .brand-card.active{background:#b40000;border-color:#cc0000;cursor:pointer}
 .brand-card.active:active{transform:scale(.97)}
 .brand-card.inactive{opacity:.45;cursor:not-allowed}
+.brand-logo{font-size:28px}
 .brand-name{font-size:16px;font-weight:700;color:white}
-.brand-name.muted{color:#8a9dae}
-.brand-tap{font-size:11px;color:rgba(255,255,255,.65)}
-.brand-soon{font-size:11px;background:#f5f5f5;color:#8a9dae;padding:3px 10px;border-radius:20px}
+.brand-name.muted{color:#aaa}
+.brand-tap{font-size:11px;color:rgba(255,255,255,.7)}
+.brand-soon{font-size:11px;background:#f5f5f5;color:#aaa;padding:3px 10px;border-radius:20px}
 .center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;text-align:center}
 .big-icon{width:80px;height:80px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:38px}
 .center-title{font-size:20px;font-weight:700;color:#1a0000}
-.center-desc{font-size:14px;color:#555555;line-height:1.7}
-.note-text{font-size:12px;color:#aaaaaa;line-height:1.6}
-.back-link{font-size:13px;color:#cc0000;cursor:pointer;text-decoration:underline}
+.center-desc{font-size:14px;color:#555;line-height:1.7}
+.note-text{font-size:12px;color:#aaa;line-height:1.6}
+.back-link{font-size:13px;color:#b40000;cursor:pointer;text-decoration:underline}
 .btn-primary{background:#b40000;color:white;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:280px}
 .btn-primary:active{opacity:.85}
 .btn-secondary{background:white;color:#b40000;border:2px solid #b40000;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:280px;margin-top:4px}
 .scan-hdr{background:#b40000;color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
-.back-btn{background:rgba(255,255,255,.15);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back-btn{background:rgba(255,255,255,.2);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .scan-brand{font-size:17px;font-weight:700}
-.scan-sub{font-size:12px;opacity:.6;margin-top:1px}
+.scan-sub{font-size:12px;opacity:.7;margin-top:1px}
 .cam-wrap{position:relative;flex:1;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:300px}
 #preview{width:100%;height:100%;object-fit:cover;display:block}
 #canvas{display:none}
@@ -55,43 +62,37 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0}
 .dot.on{background:#4ade80;animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.retry-btn{display:none;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer;margin-left:8px}
+.retry-btn{display:none;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:white;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer;margin-left:8px}
 .loading-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#b40000;border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#b40000;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:15px;color:#555555}
+.loading-text{font-size:15px;color:#555}
 .confirm-wrap{flex:1;padding:16px;overflow-y:auto}
 .member-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
-.member-card h3{font-size:13px;font-weight:700;color:#888888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.member-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
 .info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:14px}
 .info-row:last-child{border-bottom:none}
-.info-label{color:#8a9dae;flex-shrink:0;margin-right:12px}
+.info-label{color:#aaa;flex-shrink:0;margin-right:12px}
 .info-value{color:#1a0000;font-weight:500;text-align:right}
 .confirm-brand{background:#b40000;color:white;border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
 .confirm-brand-name{font-size:18px;font-weight:700}
-.confirm-brand-sub{font-size:12px;opacity:.65;margin-top:2px}
+.confirm-brand-sub{font-size:12px;opacity:.7;margin-top:2px}
 .action-btn{background:#b40000;color:white;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px}
 .action-btn:active{opacity:.85}
-.action-btn:disabled{background:#94a3b8;cursor:not-allowed}
-.cancel-btn{background:white;color:#555555;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px;font-size:15px;cursor:pointer;width:100%}
+.action-btn:disabled{background:#ccc;cursor:not-allowed}
+.cancel-btn{background:white;color:#555;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px;font-size:15px;cursor:pointer;width:100%}
 .receipt-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
-.receipt-card h3{font-size:13px;font-weight:700;color:#888888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.receipt-upload-area{border:2px dashed #cbd5e1;border-radius:12px;padding:24px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
-.receipt-upload-area.has-photo{border-color:#22c55e;background:#f0fdf4}
-.receipt-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.receipt-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.receipt-area{border:2px dashed #ccc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
+.receipt-area.has-photo{border-color:#22c55e;background:#f0fdf4}
+.receipt-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .receipt-preview{width:100%;max-height:200px;object-fit:contain;border-radius:8px;display:none;margin-top:8px}
 .receipt-status{font-size:13px;margin-top:8px}
 .receipt-status.ok{color:#16a34a;font-weight:600}
-.receipt-status.uploading{color:#cc0000}
+.receipt-status.uploading{color:#b40000}
 .receipt-status.error{color:#dc2626}
-.footer{text-align:center;padding:14px;font-size:11px;color:#aaaaaa;flex-shrink:0}
+.footer{text-align:center;padding:14px;font-size:11px;color:#aaa;flex-shrink:0}
 </style>
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tyre Warranty">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#b40000">
 </head>
 <body>
 
@@ -99,7 +100,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 <div class="screen active" id="s-brands">
   <div class="hdr">
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">ลงทะเบียนรับประกัน</div>
+    <div class="hdr-title">Tyre Warranty</div>
     <div class="hdr-sub">เลือกแบรนด์ยางก่อนสแกน QR</div>
   </div>
   <div class="content">
@@ -109,11 +110,11 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
   <div class="footer">B.N. Tires &amp; Max · ระบบลงทะเบียนรับประกัน</div>
 </div>
 
-<!-- Screen 2: Camera Permission -->
+<!-- Screen 2: Permission -->
 <div class="screen" id="s-permission">
   <div class="hdr">
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title" id="perm-brand-name">Atlas</div>
+    <div class="hdr-title" id="perm-brand-name"></div>
     <div class="hdr-sub">สแกน QR ลูกค้า</div>
   </div>
   <div class="center-wrap">
@@ -126,7 +127,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
   </div>
 </div>
 
-<!-- Screen 3: QR Scanner -->
+<!-- Screen 3: Scanner -->
 <div class="screen" id="s-scanner">
   <div class="scan-hdr">
     <button class="back-btn" onclick="goBack()">←</button>
@@ -162,7 +163,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
   </div>
 </div>
 
-<!-- Screen 5: Confirm + Receipt Upload -->
+<!-- Screen 5: Confirm + Receipt -->
 <div class="screen" id="s-confirm">
   <div class="hdr">
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
@@ -179,12 +180,12 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
     </div>
     <div class="receipt-card">
       <h3>📎 ภาพใบเสร็จ</h3>
-      <div class="receipt-upload-area" id="receipt-area">
+      <div class="receipt-area" id="receipt-area">
         <input type="file" accept="image/*" capture="environment" id="receipt-input" onchange="handleReceiptPhoto(this)">
         <div id="receipt-placeholder">
           <div style="font-size:32px;margin-bottom:8px">📸</div>
-          <div style="font-size:14px;color:#64748b;font-weight:600">แตะเพื่อถ่ายรูปใบเสร็จ</div>
-          <div style="font-size:12px;color:#94a3b8;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
+          <div style="font-size:14px;color:#555;font-weight:600">แตะเพื่อถ่ายรูปใบเสร็จ</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
         </div>
         <img id="receipt-preview" class="receipt-preview">
       </div>
@@ -225,22 +226,22 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 </div>
 
 <script>
-// ══ CONFIG ══
-var GAS_API_URL     = "https://script.google.com/macros/s/AKfycbycsWoi0upYzEc-RkE5uN-ZIHsJ5Rt-DpGkTIo9XJfHiT6A66tBjCnARk1DPG5CJxTzuQ/exec";
+// ══ CONFIG — update GAS_API_URL after new deployment ══
+var GAS_API_URL = "https://script.google.com/macros/s/AKfycbzJXAfFpi2E4MF869_bl2EossH4ieqMEtV8ip5oRWkOwU7wFZEvrNT6TE6InrvnoSuD-A/exec";
 
 var BRANDS = [
-  { id:"atlas", name:"Atlas", url:"https://members.llit-eservice.com/register/year/atlas/", active:true },
-  { id:"b", name:"Brand B", active:false },
-  { id:"c", name:"Brand C", active:false },
-  { id:"d", name:"Brand D", active:false }
+  { id:"atlas",  name:"Atlas",   url:"https://members.llit-eservice.com/register/year/atlas/", active:true  },
+  { id:"b",      name:"Brand B", active:false },
+  { id:"c",      name:"Brand C", active:false },
+  { id:"d",      name:"Brand D", active:false }
 ];
 
-var selectedBrand = null;
-var lookupResult  = null;
-var stream        = null;
-var scanTimer     = null;
-var receiptReady  = false;
-var currentCarId  = null;
+var selectedBrand  = null;
+var lookupResult   = null;
+var stream         = null;
+var scanTimer      = null;
+var receiptReady   = false;
+var currentCarId   = null;
 var uploadedFileId = null;
 
 // ── Build brand grid ──
@@ -250,23 +251,24 @@ var uploadedFileId = null;
     var el = document.createElement("div");
     el.className = "brand-card "+(b.active?"active":"inactive");
     el.innerHTML =
-      '<div style="font-size:28px">🔘</div>'+
+      '<div class="brand-logo">🔘</div>'+
       '<div class="brand-name '+(b.active?"":"muted")+'">'+b.name+'</div>'+
       (b.active?'<div class="brand-tap">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
-    if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
+    if(b.active) el.addEventListener("click", function(){ pickBrand(b); });
     grid.appendChild(el);
   });
 })();
 
+// ── Navigation ──
 function show(id){
   document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
   document.getElementById(id).classList.add("active");
 }
 function pickBrand(brand){
-  selectedBrand=brand;
-  document.getElementById("perm-brand-name").textContent=brand.name;
-  document.getElementById("scan-brand-label").textContent=brand.name;
-  document.getElementById("confirm-brand-name").textContent=brand.name;
+  selectedBrand = brand;
+  document.getElementById("perm-brand-name").textContent   = brand.name;
+  document.getElementById("scan-brand-label").textContent  = brand.name;
+  document.getElementById("confirm-brand-name").textContent= brand.name;
   show("s-permission");
 }
 function goBack(){ stopCamera(); show("s-brands"); }
@@ -309,30 +311,21 @@ function setStatus(msg,active){
   if(active) dot.classList.add("on"); else dot.classList.remove("on");
 }
 
-// ── QR Handler via JSONP ──
+// ── QR lookup via JSONP ──
 function handleQR(raw){
   var carId=raw.trim().toUpperCase();
   currentCarId=carId;
   document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
   show("s-loading");
-  var cbName="gasCallback_"+Date.now();
-  var script=document.createElement("script");
-  var timeout=setTimeout(function(){
-    document.getElementById("error-msg").textContent="หมดเวลาเชื่อมต่อ — ลองใหม่";
-    show("s-error"); delete window[cbName];
-    if(script.parentNode) document.body.removeChild(script);
-  },10000);
-  window[cbName]=function(result){
-    clearTimeout(timeout); delete window[cbName];
-    if(script.parentNode) document.body.removeChild(script);
+  jsonp(GAS_API_URL+"?carId="+encodeURIComponent(carId), function(result){
     if(result.error){ document.getElementById("error-msg").textContent=result.error; show("s-error"); return; }
     lookupResult=result;
-    document.getElementById("c-name").textContent=result.fullName;
-    document.getElementById("c-phone").textContent=result.phone;
+    document.getElementById("c-name").textContent    =result.fullName;
+    document.getElementById("c-phone").textContent   =result.phone;
     document.getElementById("c-memberid").textContent=result.memberId;
-    document.getElementById("c-carid").textContent=result.carId;
-    document.getElementById("c-car").textContent=result.carBrand+" "+result.carModel;
-    document.getElementById("c-plate").textContent=result.plate;
+    document.getElementById("c-carid").textContent   =result.carId;
+    document.getElementById("c-car").textContent     =result.carBrand+" "+result.carModel;
+    document.getElementById("c-plate").textContent   =result.plate;
     receiptReady=false; uploadedFileId=null;
     document.getElementById("receipt-area").classList.remove("has-photo");
     document.getElementById("receipt-preview").style.display="none";
@@ -343,118 +336,100 @@ function handleQR(raw){
     document.getElementById("open-form-btn").textContent="📎 กรุณาถ่ายรูปใบเสร็จก่อน";
     document.getElementById("receipt-input").value="";
     show("s-confirm");
-  };
-  script.src=GAS_API_URL+"?carId="+encodeURIComponent(carId)+"&callback="+cbName;
-  document.body.appendChild(script);
+  }, function(err){
+    document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err;
+    show("s-error");
+  });
 }
 
-// ── Upload receipt directly to Google Drive ──
+// ── JSONP helper ──
+function jsonp(url, onSuccess, onError){
+  var cb="cb_"+Date.now();
+  var s=document.createElement("script");
+  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },10000);
+  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
+  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
+  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
+  document.body.appendChild(s);
+}
+
+// ── Receipt photo handler ──
 async function handleReceiptPhoto(input){
   if(!input.files||!input.files[0]) return;
   var file=input.files[0];
-  var statusEl=document.getElementById("receipt-status");
+  var statusEl =document.getElementById("receipt-status");
   var previewEl=document.getElementById("receipt-preview");
-  var areaEl=document.getElementById("receipt-area");
+  var areaEl   =document.getElementById("receipt-area");
 
   // Show preview
   var reader=new FileReader();
-  reader.onload=function(e){
-    previewEl.src=e.target.result;
-    previewEl.style.display="block";
-    document.getElementById("receipt-placeholder").style.display="none";
-  };
+  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("receipt-placeholder").style.display="none"; };
   reader.readAsDataURL(file);
 
   statusEl.className="receipt-status uploading";
-  statusEl.textContent="⏳ กำลังอัพโหลดรูปใบเสร็จ...";
+  statusEl.textContent="⏳ กำลังบีบอัดรูปภาพ...";
   document.getElementById("open-form-btn").disabled=true;
 
   try {
-    // Compress image to max 800px, quality 0.7
-    var compressed = await new Promise(function(resolve) {
-      var img = new window.Image();
-      img.onload = function() {
-        var canvas = document.createElement("canvas");
-        var MAX = 800, w = img.width, h = img.height;
-        if(w > MAX || h > MAX) {
-          if(w > h){ h = Math.round(h*MAX/w); w = MAX; }
-          else     { w = Math.round(w*MAX/h); h = MAX; }
-        }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL("image/jpeg", 0.7));
+    // Compress to max 800px / 70% quality
+    var base64=await new Promise(function(resolve){
+      var img=new window.Image();
+      img.onload=function(){
+        var c=document.createElement("canvas");
+        var MAX=800,w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+        c.width=w; c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(c.toDataURL("image/jpeg",0.7).split(",")[1]);
       };
-      img.src = URL.createObjectURL(file);
+      img.src=URL.createObjectURL(file);
     });
-    var base64 = compressed.split(",")[1];
 
-    // Split into ~5000 char chunks (safe URL size)
-    var CHUNK = 5000;
-    var chunks = [];
-    for(var i = 0; i < base64.length; i += CHUNK)
-      chunks.push(base64.slice(i, i + CHUNK));
-    var total = chunks.length;
+    // Split into 5000-char chunks and upload via JSONP GET
+    var CHUNK=5000, chunks=[], i;
+    for(i=0;i<base64.length;i+=CHUNK) chunks.push(base64.slice(i,i+CHUNK));
+    var total=chunks.length;
 
-    // Send each chunk via JSONP GET
-    function sendChunk(idx) {
-      return new Promise(function(resolve, reject) {
-        var cb = "chunk_"+Date.now()+"_"+idx;
-        var s  = document.createElement("script");
-        var t  = setTimeout(function(){
-          delete window[cb];
-          if(s.parentNode) document.body.removeChild(s);
-          reject(new Error("chunk "+idx+" timeout"));
-        }, 20000);
-        window[cb] = function(r) {
-          clearTimeout(t); delete window[cb];
-          if(s.parentNode) document.body.removeChild(s);
-          if(r.ok) resolve(r); else reject(new Error(r.error));
-        };
-        s.src = GAS_API_URL
-          + "?action=uploadChunk"
-          + "&carId="   + encodeURIComponent(currentCarId)
-          + "&chunk="   + encodeURIComponent(chunks[idx])
-          + "&idx="     + idx
-          + "&total="   + total
-          + "&callback="+ cb;
-        document.body.appendChild(s);
-      });
-    }
-
-    var fileId = null;
-    for(var c = 0; c < chunks.length; c++) {
-      statusEl.textContent = "⏳ กำลังอัพโหลด... ("+(c+1)+"/"+total+")";
-      var res = await sendChunk(c);
-      if(res.fileId) fileId = res.fileId;
+    var fileId=null;
+    for(var c=0;c<chunks.length;c++){
+      statusEl.textContent="⏳ กำลังอัพโหลด... ("+(c+1)+"/"+total+")";
+      var res=await new Promise(function(idx){ return function(resolve,reject){
+        jsonp(
+          GAS_API_URL+"?action=uploadChunk"+
+          "&carId="+encodeURIComponent(currentCarId)+
+          "&chunk="+encodeURIComponent(chunks[idx])+
+          "&idx="+idx+"&total="+total,
+          function(r){ if(r.ok) resolve(r); else reject(new Error(r.error||"chunk failed")); },
+          function(e){ reject(new Error(e)); }
+        );
+      };}(c));
+      if(res.fileId) fileId=res.fileId;
     }
 
     if(!fileId) throw new Error("ไม่ได้รับ fileId");
 
-    uploadedFileId = fileId;
-    receiptReady   = true;
+    uploadedFileId=fileId;
+    receiptReady=true;
     areaEl.classList.add("has-photo");
-    statusEl.className    = "receipt-status ok";
-    statusEl.textContent  = "✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
-    document.getElementById("open-form-btn").disabled    = false;
-    document.getElementById("open-form-btn").textContent = "🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
+    statusEl.className="receipt-status ok";
+    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
+    document.getElementById("open-form-btn").disabled=false;
+    document.getElementById("open-form-btn").textContent="🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
 
   } catch(err){
-    statusEl.className   = "receipt-status error";
-    statusEl.textContent = "❌ อัพโหลดไม่สำเร็จ: "+err.message;
+    statusEl.className="receipt-status error";
+    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
   }
 }
-}
 
-// ── Open Warranty Form ──
+// ── Open warranty form ──
 function openWarrantyForm(){
   if(!lookupResult||!selectedBrand||!receiptReady) return;
   var p=Object.assign({},lookupResult.params);
   p.car_id=currentCarId;
   if(uploadedFileId) p.receipt_file_id=uploadedFileId;
-  var qs=Object.keys(p)
-    .filter(function(k){ return p[k]!==""&&p[k]!==null; })
-    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); })
-    .join("&");
+  var qs=Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
+    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
   window.open(selectedBrand.url+"?"+qs,"_blank");
 }
 </script>
