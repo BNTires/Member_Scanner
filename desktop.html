@@ -62,7 +62,7 @@ var POLL_INTERVAL = CONFIG.POLL_INTERVAL_MS;
 
 var pollTimer   = null;
 var isListening = false;
-var history     = [];
+var openHistory = [];
 
 function log(msg, type) {
   var div = document.getElementById("log");
@@ -170,7 +170,7 @@ function handleNewUrl(url, carId) {
       setStatus("กำลังรอฟอร์มถัดไป...", "");
 
       // Add to history
-      history.unshift({ carId: carId, time: new Date().toLocaleTimeString("th-TH") });
+      openHistory.unshift({ carId: carId, time: new Date().toLocaleTimeString("th-TH") });
       renderHistory();
     },
     function(err){ log("แจ้งโทรศัพท์ไม่ได้: "+err, "err"); }
@@ -178,11 +178,11 @@ function handleNewUrl(url, carId) {
 }
 
 function renderHistory() {
-  if(history.length===0) return;
+  if(openHistory.length===0) return;
   document.getElementById("history-wrap").style.display="block";
   var list = document.getElementById("history-list");
   list.innerHTML = "";
-  history.slice(0,5).forEach(function(h) {
+  openHistory.slice(0,5).forEach(function(h) {
     var div = document.createElement("div");
     div.className = "history-item";
     div.innerHTML = "🚗 "+h.carId+'<span>'+h.time+'</span>';
