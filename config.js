@@ -7,11 +7,11 @@ var CONFIG = {
 
   // ── Google Apps Script API URL ──
   // อัพเดทหลังจาก deploy ใหม่ทุกครั้ง
-  GAS_API_URL: "https://script.google.com/macros/s/AKfycbwUlYW2Gl9V93CWLWV3OvhQEYsme08FN-3o1GkR6_I03JgQrIVtLy5fWT8CNBn90vHoEg/exec",
+  GAS_API_URL: "https://script.google.com/macros/s/AKfycby9dFvl_3KXOMqPpHprpxl5EEug41e4Q6Ltb0noQJleo_b06DNWCo3EfOLnlMk-7ahldA/exec",
 
   // ── ImgBB API Key ──
   // https://api.imgbb.com → Get API key
-  IMGBB_KEY: "3156ff7ae9c8c1c2fc312a1058340528",
+  IMGBB_KEY: "5212c8c826fac2e5058831ccc3f33747",
 
   // ── Shop Info ──
   SHOP_NAME:     "B.N.Tires&Max",
