@@ -55,7 +55,7 @@ h1{font-size:20px;font-weight:700;color:#1a0000;margin-bottom:6px}
 
 <script>
 // ══ CONFIG ══
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxc-flUuIKDH-mIh3vA6KDKGuknQ2NGN0CWmLzVbvsdgFkZIOUruzKymtN5aNgUixLnyg/exec";
+var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxxNnWSr1ZrZfbf3ufBn1FCWFUJn75EAzq5nCDnB2pF0XPiA1x2lTc-uHESp3-ylnkqxA/exec";
 var POLL_INTERVAL = 3000; // 3 seconds
 
 var pollTimer   = null;
@@ -81,10 +81,34 @@ function setStatus(msg, state) {
 function jsonp(url, onSuccess, onError) {
   var cb = "cb_"+Date.now();
   var s  = document.createElement("script");
-  var t  = setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); }, 10000);
-  window[cb] = function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
+  var done = false;
+  var t  = setTimeout(function(){
+    if(done) return;
+    done = true;
+    delete window[cb];
+    if(s.parentNode) document.body.removeChild(s);
+    if(onError) onError("timeout");
+  }, 15000);
+  window[cb] = function(r){
+    if(done) return;
+    done = true;
+    clearTimeout(t);
+    delete window[cb];
+    if(s.parentNode) document.body.removeChild(s);
+    onSuccess(r);
+  };
   s.src = url + (url.indexOf("?")>=0?"&":"?") + "callback="+cb;
-  s.onerror = function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
+  s.onerror = function(){
+    if(done) return;
+    done = true;
+    clearTimeout(t);
+    delete window[cb];
+    if(s.parentNode) document.body.removeChild(s);
+    // Retry once on script error
+    setTimeout(function(){
+      jsonp(url, onSuccess, onError);
+    }, 1000);
+  };
   document.body.appendChild(s);
 }
 
@@ -108,16 +132,22 @@ function stopListening() {
   log("หยุดรับฟอร์ม");
 }
 
+var errorCount = 0;
 function poll() {
   jsonp(
     GAS_API_URL + "?action=popUrl",
     function(result) {
+      errorCount = 0;
       if(result.ok && result.url) {
         handleNewUrl(result.url, result.carId);
       }
+      // Silent success - no log needed when nothing pending
     },
     function(err) {
-      log("เชื่อมต่อ GAS ไม่ได้: "+err, "err");
+      errorCount++;
+      if(errorCount <= 2 || errorCount % 10 === 0) {
+        log("เชื่อมต่อ GAS ไม่ได้ ("+errorCount+"x): "+err, "err");
+      }
     }
   );
 }
