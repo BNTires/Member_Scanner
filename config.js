@@ -9,9 +9,10 @@ var CONFIG = {
   // อัพเดทหลังจาก deploy ใหม่ทุกครั้ง
   GAS_API_URL: "https://script.google.com/macros/s/AKfycby9dFvl_3KXOMqPpHprpxl5EEug41e4Q6Ltb0noQJleo_b06DNWCo3EfOLnlMk-7ahldA/exec",
 
-  // ── ImgBB API Key ──
-  // https://api.imgbb.com → Get API key
-  IMGBB_KEY: "5212c8c826fac2e5058831ccc3f33747",
+  // ── Cloudinary Config ──
+  // https://cloudinary.com → Dashboard
+  CLOUDINARY_CLOUD: "dqgszn5b1",
+  CLOUDINARY_PRESET: "Bntires",
 
   // ── Shop Info ──
   SHOP_NAME:     "B.N.Tires&Max",
