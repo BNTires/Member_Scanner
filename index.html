@@ -66,7 +66,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 .loading-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#b40000;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:15px;color:#555}
+.loading-text{font-size:15px;color:#555;text-align:center;padding:0 24px}
 .confirm-wrap{flex:1;padding:16px;overflow-y:auto}
 .member-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
 .member-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
@@ -218,696 +218,12 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
   </div>
   <div class="center-wrap">
     <div class="big-icon">⚠️</div>
-    <div class="center-title">ไม่พบข้อมูล</div>
+    <div class="center-title">เกิดข้อผิดพลาด</div>
     <div class="center-desc" id="error-msg"></div>
     <button class="btn-primary" onclick="show('s-brands')">← กลับหน้าแรก</button>
     <button class="btn-secondary" onclick="show('s-permission')">🔄 สแกนใหม่</button>
   </div>
 </div>
-
-<script>
-// ══ CONFIG — update GAS_API_URL after new deployment ══
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxxNnWSr1ZrZfbf3ufBn1FCWFUJn75EAzq5nCDnB2pF0XPiA1x2lTc-uHESp3-ylnkqxA/exec";
-
-var BRANDS = [
-  { id:"atlas",  name:"Atlas",   url:"https://members.llit-eservice.com/register/year/atlas/", active:true  },
-  { id:"b",      name:"Brand B", active:false },
-  { id:"c",      name:"Brand C", active:false },
-  { id:"d",      name:"Brand D", active:false }
-];
-
-var selectedBrand  = null;
-var lookupResult   = null;
-var stream         = null;
-var scanTimer      = null;
-var receiptReady   = false;
-var currentCarId   = null;
-var uploadedFileId = null;
-
-// ── Build brand grid ──
-(function(){
-  var grid = document.getElementById("brand-grid");
-  BRANDS.forEach(function(b){
-    var el = document.createElement("div");
-    el.className = "brand-card "+(b.active?"active":"inactive");
-    el.innerHTML =
-      '<div class="brand-logo">🔘</div>'+
-      '<div class="brand-name '+(b.active?"":"muted")+'">'+b.name+'</div>'+
-      (b.active?'<div class="brand-tap">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
-    if(b.active) el.addEventListener("click", function(){ pickBrand(b); });
-    grid.appendChild(el);
-  });
-})();
-
-// ── Navigation ──
-function show(id){
-  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
-  document.getElementById(id).classList.add("active");
-}
-function pickBrand(brand){
-  selectedBrand = brand;
-  document.getElementById("perm-brand-name").textContent   = brand.name;
-  document.getElementById("scan-brand-label").textContent  = brand.name;
-  document.getElementById("confirm-brand-name").textContent= brand.name;
-  show("s-permission");
-}
-function goBack(){ stopCamera(); show("s-brands"); }
-
-// ── Camera ──
-async function openCamera(){
-  document.getElementById("retry-btn").style.display="none";
-  setStatus("กำลังเปิดกล้อง...",true);
-  show("s-scanner"); stopCamera();
-  try {
-    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
-    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
-    var vid=document.getElementById("preview");
-    vid.srcObject=stream; await vid.play();
-    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
-    scanTimer=setInterval(tick,250);
-  } catch(err){
-    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
-    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
-    document.getElementById("retry-btn").style.display="inline-block";
-  }
-}
-function stopCamera(){
-  clearInterval(scanTimer); scanTimer=null;
-  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-}
-function tick(){
-  var vid=document.getElementById("preview");
-  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
-  var cvs=document.getElementById("canvas");
-  cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
-  var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
-  var img=ctx.getImageData(0,0,cvs.width,cvs.height);
-  var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
-  if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
-}
-function setStatus(msg,active){
-  document.getElementById("scan-status-text").textContent=msg;
-  var dot=document.getElementById("scan-dot");
-  if(active) dot.classList.add("on"); else dot.classList.remove("on");
-}
-
-// ── QR lookup via JSONP ──
-function handleQR(raw){
-  var carId=raw.trim().toUpperCase();
-  currentCarId=carId;
-  document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
-  show("s-loading");
-  jsonp(GAS_API_URL+"?carId="+encodeURIComponent(carId), function(result){
-    if(result.error){ document.getElementById("error-msg").textContent=result.error; show("s-error"); return; }
-    lookupResult=result;
-    document.getElementById("c-name").textContent    =result.fullName;
-    document.getElementById("c-phone").textContent   =result.phone;
-    document.getElementById("c-memberid").textContent=result.memberId;
-    document.getElementById("c-carid").textContent   =result.carId;
-    document.getElementById("c-car").textContent     =result.carBrand+" "+result.carModel;
-    document.getElementById("c-plate").textContent   =result.plate;
-    receiptReady=false; uploadedFileId=null;
-    document.getElementById("receipt-area").classList.remove("has-photo");
-    document.getElementById("receipt-preview").style.display="none";
-    document.getElementById("receipt-placeholder").style.display="block";
-    document.getElementById("receipt-status").textContent="";
-    document.getElementById("receipt-status").className="receipt-status";
-    document.getElementById("open-form-btn").disabled=true;
-    document.getElementById("open-form-btn").textContent="📎 กรุณาถ่ายรูปใบเสร็จก่อน";
-    document.getElementById("receipt-input").value="";
-    show("s-confirm");
-  }, function(err){
-    document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err;
-    show("s-error");
-  });
-}
-
-// ── JSONP helper ──
-function jsonp(url, onSuccess, onError){
-  var cb="cb_"+Date.now();
-  var s=document.createElement("script");
-  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },30000);
-  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
-  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
-  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
-  document.body.appendChild(s);
-}
-
-// ── Receipt photo handler ──
-async function handleReceiptPhoto(input){
-  if(!input.files||!input.files[0]) return;
-  var file=input.files[0];
-  var statusEl =document.getElementById("receipt-status");
-  var previewEl=document.getElementById("receipt-preview");
-  var areaEl   =document.getElementById("receipt-area");
-
-  // Show preview
-  var reader=new FileReader();
-  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("receipt-placeholder").style.display="none"; };
-  reader.readAsDataURL(file);
-
-  statusEl.className="receipt-status uploading";
-  statusEl.textContent="⏳ กำลังบีบอัดรูปภาพ...";
-  document.getElementById("open-form-btn").disabled=true;
-
-  try {
-    // Compress to max 800px / 70% quality
-    var base64=await new Promise(function(resolve){
-      var img=new window.Image();
-      img.onload=function(){
-        var c=document.createElement("canvas");
-        var MAX=400,w=img.width,h=img.height;
-        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
-        c.width=w; c.height=h;
-        c.getContext("2d").drawImage(img,0,0,w,h);
-        resolve(c.toDataURL("image/jpeg",0.5).split(",")[1]);
-      };
-      img.src=URL.createObjectURL(file);
-    });
-
-    // Split into chunks and upload sequentially (reliable)
-    var CHUNK=4000, chunks=[], ci;
-    for(ci=0;ci<base64.length;ci+=CHUNK) chunks.push(base64.slice(ci,ci+CHUNK));
-    var total=chunks.length;
-
-    var fileId=null;
-    for(var c=0;c<chunks.length;c++){
-      statusEl.textContent="⏳ กำลังอัพโหลด... ("+(c+1)+"/"+total+")";
-      var res=await new Promise(function(idx){ return function(resolve,reject){
-        jsonp(
-          GAS_API_URL+"?action=uploadChunk"+
-          "&carId="+encodeURIComponent(currentCarId)+
-          "&chunk="+encodeURIComponent(chunks[idx])+
-          "&idx="+idx+"&total="+total,
-          function(r){ if(r.ok) resolve(r); else reject(new Error(r.error||"chunk "+idx+" failed")); },
-          function(e){ reject(new Error("chunk "+idx+": "+e)); }
-        );
-      };}(c));
-      if(res.fileId) fileId=res.fileId;
-    }>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Tyre Warranty</title>
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tyre Warranty">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#b40000">
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh}
-.screen{display:none;flex-direction:column;min-height:100vh}
-.screen.active{display:flex}
-.hdr{background:#b40000;color:white;padding:16px;text-align:center;flex-shrink:0}
-.hdr-shop{font-size:10px;letter-spacing:2px;opacity:.7;margin-bottom:3px;text-transform:uppercase}
-.hdr-title{font-size:20px;font-weight:700}
-.hdr-sub{font-size:12px;opacity:.6;margin-top:3px}
-.content{padding:16px;flex:1}
-.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#888;margin-bottom:10px;text-transform:uppercase}
-.brand-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.brand-card{background:white;border-radius:14px;padding:20px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1.5px solid #e0e0e0;-webkit-tap-highlight-color:transparent}
-.brand-card.active{background:#b40000;border-color:#cc0000;cursor:pointer}
-.brand-card.active:active{transform:scale(.97)}
-.brand-card.inactive{opacity:.45;cursor:not-allowed}
-.brand-logo{font-size:28px}
-.brand-name{font-size:16px;font-weight:700;color:white}
-.brand-name.muted{color:#aaa}
-.brand-tap{font-size:11px;color:rgba(255,255,255,.7)}
-.brand-soon{font-size:11px;background:#f5f5f5;color:#aaa;padding:3px 10px;border-radius:20px}
-.center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;text-align:center}
-.big-icon{width:80px;height:80px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:38px}
-.center-title{font-size:20px;font-weight:700;color:#1a0000}
-.center-desc{font-size:14px;color:#555;line-height:1.7}
-.note-text{font-size:12px;color:#aaa;line-height:1.6}
-.back-link{font-size:13px;color:#b40000;cursor:pointer;text-decoration:underline}
-.btn-primary{background:#b40000;color:white;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:280px}
-.btn-primary:active{opacity:.85}
-.btn-secondary{background:white;color:#b40000;border:2px solid #b40000;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:280px;margin-top:4px}
-.scan-hdr{background:#b40000;color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
-.back-btn{background:rgba(255,255,255,.2);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.scan-brand{font-size:17px;font-weight:700}
-.scan-sub{font-size:12px;opacity:.7;margin-top:1px}
-.cam-wrap{position:relative;flex:1;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:300px}
-#preview{width:100%;height:100%;object-fit:cover;display:block}
-#canvas{display:none}
-.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.box{width:220px;height:220px;position:relative}
-.box::before,.box::after,.bl,.br{content:'';position:absolute;width:36px;height:36px;border-color:white;border-style:solid}
-.box::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
-.box::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
-.bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
-.br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-.scan-line{position:absolute;left:4px;right:4px;height:2px;background:rgba(255,255,255,.75);animation:sweep 2s ease-in-out infinite}
-@keyframes sweep{0%{top:4px}50%{top:calc(100% - 6px)}100%{top:4px}}
-.cam-hint{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:white;text-align:center;font-size:13px;padding:12px 16px}
-.status-bar{background:#b40000;color:white;padding:12px 16px;font-size:13px;flex-shrink:0;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px}
-.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0}
-.dot.on{background:#4ade80;animation:pulse 1s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.retry-btn{display:none;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:white;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer;margin-left:8px}
-.loading-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#b40000;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:15px;color:#555}
-.confirm-wrap{flex:1;padding:16px;overflow-y:auto}
-.member-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
-.member-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:14px}
-.info-row:last-child{border-bottom:none}
-.info-label{color:#aaa;flex-shrink:0;margin-right:12px}
-.info-value{color:#1a0000;font-weight:500;text-align:right}
-.confirm-brand{background:#b40000;color:white;border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-.confirm-brand-name{font-size:18px;font-weight:700}
-.confirm-brand-sub{font-size:12px;opacity:.7;margin-top:2px}
-.action-btn{background:#b40000;color:white;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px}
-.action-btn:active{opacity:.85}
-.action-btn:disabled{background:#ccc;cursor:not-allowed}
-.cancel-btn{background:white;color:#555;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px;font-size:15px;cursor:pointer;width:100%}
-.receipt-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
-.receipt-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.receipt-area{border:2px dashed #ccc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
-.receipt-area.has-photo{border-color:#22c55e;background:#f0fdf4}
-.receipt-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.receipt-preview{width:100%;max-height:200px;object-fit:contain;border-radius:8px;display:none;margin-top:8px}
-.receipt-status{font-size:13px;margin-top:8px}
-.receipt-status.ok{color:#16a34a;font-weight:600}
-.receipt-status.uploading{color:#b40000}
-.receipt-status.error{color:#dc2626}
-.footer{text-align:center;padding:14px;font-size:11px;color:#aaa;flex-shrink:0}
-</style>
-</head>
-<body>
-
-<!-- Screen 1: Brand Picker -->
-<div class="screen active" id="s-brands">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">Tyre Warranty</div>
-    <div class="hdr-sub">เลือกแบรนด์ยางก่อนสแกน QR</div>
-  </div>
-  <div class="content">
-    <div class="sec-label">เลือกแบรนด์ยาง</div>
-    <div class="brand-grid" id="brand-grid"></div>
-  </div>
-  <div class="footer">B.N. Tires &amp; Max · ระบบลงทะเบียนรับประกัน</div>
-</div>
-
-<!-- Screen 2: Permission -->
-<div class="screen" id="s-permission">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title" id="perm-brand-name"></div>
-    <div class="hdr-sub">สแกน QR ลูกค้า</div>
-  </div>
-  <div class="center-wrap">
-    <div class="big-icon">📷</div>
-    <div class="center-title">ต้องการใช้กล้อง</div>
-    <div class="center-desc">แอปต้องการเข้าถึงกล้องเพื่อสแกน<br>QR code ของลูกค้า กด <b>Allow</b><br>เมื่อระบบถามอนุญาต</div>
-    <button class="btn-primary" onclick="openCamera()">📷&nbsp; เปิดกล้องสแกน QR</button>
-    <div class="note-text">หากเคยปฏิเสธ ไปที่ Settings เปิดอนุญาตกล้อง</div>
-    <span class="back-link" onclick="show('s-brands')">← เปลี่ยนแบรนด์</span>
-  </div>
-</div>
-
-<!-- Screen 3: Scanner -->
-<div class="screen" id="s-scanner">
-  <div class="scan-hdr">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div>
-      <div class="scan-brand" id="scan-brand-label"></div>
-      <div class="scan-sub">สแกน QR code ของลูกค้า</div>
-    </div>
-  </div>
-  <div class="cam-wrap">
-    <video id="preview" autoplay playsinline muted></video>
-    <canvas id="canvas"></canvas>
-    <div class="overlay">
-      <div class="box"><div class="bl"></div><div class="br"></div><div class="scan-line"></div></div>
-    </div>
-    <div class="cam-hint">จัด QR code ให้อยู่ในกรอบสีขาว</div>
-  </div>
-  <div class="status-bar">
-    <div class="dot on" id="scan-dot"></div>
-    <span id="scan-status-text">กำลังเปิดกล้อง...</span>
-    <button class="retry-btn" id="retry-btn" onclick="openCamera()">ลองอีกครั้ง</button>
-  </div>
-</div>
-
-<!-- Screen 4: Loading -->
-<div class="screen" id="s-loading">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">กำลังค้นหาข้อมูล...</div>
-  </div>
-  <div class="loading-wrap">
-    <div class="spinner"></div>
-    <div class="loading-text" id="loading-text">กำลังค้นหาข้อมูลสมาชิก...</div>
-  </div>
-</div>
-
-<!-- Screen 5: Confirm + Receipt -->
-<div class="screen" id="s-confirm">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">พบข้อมูลแล้ว ✓</div>
-    <div class="hdr-sub">ถ่ายรูปใบเสร็จแล้วกดเปิดฟอร์ม</div>
-  </div>
-  <div class="confirm-wrap">
-    <div class="confirm-brand">
-      <div style="font-size:32px">🏷️</div>
-      <div>
-        <div class="confirm-brand-name" id="confirm-brand-name"></div>
-        <div class="confirm-brand-sub">แบรนด์ที่จะลงทะเบียน</div>
-      </div>
-    </div>
-    <div class="receipt-card">
-      <h3>📎 ภาพใบเสร็จ</h3>
-      <div class="receipt-area" id="receipt-area">
-        <input type="file" accept="image/*" capture="environment" id="receipt-input" onchange="handleReceiptPhoto(this)">
-        <div id="receipt-placeholder">
-          <div style="font-size:32px;margin-bottom:8px">📸</div>
-          <div style="font-size:14px;color:#555;font-weight:600">แตะเพื่อถ่ายรูปใบเสร็จ</div>
-          <div style="font-size:12px;color:#aaa;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
-        </div>
-        <img id="receipt-preview" class="receipt-preview">
-      </div>
-      <div class="receipt-status" id="receipt-status"></div>
-    </div>
-    <div class="member-card">
-      <h3>ข้อมูลสมาชิก</h3>
-      <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="c-name"></span></div>
-      <div class="info-row"><span class="info-label">เบอร์โทร</span><span class="info-value" id="c-phone"></span></div>
-      <div class="info-row"><span class="info-label">Member ID</span><span class="info-value" id="c-memberid"></span></div>
-    </div>
-    <div class="member-card">
-      <h3>ข้อมูลรถยนต์</h3>
-      <div class="info-row"><span class="info-label">Car ID</span><span class="info-value" id="c-carid"></span></div>
-      <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="c-car"></span></div>
-      <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="c-plate"></span></div>
-    </div>
-    <button class="action-btn" id="open-form-btn" onclick="openWarrantyForm()" disabled>
-      📎 กรุณาถ่ายรูปใบเสร็จก่อน
-    </button>
-    <button class="cancel-btn" onclick="show('s-brands')">← เลือกแบรนด์ใหม่</button>
-  </div>
-</div>
-
-<!-- Screen 6: Error -->
-<div class="screen" id="s-error">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">เกิดข้อผิดพลาด</div>
-  </div>
-  <div class="center-wrap">
-    <div class="big-icon">⚠️</div>
-    <div class="center-title">ไม่พบข้อมูล</div>
-    <div class="center-desc" id="error-msg"></div>
-    <button class="btn-primary" onclick="show('s-brands')">← กลับหน้าแรก</button>
-    <button class="btn-secondary" onclick="show('s-permission')">🔄 สแกนใหม่</button>
-  </div>
-</div>
-
-<script>
-// ══ CONFIG — update GAS_API_URL after new deployment ══
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbwI4hD0bl7ukZDM8Z2AOoM2TCG7x9e1dkFNw4zYnRL8G7levSePpvUbNXdFUlj4rQo20Q/exec";
-
-var BRANDS = [
-  { id:"atlas",  name:"Atlas",   url:"https://members.llit-eservice.com/register/year/atlas/", active:true  },
-  { id:"b",      name:"Brand B", active:false },
-  { id:"c",      name:"Brand C", active:false },
-  { id:"d",      name:"Brand D", active:false }
-];
-
-var selectedBrand  = null;
-var lookupResult   = null;
-var stream         = null;
-var scanTimer      = null;
-var receiptReady   = false;
-var currentCarId   = null;
-var uploadedFileId = null;
-
-// ── Build brand grid ──
-(function(){
-  var grid = document.getElementById("brand-grid");
-  BRANDS.forEach(function(b){
-    var el = document.createElement("div");
-    el.className = "brand-card "+(b.active?"active":"inactive");
-    el.innerHTML =
-      '<div class="brand-logo">🔘</div>'+
-      '<div class="brand-name '+(b.active?"":"muted")+'">'+b.name+'</div>'+
-      (b.active?'<div class="brand-tap">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
-    if(b.active) el.addEventListener("click", function(){ pickBrand(b); });
-    grid.appendChild(el);
-  });
-})();
-
-// ── Navigation ──
-function show(id){
-  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
-  document.getElementById(id).classList.add("active");
-}
-function pickBrand(brand){
-  selectedBrand = brand;
-  document.getElementById("perm-brand-name").textContent   = brand.name;
-  document.getElementById("scan-brand-label").textContent  = brand.name;
-  document.getElementById("confirm-brand-name").textContent= brand.name;
-  show("s-permission");
-}
-function goBack(){ stopCamera(); show("s-brands"); }
-
-// ── Camera ──
-async function openCamera(){
-  document.getElementById("retry-btn").style.display="none";
-  setStatus("กำลังเปิดกล้อง...",true);
-  show("s-scanner"); stopCamera();
-  try {
-    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
-    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
-    var vid=document.getElementById("preview");
-    vid.srcObject=stream; await vid.play();
-    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
-    scanTimer=setInterval(tick,250);
-  } catch(err){
-    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
-    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
-    document.getElementById("retry-btn").style.display="inline-block";
-  }
-}
-function stopCamera(){
-  clearInterval(scanTimer); scanTimer=null;
-  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-}
-function tick(){
-  var vid=document.getElementById("preview");
-  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
-  var cvs=document.getElementById("canvas");
-  cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
-  var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
-  var img=ctx.getImageData(0,0,cvs.width,cvs.height);
-  var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
-  if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
-}
-function setStatus(msg,active){
-  document.getElementById("scan-status-text").textContent=msg;
-  var dot=document.getElementById("scan-dot");
-  if(active) dot.classList.add("on"); else dot.classList.remove("on");
-}
-
-// ── QR lookup via JSONP ──
-function handleQR(raw){
-  var carId=raw.trim().toUpperCase();
-  currentCarId=carId;
-  document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
-  show("s-loading");
-  jsonp(GAS_API_URL+"?carId="+encodeURIComponent(carId), function(result){
-    if(result.error){ document.getElementById("error-msg").textContent=result.error; show("s-error"); return; }
-    lookupResult=result;
-    document.getElementById("c-name").textContent    =result.fullName;
-    document.getElementById("c-phone").textContent   =result.phone;
-    document.getElementById("c-memberid").textContent=result.memberId;
-    document.getElementById("c-carid").textContent   =result.carId;
-    document.getElementById("c-car").textContent     =result.carBrand+" "+result.carModel;
-    document.getElementById("c-plate").textContent   =result.plate;
-    receiptReady=false; uploadedFileId=null;
-    document.getElementById("receipt-area").classList.remove("has-photo");
-    document.getElementById("receipt-preview").style.display="none";
-    document.getElementById("receipt-placeholder").style.display="block";
-    document.getElementById("receipt-status").textContent="";
-    document.getElementById("receipt-status").className="receipt-status";
-    document.getElementById("open-form-btn").disabled=true;
-    document.getElementById("open-form-btn").textContent="📎 กรุณาถ่ายรูปใบเสร็จก่อน";
-    document.getElementById("receipt-input").value="";
-    show("s-confirm");
-  }, function(err){
-    document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err;
-    show("s-error");
-  });
-}
-
-// ── JSONP helper ──
-function jsonp(url, onSuccess, onError){
-  var cb="cb_"+Date.now();
-  var s=document.createElement("script");
-  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },30000);
-  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
-  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
-  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
-  document.body.appendChild(s);
-}
-
-// ── Receipt photo handler ──
-async function handleReceiptPhoto(input){
-  if(!input.files||!input.files[0]) return;
-  var file=input.files[0];
-  var statusEl =document.getElementById("receipt-status");
-  var previewEl=document.getElementById("receipt-preview");
-  var areaEl   =document.getElementById("receipt-area");
-
-  // Show preview
-  var reader=new FileReader();
-  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("receipt-placeholder").style.display="none"; };
-  reader.readAsDataURL(file);
-
-  statusEl.className="receipt-status uploading";
-  statusEl.textContent="⏳ กำลังบีบอัดรูปภาพ...";
-  document.getElementById("open-form-btn").disabled=true;
-
-  try {
-    // Compress to max 800px / 70% quality
-    var base64=await new Promise(function(resolve){
-      var img=new window.Image();
-      img.onload=function(){
-        var c=document.createElement("canvas");
-        var MAX=400,w=img.width,h=img.height;
-        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
-        c.width=w; c.height=h;
-        c.getContext("2d").drawImage(img,0,0,w,h);
-        resolve(c.toDataURL("image/jpeg",0.5).split(",")[1]);
-      };
-      img.src=URL.createObjectURL(file);
-    });
-
-    // Split into 5000-char chunks and upload via JSONP GET
-    var CHUNK=5000, chunks=[], i;
-    for(i=0;i<base64.length;i+=CHUNK) chunks.push(base64.slice(i,i+CHUNK));
-    var total=chunks.length;
-
-    // Upload all chunks in parallel (faster!)
-    statusEl.textContent="⏳ กำลังอัพโหลด...";
-    var fileId=null;
-    var promises=chunks.map(function(chunk,idx){
-      return new Promise(function(resolve,reject){
-        jsonp(
-          GAS_API_URL+"?action=uploadChunk"+
-          "&carId="+encodeURIComponent(currentCarId)+
-          "&chunk="+encodeURIComponent(chunk)+
-          "&idx="+idx+"&total="+total,
-          function(r){ if(r.ok) resolve(r); else reject(new Error(r.error||"chunk "+idx+" failed")); },
-          function(e){ reject(new Error(e)); }
-        );
-      });
-    });
-    var results=await Promise.all(promises);
-    results.forEach(function(r){ if(r.fileId) fileId=r.fileId; });
-
-    if(!fileId) throw new Error("ไม่ได้รับ fileId");
-
-    uploadedFileId=fileId;
-    receiptReady=true;
-    areaEl.classList.add("has-photo");
-    statusEl.className="receipt-status ok";
-    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
-    document.getElementById("open-form-btn").disabled=false;
-    document.getElementById("open-form-btn").textContent="🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
-
-  } catch(err){
-    statusEl.className="receipt-status error";
-    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
-  }
-}
-
-// ── Open warranty form — send to desktop ──
-var waitingTimer = null;
-var waitingElapsed = 0;
-
-function openWarrantyForm(){
-  if(!lookupResult||!selectedBrand||!receiptReady) return;
-  var p=Object.assign({},lookupResult.params);
-  p.car_id=currentCarId;
-  if(uploadedFileId) p.receipt_file_id=uploadedFileId;
-  var qs=Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
-    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
-  var warrantyUrl = selectedBrand.url+"?"+qs;
-
-  // Save URL to GAS for desktop to pick up
-  document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
-  show("s-waiting");
-  waitingElapsed=0;
-
-  jsonp(
-    GAS_API_URL+"?action=pushUrl"+
-    "&carId="+encodeURIComponent(currentCarId)+
-    "&url="+encodeURIComponent(warrantyUrl),
-    function(result){
-      if(result.ok){
-        // Start polling for desktop confirmation
-        document.getElementById("waiting-text").textContent="รอให้คอมพิวเตอร์เปิดฟอร์ม...";
-        pollDesktop();
-      } else {
-        showWaitingError("ส่ง URL ไม่สำเร็จ: "+(result.error||""));
-      }
-    },
-    function(err){ showWaitingError("เชื่อมต่อ GAS ไม่ได้: "+err); }
-  );
-}
-
-function pollDesktop(){
-  waitingTimer=setInterval(function(){
-    waitingElapsed+=3;
-    document.getElementById("waiting-text").textContent=
-      "รอให้คอมพิวเตอร์เปิดฟอร์ม... ("+waitingElapsed+"s)";
-
-    // Timeout after 30 seconds
-    if(waitingElapsed>=30){
-      clearInterval(waitingTimer);
-      showWaitingError("หมดเวลา — ตรวจสอบว่าเปิด Desktop Opener บนคอมพิวเตอร์แล้ว");
-      return;
-    }
-
-    jsonp(
-      GAS_API_URL+"?action=checkOpened&carId="+encodeURIComponent(currentCarId),
-      function(result){
-        if(result.opened){
-          clearInterval(waitingTimer);
-          show("s-sent");
-        }
-      },
-      function(){}  // silent fail, keep polling
-    );
-  }, 3000);
-}
-
-function cancelWaiting(){
-  clearInterval(waitingTimer);
-  show("s-confirm");
-}
-
-function showWaitingError(msg){
-  clearInterval(waitingTimer);
-  document.getElementById("error-msg").textContent=msg;
-  show("s-error");
-}
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/Member_Scanner/sw.js')
-    .then(function(){ console.log('SW registered'); })
-    .catch(function(e){ console.log('SW error:', e); });
-}
-</script>
 
 <!-- Screen 7: Waiting for desktop -->
 <div class="screen" id="s-waiting">
@@ -919,16 +235,16 @@ if('serviceWorker' in navigator){
   <div class="loading-wrap">
     <div class="spinner"></div>
     <div class="loading-text" id="waiting-text">รอให้คอมพิวเตอร์เปิดฟอร์ม...</div>
-    <div style="font-size:12px;color:#aaa;margin-top:8px;text-align:center;padding:0 32px" id="waiting-sub">
+    <div style="font-size:12px;color:#aaa;margin-top:8px;text-align:center;padding:0 32px">
       ตรวจสอบให้แน่ใจว่าเปิดหน้า Desktop Opener บนคอมพิวเตอร์แล้ว
     </div>
   </div>
   <div style="padding:16px">
-    <button class="cancel-btn" id="waiting-cancel" onclick="cancelWaiting()">ยกเลิก</button>
+    <button class="cancel-btn" onclick="cancelWaiting()">ยกเลิก</button>
   </div>
 </div>
 
-<!-- Screen 8: Success sent to desktop -->
+<!-- Screen 8: Success -->
 <div class="screen" id="s-sent">
   <div class="hdr">
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
@@ -942,5 +258,256 @@ if('serviceWorker' in navigator){
   </div>
 </div>
 
+<script>
+var GAS_API_URL  = "https://script.google.com/macros/s/AKfycbwUlYW2Gl9V93CWLWV3OvhQEYsme08FN-3o1GkR6_I03JgQrIVtLy5fWT8CNBn90vHoEg/exec";
+var IMGBB_KEY    = "3156ff7ae9c8c1c2fc312a1058340528";
+
+var BRANDS = [
+  { id:"atlas", name:"Atlas", url:"https://members.llit-eservice.com/register/year/atlas/", active:true },
+  { id:"b",     name:"Brand B", active:false },
+  { id:"c",     name:"Brand C", active:false },
+  { id:"d",     name:"Brand D", active:false }
+];
+
+var selectedBrand  = null;
+var lookupResult   = null;
+var stream         = null;
+var scanTimer      = null;
+var receiptReady   = false;
+var currentCarId   = null;
+var receiptUrl     = null;
+var waitingTimer   = null;
+var waitingElapsed = 0;
+
+// ── Brand grid ──
+(function(){
+  var grid=document.getElementById("brand-grid");
+  BRANDS.forEach(function(b){
+    var el=document.createElement("div");
+    el.className="brand-card "+(b.active?"active":"inactive");
+    el.innerHTML='<div class="brand-logo">🔘</div>'+
+      '<div class="brand-name '+(b.active?"":"muted")+'">'+b.name+'</div>'+
+      (b.active?'<div class="brand-tap">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
+    if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
+    grid.appendChild(el);
+  });
+})();
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+  document.getElementById(id).classList.add("active");
+}
+function pickBrand(brand){
+  selectedBrand=brand;
+  document.getElementById("perm-brand-name").textContent=brand.name;
+  document.getElementById("scan-brand-label").textContent=brand.name;
+  document.getElementById("confirm-brand-name").textContent=brand.name;
+  show("s-permission");
+}
+function goBack(){ stopCamera(); show("s-brands"); }
+
+// ── Camera ──
+async function openCamera(){
+  document.getElementById("retry-btn").style.display="none";
+  setStatus("กำลังเปิดกล้อง...",true);
+  show("s-scanner"); stopCamera();
+  try {
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
+    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
+    var vid=document.getElementById("preview");
+    vid.srcObject=stream; await vid.play();
+    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
+    scanTimer=setInterval(tick,250);
+  } catch(err){
+    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
+    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
+    document.getElementById("retry-btn").style.display="inline-block";
+  }
+}
+function stopCamera(){
+  clearInterval(scanTimer); scanTimer=null;
+  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+}
+function tick(){
+  var vid=document.getElementById("preview");
+  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
+  var cvs=document.getElementById("canvas");
+  cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
+  var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
+  var img=ctx.getImageData(0,0,cvs.width,cvs.height);
+  var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
+  if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
+}
+function setStatus(msg,active){
+  document.getElementById("scan-status-text").textContent=msg;
+  var dot=document.getElementById("scan-dot");
+  if(active) dot.classList.add("on"); else dot.classList.remove("on");
+}
+
+// ── JSONP helper ──
+function jsonp(url,onSuccess,onError){
+  var cb="cb_"+Date.now();
+  var s=document.createElement("script");
+  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },30000);
+  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
+  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
+  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
+  document.body.appendChild(s);
+}
+
+// ── QR lookup ──
+function handleQR(raw){
+  var carId=raw.trim().toUpperCase();
+  currentCarId=carId;
+  document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
+  show("s-loading");
+  jsonp(GAS_API_URL+"?carId="+encodeURIComponent(carId),function(result){
+    if(result.error){ document.getElementById("error-msg").textContent=result.error; show("s-error"); return; }
+    lookupResult=result;
+    document.getElementById("c-name").textContent    =result.fullName;
+    document.getElementById("c-phone").textContent   =result.phone;
+    document.getElementById("c-memberid").textContent=result.memberId;
+    document.getElementById("c-carid").textContent   =result.carId;
+    document.getElementById("c-car").textContent     =result.carBrand+" "+result.carModel;
+    document.getElementById("c-plate").textContent   =result.plate;
+    receiptReady=false; receiptUrl=null;
+    document.getElementById("receipt-area").classList.remove("has-photo");
+    document.getElementById("receipt-preview").style.display="none";
+    document.getElementById("receipt-placeholder").style.display="block";
+    document.getElementById("receipt-status").textContent="";
+    document.getElementById("receipt-status").className="receipt-status";
+    document.getElementById("open-form-btn").disabled=true;
+    document.getElementById("open-form-btn").textContent="📎 กรุณาถ่ายรูปใบเสร็จก่อน";
+    document.getElementById("receipt-input").value="";
+    show("s-confirm");
+  },function(err){
+    document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err;
+    show("s-error");
+  });
+}
+
+// ── Receipt upload via ImgBB ──
+async function handleReceiptPhoto(input){
+  if(!input.files||!input.files[0]) return;
+  var file=input.files[0];
+  var statusEl=document.getElementById("receipt-status");
+  var previewEl=document.getElementById("receipt-preview");
+  var areaEl=document.getElementById("receipt-area");
+
+  var reader=new FileReader();
+  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("receipt-placeholder").style.display="none"; };
+  reader.readAsDataURL(file);
+
+  statusEl.className="receipt-status uploading";
+  statusEl.textContent="⏳ กำลังบีบอัดรูปภาพ...";
+  document.getElementById("open-form-btn").disabled=true;
+
+  try {
+    // Compress to 800px / 70%
+    var base64=await new Promise(function(resolve){
+      var img=new window.Image();
+      img.onload=function(){
+        var c=document.createElement("canvas");
+        var MAX=800,w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+        c.width=w; c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(c.toDataURL("image/jpeg",0.7).split(",")[1]);
+      };
+      img.src=URL.createObjectURL(file);
+    });
+
+    statusEl.textContent="⏳ กำลังอัพโหลด...";
+
+    // Upload to ImgBB — fast, direct, no CORS issues
+    var formData=new FormData();
+    formData.append("key",IMGBB_KEY);
+    formData.append("image",base64);
+    formData.append("expiration","3600"); // auto-delete after 1 hour
+
+    var res=await fetch("https://api.imgbb.com/1/upload",{method:"POST",body:formData});
+    var data=await res.json();
+    if(!data.success) throw new Error(data.error&&data.error.message||"ImgBB upload failed");
+
+    receiptUrl=data.data.url;
+
+    // Save image URL to GAS for Extension to fetch by carId
+    await new Promise(function(resolve,reject){
+      jsonp(
+        GAS_API_URL+"?action=saveReceiptUrl"+
+        "&carId="+encodeURIComponent(currentCarId)+
+        "&url="+encodeURIComponent(receiptUrl),
+        function(r){ if(r.ok) resolve(); else reject(new Error(r.error||"save failed")); },
+        function(e){ reject(new Error(e)); }
+      );
+    });
+
+    receiptReady=true;
+    areaEl.classList.add("has-photo");
+    statusEl.className="receipt-status ok";
+    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
+    document.getElementById("open-form-btn").disabled=false;
+    document.getElementById("open-form-btn").textContent="🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
+
+  } catch(err){
+    statusEl.className="receipt-status error";
+    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
+  }
+}
+
+// ── Open warranty — push to desktop ──
+function openWarrantyForm(){
+  if(!lookupResult||!selectedBrand||!receiptReady) return;
+  var p=Object.assign({},lookupResult.params);
+  p.car_id=currentCarId;
+  var qs=Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
+    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
+  var warrantyUrl=selectedBrand.url+"?"+qs;
+
+  document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
+  show("s-waiting");
+  waitingElapsed=0;
+
+  jsonp(
+    GAS_API_URL+"?action=pushUrl&carId="+encodeURIComponent(currentCarId)+"&url="+encodeURIComponent(warrantyUrl),
+    function(result){
+      if(result.ok){
+        document.getElementById("waiting-text").textContent="รอให้คอมพิวเตอร์เปิดฟอร์ม...";
+        pollDesktop();
+      } else {
+        showWaitingError("ส่ง URL ไม่สำเร็จ: "+(result.error||""));
+      }
+    },
+    function(err){ showWaitingError("เชื่อมต่อ GAS ไม่ได้: "+err); }
+  );
+}
+
+function pollDesktop(){
+  waitingTimer=setInterval(function(){
+    waitingElapsed+=3;
+    document.getElementById("waiting-text").textContent="รอให้คอมพิวเตอร์เปิดฟอร์ม... ("+waitingElapsed+"s)";
+    if(waitingElapsed>=30){
+      clearInterval(waitingTimer);
+      showWaitingError("หมดเวลา — ตรวจสอบว่าเปิด Desktop Opener บนคอมพิวเตอร์แล้ว");
+      return;
+    }
+    jsonp(
+      GAS_API_URL+"?action=checkOpened&carId="+encodeURIComponent(currentCarId),
+      function(result){ if(result.opened){ clearInterval(waitingTimer); show("s-sent"); } },
+      function(){}
+    );
+  },3000);
+}
+
+function cancelWaiting(){ clearInterval(waitingTimer); show("s-confirm"); }
+function showWaitingError(msg){ clearInterval(waitingTimer); document.getElementById("error-msg").textContent=msg; show("s-error"); }
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/Member_Scanner/sw.js')
+    .catch(function(e){ console.log('SW error:',e); });
+}
+</script>
 </body>
 </html>
