@@ -55,7 +55,7 @@ h1{font-size:20px;font-weight:700;color:#1a0000;margin-bottom:6px}
 
 <script>
 // ══ CONFIG ══
-var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxc-flUuIKDH-mIh3vA6KDKGuknQ2NGN0CWmLzVbvsdgFkZIOUruzKymtN5aNgUixLnyg/exec";
+var GAS_API_URL = "https://script.google.com/macros/s/AKfycbwI4hD0bl7ukZDM8Z2AOoM2TCG7x9e1dkFNw4zYnRL8G7levSePpvUbNXdFUlj4rQo20Q/exec";
 var POLL_INTERVAL = 3000; // 3 seconds
 
 var pollTimer   = null;
@@ -87,8 +87,8 @@ function jsonp(url, onSuccess, onError) {
     done = true;
     delete window[cb];
     if(s.parentNode) document.body.removeChild(s);
-    if(onError) onError("timeout");
-  }, 15000);
+    if(onError) onError("timeout after 30s");
+  }, 30000);
   window[cb] = function(r){
     if(done) return;
     done = true;
