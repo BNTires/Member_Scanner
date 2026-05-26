@@ -7,7 +7,7 @@ var CONFIG = {
 
   // ── Google Apps Script API URL ──
   // อัพเดทหลังจาก deploy ใหม่ทุกครั้ง
-  GAS_API_URL: "https://script.google.com/macros/s/AKfycbxxNnWSr1ZrZfbf3ufBn1FCWFUJn75EAzq5nCDnB2pF0XPiA1x2lTc-uHESp3-ylnkqxA/exec",
+  GAS_API_URL: "https://script.google.com/macros/s/AKfycbwUlYW2Gl9V93CWLWV3OvhQEYsme08FN-3o1GkR6_I03JgQrIVtLy5fWT8CNBn90vHoEg/exec",
 
   // ── ImgBB API Key ──
   // https://api.imgbb.com → Get API key
