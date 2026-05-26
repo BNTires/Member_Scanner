@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -416,12 +416,12 @@ async function handleReceiptPhoto(input){
     statusEl.textContent="⏳ กำลังอัพโหลด...";
 
     // Upload to ImgBB — fast, direct, no CORS issues
+    // Upload to ImgBB — key in URL, base64 in form body
     var formData=new FormData();
-    formData.append("key",IMGBB_KEY);
-    formData.append("image",base64);
-    formData.append("expiration",String(CONFIG.RECEIPT_EXPIRY_SECONDS)); // auto-delete after 1 hour
+    formData.append("image", base64);
+    formData.append("expiration", String(CONFIG.RECEIPT_EXPIRY_SECONDS));
 
-    var res=await fetch("https://api.imgbb.com/1/upload",{method:"POST",body:formData});
+    var res=await fetch("https://api.imgbb.com/1/upload?key="+IMGBB_KEY, {method:"POST", body:formData});
     var data=await res.json();
     if(!data.success) throw new Error(data.error&&data.error.message||"ImgBB upload failed");
 
