@@ -1,5 +1,5 @@
 // Service Worker for Tyre Warranty PWA
-var CACHE = "tyre-warranty-v1";
+var CACHE = "tyre-warranty-v3";
 var ASSETS = [
   "/Member_Scanner/",
   "/Member_Scanner/index.html",
