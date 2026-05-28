@@ -460,6 +460,7 @@ function openWarrantyForm(){
   if(!lookupResult||!selectedBrand||!receiptReady) return;
   var p=Object.assign({},lookupResult.params);
   p.car_id=currentCarId;
+  if(receiptUrl) p.receipt_url=receiptUrl; // pass image URL directly to extension
   var qs=Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
     .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
   var warrantyUrl=selectedBrand.url+"?"+qs;
