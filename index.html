@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- v1779955070 -->
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -519,7 +519,8 @@ function showWaitingError(msg){ clearInterval(waitingTimer); document.getElement
 
 <script>
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/Member_Scanner/sw.js')
+  // serviceWorker disabled for debugging
+  //navigator.serviceWorker.register('/Member_Scanner/sw.js')
     .catch(function(e){ console.log('SW error:',e); });
 }
 </script>
