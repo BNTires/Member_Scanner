@@ -438,8 +438,10 @@ async function handleReceiptPhoto(input){
     if (data.error) throw new Error(data.error.message || "Cloudinary upload failed");
 
     // Store public_id + extension (shorter than full URL)
-    var ext = data.secure_url.split('.').pop(); // jpg or png
-    receiptUrl = data.public_id + '.' + ext; // e.g. "abc123.jpg"
+    var ext = data.secure_url.split('.').pop();
+    receiptUrl = data.public_id + '.' + ext;
+    statusEl.textContent = "✅ อัพโหลดสำเร็จ: " + receiptUrl;
+    console.log("receiptUrl set to:", receiptUrl);
 
     // Save image URL to GAS for Extension to fetch by carId
     await new Promise(function(resolve,reject){
