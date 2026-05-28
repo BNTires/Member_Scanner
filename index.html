@@ -429,7 +429,8 @@ async function handleReceiptPhoto(input){
     var data = await res.json();
     if (data.error) throw new Error(data.error.message || "Cloudinary upload failed");
 
-    receiptUrl = data.secure_url;
+    // Store only public_id (short) instead of full URL to keep warranty URL short
+    receiptUrl = data.public_id; // e.g. "bntires_receipts/abc123"
 
     // Save image URL to GAS for Extension to fetch by carId
     await new Promise(function(resolve,reject){
