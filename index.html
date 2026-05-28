@@ -208,6 +208,13 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
       📎 กรุณาถ่ายรูปใบเสร็จก่อน
     </button>
     <button class="cancel-btn" onclick="show('s-brands')">← เลือกแบรนด์ใหม่</button>
+
+    <!-- Debug panel -->
+    <div id="debug-panel" style="background:#1a1a1a;color:#4ade80;padding:12px;border-radius:8px;font-size:11px;font-family:monospace;margin-top:10px;display:none">
+      <div style="color:#fff;font-weight:bold;margin-bottom:6px">🔍 Debug Info</div>
+      <div id="debug-text"></div>
+    </div>
+    <button onclick="showDebug()" style="background:#333;color:white;border:none;border-radius:8px;padding:8px;width:100%;font-size:12px;margin-top:6px;cursor:pointer">🔍 Show Debug</button>
   </div>
 </div>
 
