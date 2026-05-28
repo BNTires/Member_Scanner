@@ -7,7 +7,7 @@ var CONFIG = {
 
   // ── Google Apps Script API URL ──
   // อัพเดทหลังจาก deploy ใหม่ทุกครั้ง
-  GAS_API_URL: "https://script.google.com/macros/s/AKfycbwyMWsRVoSdFSFYSMtIuU-AEiiBCuB6xUjhg3CQKJBbcqHdLJgeHp-toEqE0lw8o1arqQ/exec",
+  GAS_API_URL: "https://script.google.com/macros/s/AKfycbwVVl7JN0c93Iorj5LIjfW8hMGqutq8uaUXvfBDDcS2Q_d75tOIoJe1OU1xvPQYT-yEJA/exec",
 
   // ── Cloudinary Config ──
   // https://cloudinary.com → Dashboard
