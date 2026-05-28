@@ -247,6 +247,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
       ตรวจสอบให้แน่ใจว่าเปิดหน้า Desktop Opener บนคอมพิวเตอร์แล้ว
     </div>
     <div id="waiting-debug" style="font-size:10px;color:#ffcc00;margin-top:8px;text-align:center;padding:0 16px;word-break:break-all"></div>
+    <div id="screen-log" style="font-size:10px;color:#88ff88;margin-top:8px;padding:0 16px;word-break:break-all;text-align:left;background:rgba(0,0,0,0.3);border-radius:8px;padding:8px"></div>
   </div>
   <div style="padding:16px">
     <button class="cancel-btn" onclick="cancelWaiting()">ยกเลิก</button>
@@ -440,6 +441,7 @@ async function handleReceiptPhoto(input){
     // Store public_id + extension (shorter than full URL)
     var ext = data.secure_url.split('.').pop();
     receiptUrl = data.public_id + '.' + ext;
+    slog('receiptUrl set: '+receiptUrl);
     statusEl.textContent = "✅ อัพโหลดสำเร็จ: " + receiptUrl;
     console.log("receiptUrl set to:", receiptUrl);
 
@@ -453,6 +455,7 @@ async function handleReceiptPhoto(input){
     );
 
     receiptReady=true;
+    slog('receiptReady=true, receiptUrl='+receiptUrl);
     areaEl.classList.add("has-photo");
     statusEl.className="receipt-status ok";
     statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
@@ -476,6 +479,7 @@ function openWarrantyForm(){
   var warrantyUrl=selectedBrand.url+"?"+qs;
 
   document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
+  slog('openWarrantyForm: receiptUrl='+receiptUrl+' ready='+receiptReady);
   // Debug: show receipt info
   var debugEl = document.getElementById("waiting-debug");
   if(debugEl) debugEl.textContent = "receiptUrl: "+(receiptUrl||"NULL")+" | receipt_url in params: "+(p.receipt_url||"NULL");
