@@ -246,6 +246,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
     <div style="font-size:12px;color:#aaa;margin-top:8px;text-align:center;padding:0 32px">
       ตรวจสอบให้แน่ใจว่าเปิดหน้า Desktop Opener บนคอมพิวเตอร์แล้ว
     </div>
+    <div id="waiting-debug" style="font-size:10px;color:#ffcc00;margin-top:8px;text-align:center;padding:0 16px;word-break:break-all"></div>
   </div>
   <div style="padding:16px">
     <button class="cancel-btn" onclick="cancelWaiting()">ยกเลิก</button>
@@ -475,6 +476,9 @@ function openWarrantyForm(){
   var warrantyUrl=selectedBrand.url+"?"+qs;
 
   document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
+  // Debug: show receipt info
+  var debugEl = document.getElementById("waiting-debug");
+  if(debugEl) debugEl.textContent = "receiptUrl: "+(receiptUrl||"NULL")+" | receipt_url in params: "+(p.receipt_url||"NULL");
   show("s-waiting");
   waitingElapsed=0;
 
