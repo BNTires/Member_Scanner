@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- v1779955070 -->
+<!DOCTYPE html><!-- v1779955760 -->
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -441,7 +441,7 @@ async function handleReceiptPhoto(input){
     // Store public_id + extension (shorter than full URL)
     var ext = data.secure_url.split('.').pop();
     receiptUrl = data.public_id + '.' + ext;
-    slog('receiptUrl set: '+receiptUrl);
+    alert('1. receiptUrl set: '+receiptUrl);
     statusEl.textContent = "✅ อัพโหลดสำเร็จ: " + receiptUrl;
     console.log("receiptUrl set to:", receiptUrl);
 
@@ -455,7 +455,7 @@ async function handleReceiptPhoto(input){
     );
 
     receiptReady=true;
-    slog('receiptReady=true, receiptUrl='+receiptUrl);
+    alert('2. ready=true, url='+receiptUrl);
     areaEl.classList.add("has-photo");
     statusEl.className="receipt-status ok";
     statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
@@ -479,7 +479,7 @@ function openWarrantyForm(){
   var warrantyUrl=selectedBrand.url+"?"+qs;
 
   document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
-  slog('openWarrantyForm: receiptUrl='+receiptUrl+' ready='+receiptReady);
+  alert('3. openForm: url='+receiptUrl+' ready='+receiptReady);
   // Debug: show receipt info
   var debugEl = document.getElementById("waiting-debug");
   if(debugEl) debugEl.textContent = "receiptUrl: "+(receiptUrl||"NULL")+" | receipt_url in params: "+(p.receipt_url||"NULL");
