@@ -443,16 +443,14 @@ async function handleReceiptPhoto(input){
     statusEl.textContent = "✅ อัพโหลดสำเร็จ: " + receiptUrl;
     console.log("receiptUrl set to:", receiptUrl);
 
-    // Save image URL to GAS for Extension to fetch by carId
-    await new Promise(function(resolve,reject){
-      jsonp(
-        GAS_API_URL+"?action=saveReceiptUrl"+
-        "&carId="+encodeURIComponent(currentCarId)+
-        "&url="+encodeURIComponent(receiptUrl),
-        function(r){ if(r.ok) resolve(); else reject(new Error(r.error||"save failed")); },
-        function(e){ reject(new Error(e)); }
-      );
-    });
+    // Save image URL to GAS (non-blocking — don't wait for it)
+    jsonp(
+      GAS_API_URL+"?action=saveReceiptUrl"+
+      "&carId="+encodeURIComponent(currentCarId)+
+      "&url="+encodeURIComponent(receiptUrl),
+      function(r){ console.log("saveReceiptUrl:", r.ok ? "ok" : r.error); },
+      function(e){ console.log("saveReceiptUrl error:", e); }
+    );
 
     receiptReady=true;
     areaEl.classList.add("has-photo");
