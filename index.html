@@ -124,6 +124,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
     <div class="center-desc">แอปต้องการเข้าถึงกล้องเพื่อสแกน<br>QR code ของลูกค้า กด <b>Allow</b><br>เมื่อระบบถามอนุญาต</div>
     <button class="btn-primary" onclick="openCamera()">📷&nbsp; เปิดกล้องสแกน QR</button>
     <div class="note-text">หากเคยปฏิเสธ ไปที่ Settings เปิดอนุญาตกล้อง</div>
+    <button class="btn-secondary" onclick="openSearch()">🔍&nbsp; ค้นหาด้วยเบอร์/ทะเบียน</button>
     <span class="back-link" onclick="show('s-brands')">← เปลี่ยนแบรนด์</span>
   </div>
 </div>
@@ -149,6 +150,40 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
     <div class="dot on" id="scan-dot"></div>
     <span id="scan-status-text">กำลังเปิดกล้อง...</span>
     <button class="retry-btn" id="retry-btn" onclick="openCamera()">ลองอีกครั้ง</button>
+  </div>
+</div>
+
+<!-- Screen 3b: Manual Search -->
+<div class="screen" id="s-search">
+  <div class="scan-hdr">
+    <button class="back-btn" onclick="show('s-permission')">←</button>
+    <div>
+      <div class="scan-brand" id="search-brand-label"></div>
+      <div class="scan-sub">ค้นหาด้วยข้อมูลลูกค้า</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="member-card">
+      <h3>ค้นหาสมาชิก</h3>
+      <div class="field" style="margin-bottom:12px">
+        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">เบอร์โทรศัพท์</label>
+        <input type="tel" id="search-phone" placeholder="0812345678"
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px">
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">ทะเบียนรถ</label>
+        <input type="text" id="search-plate" placeholder="กข 1234"
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;text-transform:uppercase">
+      </div>
+      <div id="search-status" style="font-size:13px;color:#b40000;margin-bottom:8px;min-height:20px"></div>
+      <button class="action-btn" onclick="doSearch()" style="margin-bottom:0">🔍 ค้นหา</button>
+    </div>
+
+    <!-- Search results -->
+    <div id="search-results" style="display:none">
+      <div class="sec-label" style="margin-top:16px">ผลการค้นหา</div>
+      <div id="search-result-list"></div>
+    </div>
   </div>
 </div>
 
