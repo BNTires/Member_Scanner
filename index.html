@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- v1779955760 -->
+<!DOCTYPE html><!-- v1780021001 -->
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -438,12 +438,12 @@ async function handleReceiptPhoto(input){
     var data = await res.json();
     if (data.error) throw new Error(data.error.message || "Cloudinary upload failed");
 
-    // Store public_id + extension (shorter than full URL)
-    var ext = data.secure_url.split('.').pop();
-    receiptUrl = data.public_id + '.' + ext;
-    alert('1. receiptUrl set: '+receiptUrl);
-    statusEl.textContent = "✅ อัพโหลดสำเร็จ: " + receiptUrl;
-    console.log("receiptUrl set to:", receiptUrl);
+    // Store full Cloudinary URL
+    receiptUrl = data.secure_url;
+    alert("UPLOAD OK: "+receiptUrl.substring(0,60));
+
+
+
 
     // Save image URL to GAS (non-blocking — don't wait for it)
     jsonp(
@@ -455,7 +455,7 @@ async function handleReceiptPhoto(input){
     );
 
     receiptReady=true;
-    alert('2. ready=true, url='+receiptUrl);
+    
     areaEl.classList.add("has-photo");
     statusEl.className="receipt-status ok";
     statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
@@ -479,7 +479,7 @@ function openWarrantyForm(){
   var warrantyUrl=selectedBrand.url+"?"+qs;
 
   document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
-  alert('3. openForm: url='+receiptUrl+' ready='+receiptReady);
+  alert('sending: '+(receiptUrl?receiptUrl.substring(0,40):'NULL'));
   // Debug: show receipt info
   var debugEl = document.getElementById("waiting-debug");
   if(debugEl) debugEl.textContent = "receiptUrl: "+(receiptUrl||"NULL")+" | receipt_url in params: "+(p.receipt_url||"NULL");
