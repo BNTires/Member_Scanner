@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- v1780021001 -->
+<!DOCTYPE html><!-- v1780045527 -->
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -557,10 +557,14 @@ function showWaitingError(msg){ clearInterval(waitingTimer); document.getElement
 </script>
 
 <script>
+// Unregister any existing service workers to prevent caching issues
 if('serviceWorker' in navigator){
-  // serviceWorker disabled for debugging
-  //navigator.serviceWorker.register('/Member_Scanner/sw.js')
-    .catch(function(e){ console.log('SW error:',e); });
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  });
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){ caches.delete(k); });
+  });
 }
 </script>
 </body>
