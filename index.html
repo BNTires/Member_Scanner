@@ -440,7 +440,7 @@ async function handleReceiptPhoto(input){
 
     // Store full Cloudinary URL
     receiptUrl = data.secure_url;
-    alert("UPLOAD OK: "+receiptUrl.substring(0,60));
+    statusEl.textContent = "✅ OK: " + receiptUrl.substring(0,50);
 
 
 
@@ -479,7 +479,7 @@ function openWarrantyForm(){
   var warrantyUrl=selectedBrand.url+"?"+qs;
 
   document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
-  alert('sending: '+(receiptUrl?receiptUrl.substring(0,40):'NULL'));
+  document.getElementById('waiting-debug').textContent = 'sending receiptUrl: '+(receiptUrl||'NULL');
   // Debug: show receipt info
   var debugEl = document.getElementById("waiting-debug");
   if(debugEl) debugEl.textContent = "receiptUrl: "+(receiptUrl||"NULL")+" | receipt_url in params: "+(p.receipt_url||"NULL");
