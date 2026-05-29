@@ -427,7 +427,7 @@ async function handleReceiptPhoto(input){
     // Upload to ImgBB — fast, direct, no CORS issues
     // Upload to Cloudinary — no domain restrictions, free tier
     var cloudFormData = new FormData();
-    cloudFormData.append("file", "data:image/jpeg;base64," + base64);
+    cloudFormData.append("file", base64);
     cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
     cloudFormData.append("folder", "bntires_receipts");
 
