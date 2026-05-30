@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- v1780045527 -->
+<!DOCTYPE html><!-- v1780109361 -->
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Tyre Warranty">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#b40000">
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="config.js?v=1780109361"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js?v=1780109361"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh}
@@ -554,6 +554,75 @@ function pollDesktop(){
 
 function cancelWaiting(){ clearInterval(waitingTimer); show("s-confirm"); }
 function showWaitingError(msg){ clearInterval(waitingTimer); document.getElementById("error-msg").textContent=msg; show("s-error"); }
+// ── Manual Search ──
+function openSearch(){
+  document.getElementById("search-brand-label").textContent = selectedBrand ? selectedBrand.name : "";
+  document.getElementById("search-phone").value = "";
+  document.getElementById("search-plate").value = "";
+  document.getElementById("search-status").textContent = "";
+  document.getElementById("search-results").style.display = "none";
+  document.getElementById("search-result-list").innerHTML = "";
+  show("s-search");
+}
+
+function doSearch(){
+  var phone = document.getElementById("search-phone").value.trim();
+  var plate = document.getElementById("search-plate").value.trim().toUpperCase();
+  var statusEl = document.getElementById("search-status");
+  if(!phone && !plate){ statusEl.textContent = "กรุณากรอกเบอร์โทรหรือทะเบียนรถ"; return; }
+  statusEl.textContent = "กำลังค้นหา...";
+  document.getElementById("search-results").style.display = "none";
+  jsonp(
+    GAS_API_URL + "?action=search" +
+    (phone ? "&phone=" + encodeURIComponent(phone) : "") +
+    (plate ? "&plate=" + encodeURIComponent(plate) : ""),
+    function(result){
+      if(result.error){ statusEl.textContent = "❌ " + result.error; return; }
+      if(!result.results || result.results.length === 0){ statusEl.textContent = "ไม่พบข้อมูล"; return; }
+      statusEl.textContent = "พบ " + result.results.length + " รายการ";
+      renderSearchResults(result.results);
+    },
+    function(err){ statusEl.textContent = "❌ เชื่อมต่อไม่ได้: " + err; }
+  );
+}
+
+function renderSearchResults(results){
+  var list = document.getElementById("search-result-list");
+  list.innerHTML = "";
+  results.forEach(function(r){
+    var el = document.createElement("div");
+    el.className = "member-card";
+    el.style.cssText = "cursor:pointer;margin-bottom:8px";
+    el.innerHTML =
+      '<div style="font-size:15px;font-weight:700;color:#1a0000;margin-bottom:4px">' + r.fullName + '</div>' +
+      '<div style="font-size:13px;color:#888">' + r.phone + ' · ' + r.carBrand + ' ' + r.carModel + '</div>' +
+      '<div style="font-size:12px;color:#aaa;margin-top:2px">ทะเบียน: ' + r.plate + ' · CarID: ' + r.carId + '</div>';
+    el.addEventListener("click", function(){
+      currentCarId = r.carId;
+      lookupResult = r;
+      document.getElementById("c-name").textContent     = r.fullName;
+      document.getElementById("c-phone").textContent    = r.phone;
+      document.getElementById("c-memberid").textContent = r.memberId;
+      document.getElementById("c-carid").textContent    = r.carId;
+      document.getElementById("c-car").textContent      = r.carBrand + " " + r.carModel;
+      document.getElementById("c-plate").textContent    = r.plate;
+      receiptReady = false; receiptUrl = null;
+      document.getElementById("receipt-area").classList.remove("has-photo");
+      document.getElementById("receipt-preview").style.display = "none";
+      document.getElementById("receipt-placeholder").style.display = "block";
+      document.getElementById("receipt-status").textContent = "";
+      document.getElementById("receipt-status").className = "receipt-status";
+      document.getElementById("open-form-btn").disabled = true;
+      document.getElementById("open-form-btn").textContent = "📎 กรุณาถ่ายรูปใบเสร็จก่อน";
+      document.getElementById("receipt-input").value = "";
+      document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
+      show("s-confirm");
+    });
+    list.appendChild(el);
+  });
+  document.getElementById("search-results").style.display = "block";
+}
+
 </script>
 
 <script>
