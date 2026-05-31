@@ -670,6 +670,9 @@ function renderSearchResults(results){
       document.getElementById("open-form-btn").textContent = "📎 กรุณาถ่ายรูปใบเสร็จก่อน";
       document.getElementById("receipt-input").value = "";
       document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
+      selectedTire = null;
+      document.getElementById("tire-selected").style.display = "none";
+      loadTires();
       show("s-confirm");
     });
     list.appendChild(el);
