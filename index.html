@@ -339,7 +339,7 @@ function renderBrands(brands){
     el.style.borderColor  = b.active ? (b.background||"#b40000") : "#e0e0e0";
 
     var imgHtml = b.imageUrl
-      ? '<img src="'+b.imageUrl+'" style="width:48px;height:48px;object-fit:contain;border-radius:4px" onerror="this.style.display='none'">'
+      ? "<img src=\""+b.imageUrl+"\" style=\"width:48px;height:48px;object-fit:contain;border-radius:4px\" onerror=\"this.style.display='none'\">"
       : '<div class="brand-logo">🔘</div>';
 
     el.innerHTML = imgHtml +
