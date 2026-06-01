@@ -328,19 +328,39 @@ var waitingTimer   = null;
 var selectedTire   = null;
 var waitingElapsed = 0;
 
-// ── Brand grid ──
-(function(){
+// ── Brand grid — loaded dynamically from GAS ──
+function renderBrands(brands){
   var grid=document.getElementById("brand-grid");
-  BRANDS.forEach(function(b){
+  grid.innerHTML="";
+  brands.forEach(function(b){
     var el=document.createElement("div");
     el.className="brand-card "+(b.active?"active":"inactive");
-    el.innerHTML='<div class="brand-logo">🔘</div>'+
-      '<div class="brand-name '+(b.active?"":"muted")+'">'+b.name+'</div>'+
-      (b.active?'<div class="brand-tap">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
+    el.style.background   = b.active ? (b.background||"#b40000") : "white";
+    el.style.borderColor  = b.active ? (b.background||"#b40000") : "#e0e0e0";
+
+    var imgHtml = b.imageUrl
+      ? '<img src="'+b.imageUrl+'" style="width:48px;height:48px;object-fit:contain;border-radius:4px" onerror="this.style.display='none'">'
+      : '<div class="brand-logo">🔘</div>';
+
+    el.innerHTML = imgHtml +
+      '<div style="font-size:15px;font-weight:700;color:'+(b.active?(b.textColor||"white"):"#aaa")+'">'+b.name+'</div>'+
+      (b.active?'<div style="font-size:11px;color:rgba(255,255,255,.7)">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
+
     if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
     grid.appendChild(el);
   });
-})();
+}
+
+// Load brands from GAS
+document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:#aaa;font-size:13px;grid-column:1/-1">กำลังโหลด...</div>';
+jsonp(
+  GAS_API_URL+"?action=getBrands",
+  function(result){
+    if(result.ok && result.brands) renderBrands(result.brands);
+    else document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">โหลดแบรนด์ไม่ได้</div>';
+  },
+  function(err){ document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">Error: '+err+'</div>'; }
+);
 
 function show(id){
   document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
@@ -578,7 +598,7 @@ function loadTires(){
   document.getElementById("tire-loading").style.display="block";
   document.getElementById("tire-list").innerHTML="";
   jsonp(
-    GAS_API_URL+"?action=getTires&brand="+encodeURIComponent(selectedBrand.id.toUpperCase()),
+    GAS_API_URL+"?action=getTires&brand="+encodeURIComponent(selectedBrand.name.toUpperCase()),
     function(result){
       document.getElementById("tire-loading").style.display="none";
       if(result.error||!result.tires||result.tires.length===0){
