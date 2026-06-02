@@ -3,7 +3,7 @@
 // ============================================================
 
 var CONFIG = {
-  GAS_API_URL:       "https://script.google.com/macros/s/AKfycbxeZNFesYlzB6nIi3NZgc4Hzc1gFKmVbl1JM2uxiHeYhxjAkKsUAEui1LxdHj2_V94s/exec",
+  GAS_API_URL:       "https://script.google.com/macros/s/AKfycbySokzBqBTp6CVBiVDhctrNKKYCkpUWsnxhbnRZTJm6ujtHTJ0spoCy6Mlns2R3FSOdNQ/exec",
   CLOUDINARY_CLOUD:  "dqgszn5b1",
   CLOUDINARY_PRESET: "Bntires",
   SHOP_NAME:         "B.N.Tires&Max",
