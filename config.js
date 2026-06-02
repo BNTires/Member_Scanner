@@ -4,22 +4,25 @@
 
 var CONFIG = {
   GAS_API_URL:       "https://script.google.com/macros/s/AKfycbySokzBqBTp6CVBiVDhctrNKKYCkpUWsnxhbnRZTJm6ujtHTJ0spoCy6Mlns2R3FSOdNQ/exec",
+  // ── Cloudinary Config ──
   CLOUDINARY_CLOUD:  "dqgszn5b1",
   CLOUDINARY_PRESET: "Bntires",
-  SHOP_NAME:         "B.N.Tires&Max",
-  SHOP_PROVINCE:     "สมุทรปราการ",
+ 
+  // ── Shop Info ──
+  SHOP_NAME:     "B.N.Tires&Max",
+  SHOP_PROVINCE: "สมุทรปราการ",
+ 
+  // ── Receipt Settings ──
   RECEIPT_EXPIRY_SECONDS: 3600,
-  IMAGE_MAX_PX:      800,
-  IMAGE_QUALITY:     0.7,
+  IMAGE_MAX_PX:           800,
+  IMAGE_QUALITY:          0.7,
+ 
+  // ── Desktop Poller ──
   POLL_INTERVAL_MS:  3000,
-  WAITING_TIMEOUT_S: 30,
-  BRANDS: [
-    { id:"atlas", name:"Atlas", url:"https://members.llit-eservice.com/register/year/atlas/", active:true },
-    { id:"b",     name:"Brand B", url:"", active:false },
-    { id:"c",     name:"Brand C", url:"", active:false },
-    { id:"d",     name:"Brand D", url:"", active:false }
-  ]
+  WAITING_TIMEOUT_S: 30
+ 
 };
+ 
 
 // ── Receipt Upload Fix ──
 // Patch handleReceiptPhoto to store full secure_url
