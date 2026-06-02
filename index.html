@@ -338,9 +338,8 @@ function renderBrands(brands){
     el.style.background  = b.active ? (b.background||"#b40000") : "white";
     el.style.borderColor = b.active ? (b.background||"#b40000") : "#e0e0e0";
 
-    // Convert Drive URL to thumbnail
-    var imgSrc = (b.imageUrl||"").replace("uc?export=view&id=","thumbnail?id=");
-    if(imgSrc) imgSrc += "&sz=w100";
+    // Use imageUrl directly (GAS already converts to lh3.googleusercontent.com)
+    var imgSrc = b.imageUrl || "";
 
     var img = document.createElement("img");
     img.src = imgSrc || "";
