@@ -382,6 +382,17 @@ function renderBrands(brands){
   );
 })();
 
+// ── JSONP helper ──
+function jsonp(url,onSuccess,onError){
+  var cb="cb_"+Date.now();
+  var s=document.createElement("script");
+  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },30000);
+  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
+  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
+  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
+  document.body.appendChild(s);
+}
+
 // ── QR lookup ──
 function handleQR(raw){
   var carId=raw.trim().toUpperCase();
