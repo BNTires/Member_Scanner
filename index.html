@@ -335,84 +335,39 @@ function renderBrands(brands){
   brands.forEach(function(b){
     var el=document.createElement("div");
     el.className="brand-card "+(b.active?"active":"inactive");
-    el.style.background   = b.active ? (b.background||"#b40000") : "white";
-    el.style.borderColor  = b.active ? (b.background||"#b40000") : "#e0e0e0";
+    el.style.background  = b.active ? (b.background||"#b40000") : "white";
+    el.style.borderColor = b.active ? (b.background||"#b40000") : "#e0e0e0";
 
-    var imgHtml = b.imageUrl
-      ? "<img src=\""+b.imageUrl+"\" style=\"width:48px;height:48px;object-fit:contain;border-radius:4px\" onerror=\"this.style.display='none'\">"
-      : '<div class="brand-logo">🔘</div>';
+    // Convert Drive URL to thumbnail
+    var imgSrc = (b.imageUrl||"").replace("uc?export=view&id=","thumbnail?id=");
+    if(imgSrc) imgSrc += "&sz=w100";
 
-    el.innerHTML = imgHtml +
-      '<div style="font-size:15px;font-weight:700;color:'+(b.active?(b.textColor||"white"):"#aaa")+'">'+b.name+'</div>'+
-      (b.active?'<div style="font-size:11px;color:rgba(255,255,255,.7)">แตะเพื่อสแกน QR →</div>':'<div class="brand-soon">เร็วๆ นี้</div>');
+    var img = document.createElement("img");
+    img.src = imgSrc || "";
+    img.style.cssText = "width:56px;height:56px;object-fit:contain;border-radius:6px;margin-bottom:2px";
+    img.onerror = function(){ this.style.display="none"; };
+
+    var nameDiv = document.createElement("div");
+    nameDiv.style.cssText = "font-size:17px;font-weight:800;letter-spacing:0.5px;color:"+(b.active?(b.textColor||"white"):"#aaa");
+    nameDiv.textContent = b.name;
+
+    var subDiv = document.createElement("div");
+    if(b.active){
+      subDiv.style.cssText = "font-size:12px;color:rgba(255,255,255,.75)";
+      subDiv.textContent = "แตะเพื่อสแกน →";
+    } else {
+      subDiv.className = "brand-soon";
+      subDiv.textContent = "เร็วๆ นี้";
+    }
+
+    if(imgSrc) el.appendChild(img);
+    else { var icon=document.createElement("div"); icon.style.fontSize="32px"; icon.textContent="🔘"; el.appendChild(icon); }
+    el.appendChild(nameDiv);
+    el.appendChild(subDiv);
 
     if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
     grid.appendChild(el);
   });
-}
-
-// brands loaded below inside main script
-
-function show(id){
-  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
-  document.getElementById(id).classList.add("active");
-}
-function pickBrand(brand){
-  selectedBrand=brand;
-  document.getElementById("perm-brand-name").textContent=brand.name;
-  document.getElementById("scan-brand-label").textContent=brand.name;
-  document.getElementById("confirm-brand-name").textContent=brand.name;
-  show("s-permission");
-}
-function goBack(){ stopCamera(); show("s-brands"); }
-
-// ── Camera ──
-async function openCamera(){
-  document.getElementById("retry-btn").style.display="none";
-  setStatus("กำลังเปิดกล้อง...",true);
-  show("s-scanner"); stopCamera();
-  try {
-    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
-    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
-    var vid=document.getElementById("preview");
-    vid.srcObject=stream; await vid.play();
-    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
-    scanTimer=setInterval(tick,250);
-  } catch(err){
-    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
-    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
-    document.getElementById("retry-btn").style.display="inline-block";
-  }
-}
-function stopCamera(){
-  clearInterval(scanTimer); scanTimer=null;
-  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-}
-function tick(){
-  var vid=document.getElementById("preview");
-  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
-  var cvs=document.getElementById("canvas");
-  cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
-  var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
-  var img=ctx.getImageData(0,0,cvs.width,cvs.height);
-  var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
-  if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
-}
-function setStatus(msg,active){
-  document.getElementById("scan-status-text").textContent=msg;
-  var dot=document.getElementById("scan-dot");
-  if(active) dot.classList.add("on"); else dot.classList.remove("on");
-}
-
-// ── JSONP helper ──
-function jsonp(url,onSuccess,onError){
-  var cb="cb_"+Date.now();
-  var s=document.createElement("script");
-  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },30000);
-  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
-  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
-  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
-  document.body.appendChild(s);
 }
 
 // ── Load brands from GAS ──
