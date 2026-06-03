@@ -385,6 +385,77 @@ function renderBrands(brands){
   );
 })();
 
+
+// ── Navigation ──
+function show(id){
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+  document.getElementById(id).classList.add("active");
+}
+
+function pickBrand(brand){
+  selectedBrand=brand;
+  document.getElementById("perm-brand-name").textContent=brand.name;
+  document.getElementById("scan-brand-label").textContent=brand.name;
+  document.getElementById("confirm-brand-name").textContent=brand.name;
+  show("s-permission");
+}
+
+function goBack(){ stopCamera(); show("s-brands"); }
+
+// ── Camera ──
+async function openCamera(){
+  document.getElementById("retry-btn").style.display="none";
+  setStatus("กำลังเปิดกล้อง...",true);
+  show("s-scanner"); stopCamera();
+  try {
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
+    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
+    var vid=document.getElementById("preview");
+    vid.srcObject=stream; await vid.play();
+    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
+    scanTimer=setInterval(tick,250);
+  } catch(err){
+    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
+    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
+    document.getElementById("retry-btn").style.display="inline-block";
+  }
+}
+
+function stopCamera(){
+  clearInterval(scanTimer); scanTimer=null;
+  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+}
+
+function tick(){
+  var vid=document.getElementById("preview");
+  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
+  var cvs=document.getElementById("canvas");
+  cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
+  var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
+  var img=ctx.getImageData(0,0,cvs.width,cvs.height);
+  var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
+  if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
+}
+
+function setStatus(msg,active){
+  document.getElementById("scan-status-text").textContent=msg;
+  var dot=document.getElementById("scan-dot");
+  if(active) dot.classList.add("on"); else dot.classList.remove("on");
+}
+
+function showDebug(){
+  var panel=document.getElementById("debug-panel");
+  var text=document.getElementById("debug-text");
+  panel.style.display=panel.style.display==="none"?"block":"none";
+  text.innerHTML=
+    "currentCarId: "+currentCarId+"<br>"+
+    "receiptReady: "+receiptReady+"<br>"+
+    "receiptUrl: "+(receiptUrl?receiptUrl.substring(0,30)+"...":"null")+"<br>"+
+    "lookupResult: "+(lookupResult?"✅":"null")+"<br>"+
+    "selectedBrand: "+(selectedBrand?selectedBrand.name:"null")+"<br>"+
+    "selectedTire: "+(selectedTire?selectedTire.label:"null");
+}
+
 // ── JSONP helper ──
 function jsonp(url,onSuccess,onError){
   var cb="cb_"+Date.now();
