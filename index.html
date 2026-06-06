@@ -92,6 +92,14 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 .receipt-status.ok{color:#16a34a;font-weight:600}
 .receipt-status.uploading{color:#b40000}
 .receipt-status.error{color:#dc2626}
+/* ★ NEW: mileage card */
+.mileage-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
+.mileage-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.mileage-card input{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:16px;font-family:inherit;color:#1a0000}
+.mileage-card input:focus{outline:none;border-color:#b40000;box-shadow:0 0 0 3px rgba(180,0,0,.1)}
+.mileage-card input.required-err{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.1)}
+.mileage-hint{font-size:12px;color:#aaa;margin-top:6px}
+.mileage-hint.required{color:#b40000;font-weight:600}
 .footer{text-align:center;padding:14px;font-size:11px;color:#aaa;flex-shrink:0}
 </style>
 </head>
@@ -178,8 +186,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
       <div id="search-status" style="font-size:13px;color:#b40000;margin-bottom:8px;min-height:20px"></div>
       <button class="action-btn" onclick="doSearch()" style="margin-bottom:0">🔍 ค้นหา</button>
     </div>
-
-    <!-- Search results -->
     <div id="search-results" style="display:none">
       <div class="sec-label" style="margin-top:16px">ผลการค้นหา</div>
       <div id="search-result-list"></div>
@@ -214,12 +220,20 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
         <div class="confirm-brand-sub">แบรนด์ที่จะลงทะเบียน</div>
       </div>
     </div>
+
     <!-- Tire Selector -->
     <div class="member-card" id="tire-card">
       <h3>🔵 เลือกยางที่เปลี่ยน</h3>
       <div id="tire-loading" style="font-size:13px;color:#888">กำลังโหลดข้อมูลยาง...</div>
       <div id="tire-list"></div>
       <div id="tire-selected" style="display:none;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 12px;font-size:14px;color:#166534;font-weight:600;margin-top:8px"></div>
+    </div>
+
+    <!-- ★ NEW: Mileage Card -->
+    <div class="mileage-card" id="mileage-card">
+      <h3>🔢 เลขไมล์ปัจจุบัน</h3>
+      <input type="number" id="mileage-input" placeholder="กรอกเลขไมล์ (กม.)" inputmode="numeric">
+      <div class="mileage-hint" id="mileage-hint">ไม่บังคับ — กรอกหรือปล่อยว่างได้</div>
     </div>
 
     <div class="receipt-card">
@@ -235,6 +249,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
       </div>
       <div class="receipt-status" id="receipt-status"></div>
     </div>
+
     <div class="member-card">
       <h3>ข้อมูลสมาชิก</h3>
       <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="c-name"></span></div>
@@ -247,6 +262,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
       <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="c-car"></span></div>
       <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="c-plate"></span></div>
     </div>
+
     <button class="action-btn" id="open-form-btn" onclick="openWarrantyForm()" disabled>
       📎 กรุณาถ่ายรูปใบเสร็จก่อน
     </button>
@@ -314,7 +330,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 <script>
 // ── Loaded from config.js ──
 var GAS_API_URL = CONFIG.GAS_API_URL;
-
 var BRANDS      = CONFIG.BRANDS;
 
 var selectedBrand  = null;
@@ -328,7 +343,40 @@ var waitingTimer   = null;
 var selectedTire   = null;
 var waitingElapsed = 0;
 
-// ── Brand grid — loaded dynamically from GAS ──
+// ── ★ NEW: Mileage state ──
+var currentMileage = "";  // value entered by staff
+
+// ── ★ NEW: Update mileage hint based on brand requiresMileage ──
+function updateMileageHint() {
+  var required = selectedBrand && selectedBrand.requiresMileage;
+  var hint  = document.getElementById("mileage-hint");
+  var input = document.getElementById("mileage-input");
+  if (required) {
+    hint.textContent  = "⚠️ จำเป็นต้องกรอกสำหรับแบรนด์นี้";
+    hint.className    = "mileage-hint required";
+  } else {
+    hint.textContent  = "ไม่บังคับ — กรอกหรือปล่อยว่างได้";
+    hint.className    = "mileage-hint";
+  }
+  input.classList.remove("required-err");
+}
+
+// ── ★ NEW: Check if form is ready to open ──
+function checkFormReady() {
+  if (!receiptReady) return;
+  var required = selectedBrand && selectedBrand.requiresMileage;
+  var mileage  = document.getElementById("mileage-input").value.trim();
+  if (required && !mileage) {
+    // Not ready — mileage required but empty
+    document.getElementById("open-form-btn").disabled    = true;
+    document.getElementById("open-form-btn").textContent = "⚠️ กรุณากรอกเลขไมล์ก่อน";
+    return;
+  }
+  document.getElementById("open-form-btn").disabled    = false;
+  document.getElementById("open-form-btn").textContent = "🔗 เปิดฟอร์มลงทะเบียน " + (selectedBrand ? selectedBrand.name : "");
+}
+
+// ── Brand grid ──
 function renderBrands(brands){
   var grid=document.getElementById("brand-grid");
   grid.innerHTML="";
@@ -337,10 +385,7 @@ function renderBrands(brands){
     el.className="brand-card "+(b.active?"active":"inactive");
     el.style.background  = b.active ? (b.background||"#b40000") : "white";
     el.style.borderColor = b.active ? (b.background||"#b40000") : "#e0e0e0";
-
-    // Use imageUrl directly (GAS already converts to lh3.googleusercontent.com)
     var imgSrc = b.imageUrl || "";
-
     var imgWrap = document.createElement("div");
     imgWrap.style.cssText = "width:72px;height:72px;display:flex;align-items:center;justify-content:center;background:white;border-radius:10px;padding:4px;margin-bottom:4px";
     var img = document.createElement("img");
@@ -348,11 +393,9 @@ function renderBrands(brands){
     img.style.cssText = "width:64px;height:64px;object-fit:contain";
     img.onerror = function(){ imgWrap.style.display="none"; };
     imgWrap.appendChild(img);
-
     var nameDiv = document.createElement("div");
     nameDiv.style.cssText = "font-size:17px;font-weight:800;letter-spacing:0.5px;color:"+(b.active?(b.textColor||"white"):"#aaa");
     nameDiv.textContent = b.name;
-
     var subDiv = document.createElement("div");
     if(b.active){
       subDiv.style.cssText = "font-size:12px;color:rgba(255,255,255,.75)";
@@ -361,12 +404,10 @@ function renderBrands(brands){
       subDiv.className = "brand-soon";
       subDiv.textContent = "เร็วๆ นี้";
     }
-
     if(imgSrc) el.appendChild(imgWrap);
     else { var icon=document.createElement("div"); icon.style.cssText="width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:36px"; icon.textContent="🔘"; el.appendChild(icon); }
     el.appendChild(nameDiv);
     el.appendChild(subDiv);
-
     if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
     grid.appendChild(el);
   });
@@ -384,7 +425,6 @@ function renderBrands(brands){
     function(err){ document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">Error: '+err+'</div>'; }
   );
 })();
-
 
 // ── Navigation ──
 function show(id){
@@ -453,6 +493,8 @@ function showDebug(){
     "receiptUrl: "+(receiptUrl?receiptUrl.substring(0,30)+"...":"null")+"<br>"+
     "lookupResult: "+(lookupResult?"✅":"null")+"<br>"+
     "selectedBrand: "+(selectedBrand?selectedBrand.name:"null")+"<br>"+
+    "requiresMileage: "+(selectedBrand?selectedBrand.requiresMileage:"null")+"<br>"+
+    "mileage: "+document.getElementById("mileage-input").value+"<br>"+
     "selectedTire: "+(selectedTire?selectedTire.label:"null");
 }
 
@@ -467,32 +509,54 @@ function jsonp(url,onSuccess,onError){
   document.body.appendChild(s);
 }
 
+// ── ★ UPDATED: Reset confirm screen helper ──
+function _resetConfirmScreen() {
+  receiptReady = false; receiptUrl = null;
+  document.getElementById("receipt-area").classList.remove("has-photo");
+  document.getElementById("receipt-preview").style.display   = "none";
+  document.getElementById("receipt-placeholder").style.display = "block";
+  document.getElementById("receipt-status").textContent      = "";
+  document.getElementById("receipt-status").className        = "receipt-status";
+  document.getElementById("open-form-btn").disabled          = true;
+  document.getElementById("open-form-btn").textContent       = "📎 กรุณาถ่ายรูปใบเสร็จก่อน";
+  document.getElementById("receipt-input").value             = "";
+  document.getElementById("mileage-input").value             = "";  // ★ reset mileage
+  document.getElementById("mileage-input").classList.remove("required-err");
+  selectedTire = null;
+  document.getElementById("tire-selected").style.display = "none";
+  updateMileageHint(); // ★ update hint for current brand
+}
+
 // ── QR lookup ──
 function handleQR(raw){
   var carId=raw.trim().toUpperCase();
   currentCarId=carId;
   document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
   show("s-loading");
-  jsonp(GAS_API_URL+"?carId="+encodeURIComponent(carId),function(result){
-    if(result.error){ document.getElementById("error-msg").textContent=result.error; show("s-error"); return; }
+  jsonp(GAS_API_URL+"?action=getMemberByQR&carId="+encodeURIComponent(carId),function(result){
+    if(!result.success){ document.getElementById("error-msg").textContent=result.error||"ไม่พบข้อมูล"; show("s-error"); return; }
     lookupResult=result;
-    document.getElementById("c-name").textContent    =result.fullName;
-    document.getElementById("c-phone").textContent   =result.phone;
-    document.getElementById("c-memberid").textContent=result.memberId;
-    document.getElementById("c-carid").textContent   =result.carId;
-    document.getElementById("c-car").textContent     =result.carBrand+" "+result.carModel;
-    document.getElementById("c-plate").textContent   =result.plate;
-    receiptReady=false; receiptUrl=null;
-    document.getElementById("receipt-area").classList.remove("has-photo");
-    document.getElementById("receipt-preview").style.display="none";
-    document.getElementById("receipt-placeholder").style.display="block";
-    document.getElementById("receipt-status").textContent="";
-    document.getElementById("receipt-status").className="receipt-status";
-    document.getElementById("open-form-btn").disabled=true;
-    document.getElementById("open-form-btn").textContent="📎 กรุณาถ่ายรูปใบเสร็จก่อน";
-    document.getElementById("receipt-input").value="";
-    selectedTire = null;
-    document.getElementById("tire-selected").style.display="none";
+    document.getElementById("c-name").textContent    =(result.member.title||"")+" "+(result.member.firstname||"")+" "+(result.member.lastname||"");
+    document.getElementById("c-phone").textContent   =result.member.phone;
+    document.getElementById("c-memberid").textContent=result.member.id;
+    document.getElementById("c-carid").textContent   =carId;
+    document.getElementById("c-car").textContent     =(result.car?result.car.carbrand+" "+result.car.carmodel:"");
+    document.getElementById("c-plate").textContent   =(result.car?result.car.license:"");
+    // Build params for form
+    var m=result.member, car=result.car||{};
+    var phone=m.phone;
+    if(phone&&phone[0]!=="0"&&phone.length===9) phone="0"+phone;
+    lookupResult.params={
+      first_name:m.firstname||"", last_name:m.lastname||"",
+      gender:(m.title==="นาย")?"ชาย":"หญิง",
+      phone:phone, address:m.address||"", province:m.province||"",
+      district:m.district||"", sub_district:m.subdistrict||"",
+      zip_code:m.zipcode||"", plate:car.license||"",
+      shop_name:"B.N. Tires & Max",
+      car_brand:car.carbrand||"", car_model:car.carmodel||""
+    };
+    document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
+    _resetConfirmScreen();
     loadTires();
     show("s-confirm");
   },function(err){
@@ -501,7 +565,7 @@ function handleQR(raw){
   });
 }
 
-// ── Receipt upload via ImgBB ──
+// ── Receipt upload via Cloudinary ──
 async function handleReceiptPhoto(input){
   if(!input.files||!input.files[0]) return;
   var file=input.files[0];
@@ -518,7 +582,6 @@ async function handleReceiptPhoto(input){
   document.getElementById("open-form-btn").disabled=true;
 
   try {
-    // Compress to 800px / 70%
     var base64=await new Promise(function(resolve){
       var img=new window.Image();
       img.onload=function(){
@@ -534,8 +597,6 @@ async function handleReceiptPhoto(input){
 
     statusEl.textContent="⏳ กำลังอัพโหลด...";
 
-    // Upload to ImgBB — fast, direct, no CORS issues
-    // Upload to Cloudinary — no domain restrictions, free tier
     var cloudFormData = new FormData();
     cloudFormData.append("file", base64);
     cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
@@ -548,29 +609,24 @@ async function handleReceiptPhoto(input){
     var data = await res.json();
     if (data.error) throw new Error(data.error.message || "Cloudinary upload failed");
 
-    // Store full Cloudinary URL
     receiptUrl = data.secure_url;
-    statusEl.textContent = "✅ OK: " + receiptUrl.substring(0,50);
+    receiptReady = true;
+    areaEl.classList.add("has-photo");
+    statusEl.className="receipt-status ok";
+    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
 
-
-
-
-    // Save image URL to GAS (non-blocking — don't wait for it)
+    // Save receipt URL to GAS (non-blocking)
     jsonp(
-      GAS_API_URL+"?action=saveReceiptUrl"+
-      "&carId="+encodeURIComponent(currentCarId)+
-      "&url="+encodeURIComponent(receiptUrl),
+      GAS_API_URL+"?action=saveReceiptUrl&carId="+encodeURIComponent(currentCarId)+"&url="+encodeURIComponent(receiptUrl),
       function(r){ console.log("saveReceiptUrl:", r.ok ? "ok" : r.error); },
       function(e){ console.log("saveReceiptUrl error:", e); }
     );
 
-    receiptReady=true;
-    
-    areaEl.classList.add("has-photo");
-    statusEl.className="receipt-status ok";
-    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
-    document.getElementById("open-form-btn").disabled=false;
-    document.getElementById("open-form-btn").textContent="🔗 เปิดฟอร์มลงทะเบียน "+selectedBrand.name;
+    // ★ Use checkFormReady instead of directly enabling button
+    checkFormReady();
+
+    // ★ Listen for mileage input changes to recheck readiness
+    document.getElementById("mileage-input").oninput = checkFormReady;
 
   } catch(err){
     statusEl.className="receipt-status error";
@@ -578,35 +634,53 @@ async function handleReceiptPhoto(input){
   }
 }
 
-// ── Open warranty — push to desktop ──
+// ── ★ UPDATED: openWarrantyForm — includes mileage ──
 function openWarrantyForm(){
   if(!lookupResult||!selectedBrand||!receiptReady) return;
-  var p=Object.assign({},lookupResult.params);
-  p.car_id=currentCarId;
-  if(receiptUrl) p.receipt_url=receiptUrl;
-  if(selectedTire){
+
+  // ★ Validate mileage if required
+  var mileage = document.getElementById("mileage-input").value.trim();
+  if (selectedBrand.requiresMileage && !mileage) {
+    document.getElementById("mileage-input").classList.add("required-err");
+    document.getElementById("mileage-input").focus();
+    return;
+  }
+  document.getElementById("mileage-input").classList.remove("required-err");
+  currentMileage = mileage;
+
+  var p = Object.assign({}, lookupResult.params);
+  p.car_id = currentCarId;
+  if (receiptUrl)   p.receipt_url = receiptUrl;
+  if (mileage)      p.mileage     = mileage;  // ★ pass mileage to extension
+  if (selectedTire) {
     p.tire_model  = selectedTire.model;
     p.tire_width  = selectedTire.width;
     p.tire_aspect = selectedTire.aspect;
     p.tire_rim    = selectedTire.rim;
-  } // pass image URL directly to extension
-  var qs=Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
-    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
-  var warrantyUrl=selectedBrand.url+"?"+qs;
+  }
 
-  document.getElementById("waiting-text").textContent="กำลังส่งไปยังคอมพิวเตอร์...";
-  document.getElementById('waiting-debug').textContent = 'sending receiptUrl: '+(receiptUrl||'NULL');
-  // Debug: show receipt info
-  var debugEl = document.getElementById("waiting-debug");
-  if(debugEl) debugEl.textContent = "receiptUrl: "+(receiptUrl||"NULL")+" | receipt_url in params: "+(p.receipt_url||"NULL");
+  var qs = Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
+    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
+  var warrantyUrl = selectedBrand.url + "?" + qs;
+
+  document.getElementById("waiting-text").textContent = "กำลังส่งไปยังคอมพิวเตอร์...";
+  document.getElementById("waiting-debug").textContent = "mileage: "+(mileage||"(ว่าง)")+" | receipt: "+(receiptUrl?"ok":"null");
   show("s-waiting");
-  waitingElapsed=0;
+  waitingElapsed = 0;
 
   jsonp(
     GAS_API_URL+"?action=pushUrl&carId="+encodeURIComponent(currentCarId)+"&url="+encodeURIComponent(warrantyUrl),
     function(result){
       if(result.ok){
-        document.getElementById("waiting-text").textContent="รอให้คอมพิวเตอร์เปิดฟอร์ม...";
+        // ★ Update car mileage in GAS (non-blocking)
+        if (mileage) {
+          jsonp(
+            GAS_API_URL+"?action=updateCarMileage&carId="+encodeURIComponent(currentCarId)+"&mileage="+encodeURIComponent(mileage),
+            function(r){ console.log("updateCarMileage:", r.ok ? "ok" : r.error); },
+            function(e){ console.log("updateCarMileage error:", e); }
+          );
+        }
+        document.getElementById("waiting-text").textContent = "รอให้คอมพิวเตอร์เปิดฟอร์ม...";
         pollDesktop();
       } else {
         showWaitingError("ส่ง URL ไม่สำเร็จ: "+(result.error||""));
@@ -635,7 +709,8 @@ function pollDesktop(){
 
 function cancelWaiting(){ clearInterval(waitingTimer); show("s-confirm"); }
 function showWaitingError(msg){ clearInterval(waitingTimer); document.getElementById("error-msg").textContent=msg; show("s-error"); }
-// ── Manual Search ──
+
+// ── Load tires ──
 function loadTires(){
   if(!selectedBrand) return;
   document.getElementById("tire-loading").style.display="block";
@@ -657,7 +732,6 @@ function loadTires(){
         btn.innerHTML='<span style="font-weight:700;color:#1a0000">'+t.model+'</span> <span style="color:#888">'+t.width+'/'+t.aspect+'R'+t.rim+'</span>';
         btn.addEventListener("click",function(){
           selectedTire=t;
-          // Highlight selected
           list.querySelectorAll("button").forEach(function(b){ b.style.borderColor="#e0e0e0"; b.style.background="white"; });
           btn.style.borderColor="#b40000"; btn.style.background="#fff5f5";
           document.getElementById("tire-selected").style.display="block";
@@ -672,6 +746,7 @@ function loadTires(){
   );
 }
 
+// ── Manual Search ──
 function openSearch(){
   document.getElementById("search-brand-label").textContent = selectedBrand ? selectedBrand.name : "";
   document.getElementById("search-phone").value = "";
@@ -723,18 +798,8 @@ function renderSearchResults(results){
       document.getElementById("c-carid").textContent    = r.carId;
       document.getElementById("c-car").textContent      = r.carBrand + " " + r.carModel;
       document.getElementById("c-plate").textContent    = r.plate;
-      receiptReady = false; receiptUrl = null;
-      document.getElementById("receipt-area").classList.remove("has-photo");
-      document.getElementById("receipt-preview").style.display = "none";
-      document.getElementById("receipt-placeholder").style.display = "block";
-      document.getElementById("receipt-status").textContent = "";
-      document.getElementById("receipt-status").className = "receipt-status";
-      document.getElementById("open-form-btn").disabled = true;
-      document.getElementById("open-form-btn").textContent = "📎 กรุณาถ่ายรูปใบเสร็จก่อน";
-      document.getElementById("receipt-input").value = "";
       document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
-      selectedTire = null;
-      document.getElementById("tire-selected").style.display = "none";
+      _resetConfirmScreen();
       loadTires();
       show("s-confirm");
     });
@@ -742,11 +807,9 @@ function renderSearchResults(results){
   });
   document.getElementById("search-results").style.display = "block";
 }
-
 </script>
 
 <script>
-// Unregister any existing service workers to prevent caching issues
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(function(regs){
     regs.forEach(function(r){ r.unregister(); });
