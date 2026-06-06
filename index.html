@@ -391,14 +391,7 @@ function renderBrands(brands){
     var img = document.createElement("img");
     img.src = imgSrc || "";
     img.style.cssText = "width:64px;height:64px;object-fit:contain";
-    img.onerror = function(){
-      // Show brand initial as fallback when image fails to load
-      imgWrap.innerHTML = "";
-      var ini = document.createElement("div");
-      ini.textContent = (b.name || "?")[0].toUpperCase();
-      ini.style.cssText = "font-size:28px;font-weight:900;color:" + (b.textColor || "#fff");
-      imgWrap.appendChild(ini);
-    };
+    img.onerror = function(){ imgWrap.style.display="none"; };
     imgWrap.appendChild(img);
     var nameDiv = document.createElement("div");
     nameDiv.style.cssText = "font-size:17px;font-weight:800;letter-spacing:0.5px;color:"+(b.active?(b.textColor||"white"):"#aaa");
