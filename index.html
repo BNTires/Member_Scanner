@@ -661,7 +661,7 @@ function openWarrantyForm(){
 
   var qs = Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
     .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
-  var warrantyUrl = selectedBrand.url + "?" + qs;
+  var warrantyUrl = selectedBrand.url + (selectedBrand.url.includes("?") ? "&" : "?") + qs;
 
   document.getElementById("waiting-text").textContent = "กำลังส่งไปยังคอมพิวเตอร์...";
   document.getElementById("waiting-debug").textContent = "mileage: "+(mileage||"(ว่าง)")+" | receipt: "+(receiptUrl?"ok":"null");
