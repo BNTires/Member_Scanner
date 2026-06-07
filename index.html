@@ -250,6 +250,21 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
       <div class="receipt-status" id="receipt-status"></div>
     </div>
 
+    <!-- ★ Car photo card — shown only for brands with requiresCarPhoto -->
+    <div class="receipt-card" id="car-photo-card" style="display:none">
+      <h3>📸 รูปรถยนต์</h3>
+      <div class="receipt-area" id="car-photo-area">
+        <input type="file" accept="image/*" capture="environment" id="car-photo-input" onchange="handleCarPhoto(this)">
+        <div id="car-photo-placeholder">
+          <div style="font-size:32px;margin-bottom:8px">🚗</div>
+          <div style="font-size:14px;color:#555;font-weight:600">แตะเพื่อถ่ายรูปรถ</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
+        </div>
+        <img id="car-photo-preview" class="receipt-preview">
+      </div>
+      <div class="receipt-status" id="car-photo-status"></div>
+    </div>
+
     <div class="member-card">
       <h3>ข้อมูลสมาชิก</h3>
       <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="c-name"></span></div>
@@ -347,9 +362,14 @@ var waitingElapsed = 0;
 
 // ── ★ NEW: Mileage state ──
 var currentMileage = "";  // value entered by staff
+var carPhotoUrl    = null; // ★ second photo for brands that require it (e.g. Lenso)
+var carPhotoReady  = false;
 
 // ── ★ NEW: Update mileage hint based on brand requiresMileage ──
 function updateMileageHint() {
+  // Show/hide car photo card
+  var cardEl = document.getElementById("car-photo-card");
+  if (cardEl) cardEl.style.display = (selectedBrand && selectedBrand.requiresCarPhoto) ? "block" : "none";
   var required = selectedBrand && selectedBrand.requiresMileage;
   var hint  = document.getElementById("mileage-hint");
   var input = document.getElementById("mileage-input");
@@ -366,12 +386,18 @@ function updateMileageHint() {
 // ── ★ NEW: Check if form is ready to open ──
 function checkFormReady() {
   if (!receiptReady) return;
-  var required = selectedBrand && selectedBrand.requiresMileage;
-  var mileage  = document.getElementById("mileage-input").value.trim();
-  if (required && !mileage) {
-    // Not ready — mileage required but empty
+  var requiresMileage   = selectedBrand && selectedBrand.requiresMileage;
+  var requiresCarPhoto  = selectedBrand && selectedBrand.requiresCarPhoto;
+  var mileage = document.getElementById("mileage-input").value.trim();
+
+  if (requiresMileage && !mileage) {
     document.getElementById("open-form-btn").disabled    = true;
     document.getElementById("open-form-btn").textContent = "⚠️ กรุณากรอกเลขไมล์ก่อน";
+    return;
+  }
+  if (requiresCarPhoto && !carPhotoReady) {
+    document.getElementById("open-form-btn").disabled    = true;
+    document.getElementById("open-form-btn").textContent = "⚠️ กรุณาถ่ายรูปรถก่อน";
     return;
   }
   document.getElementById("open-form-btn").disabled    = false;
@@ -523,6 +549,14 @@ function _resetConfirmScreen() {
   document.getElementById("open-form-btn").textContent       = "📎 กรุณาถ่ายรูปใบเสร็จก่อน";
   document.getElementById("receipt-input").value             = "";
   document.getElementById("mileage-input").value             = "";  // ★ reset mileage
+  carPhotoUrl   = null; carPhotoReady = false;
+  document.getElementById("car-photo-area").classList.remove("has-photo");
+  document.getElementById("car-photo-preview").style.display    = "none";
+  document.getElementById("car-photo-placeholder").style.display = "block";
+  document.getElementById("car-photo-status").textContent       = "";
+  document.getElementById("car-photo-input").value              = "";
+  // Show car photo card only if brand requires it
+  document.getElementById("car-photo-card").style.display = (selectedBrand && selectedBrand.requiresCarPhoto) ? "block" : "none";
   document.getElementById("mileage-input").classList.remove("required-err");
   selectedTire = null;
   document.getElementById("tire-selected").style.display = "none";
@@ -636,6 +670,63 @@ async function handleReceiptPhoto(input){
   }
 }
 
+// ── ★ handleCarPhoto — second photo upload (e.g. Lenso car photo) ──
+async function handleCarPhoto(input){
+  if(!input.files||!input.files[0]) return;
+  var file=input.files[0];
+  var statusEl  = document.getElementById("car-photo-status");
+  var previewEl = document.getElementById("car-photo-preview");
+  var areaEl    = document.getElementById("car-photo-area");
+
+  var reader=new FileReader();
+  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("car-photo-placeholder").style.display="none"; };
+  reader.readAsDataURL(file);
+
+  statusEl.className="receipt-status uploading";
+  statusEl.textContent="⏳ กำลังบีบอัดรูปรถ...";
+  document.getElementById("open-form-btn").disabled=true;
+
+  try {
+    var base64=await new Promise(function(resolve){
+      var img=new window.Image();
+      img.onload=function(){
+        var c=document.createElement("canvas");
+        var MAX=CONFIG.IMAGE_MAX_PX,w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+        c.width=w; c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(c.toDataURL("image/jpeg",CONFIG.IMAGE_QUALITY).split(",")[1]);
+      };
+      img.src=URL.createObjectURL(file);
+    });
+
+    statusEl.textContent="⏳ กำลังอัพโหลด...";
+
+    var cloudFormData=new FormData();
+    cloudFormData.append("file", base64);
+    cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
+    cloudFormData.append("folder", "bntires_car_photos");
+
+    var res=await fetch(
+      "https://api.cloudinary.com/v1_1/"+CONFIG.CLOUDINARY_CLOUD+"/image/upload",
+      { method:"POST", body:cloudFormData }
+    );
+    var data=await res.json();
+    if(data.error) throw new Error(data.error.message||"Cloudinary upload failed");
+
+    carPhotoUrl   = data.secure_url;
+    carPhotoReady = true;
+    areaEl.classList.add("has-photo");
+    statusEl.className="receipt-status ok";
+    statusEl.textContent="✅ อัพโหลดสำเร็จ";
+    checkFormReady();
+
+  } catch(err){
+    statusEl.className="receipt-status error";
+    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
+  }
+}
+
 // ── ★ UPDATED: openWarrantyForm — includes mileage ──
 function openWarrantyForm(){
   if(!lookupResult||!selectedBrand||!receiptReady) return;
@@ -654,6 +745,7 @@ function openWarrantyForm(){
   p.car_id = currentCarId;
   if (receiptUrl)   p.receipt_url = receiptUrl;
   if (mileage)      p.mileage     = mileage;  // ★ pass mileage to extension
+  if (carPhotoUrl)  p.car_photo_url = carPhotoUrl; // ★ pass car photo URL
   if (selectedTire) {
     p.tire_model  = selectedTire.model;
     p.tire_width  = selectedTire.width;
