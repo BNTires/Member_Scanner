@@ -156,7 +156,8 @@ function poll() {
 
 function handleNewUrl(url, carId) {
   log("📋 ได้รับฟอร์มสำหรับ: "+(carId||"unknown"), "info");
-  log("🔗 กำลังเปิด Atlas...");
+  var brandHint = url.match(/https?:\/\/([^\/]+)/)?.[1] || "form";
+  log("🔗 กำลังเปิด: " + brandHint);
   setStatus("กำลังเปิดฟอร์ม — "+carId, "");
 
   // Open Atlas in new tab
