@@ -287,8 +287,9 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
     <div class="big-icon">⚠️</div>
     <div class="center-title">เกิดข้อผิดพลาด</div>
     <div class="center-desc" id="error-msg"></div>
-    <button class="btn-primary" onclick="show('s-brands')">← กลับหน้าแรก</button>
-    <button class="btn-secondary" onclick="show('s-permission')">🔄 สแกนใหม่</button>
+    <button class="btn-primary" onclick="retryOpenForm()" id="retry-error-btn">🔄 ลองส่งใหม่อีกครั้ง</button>
+    <button class="btn-secondary" onclick="show('s-confirm')">← กลับหน้ายืนยัน</button>
+    <button class="btn-secondary" onclick="show('s-brands')" style="margin-top:4px">← กลับหน้าแรก</button>
   </div>
 </div>
 
@@ -308,8 +309,9 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
     <div id="waiting-debug" style="font-size:10px;color:#ffcc00;margin-top:8px;text-align:center;padding:0 16px;word-break:break-all"></div>
     <div id="screen-log" style="font-size:10px;color:#88ff88;margin-top:8px;padding:0 16px;word-break:break-all;text-align:left;background:rgba(0,0,0,0.3);border-radius:8px;padding:8px"></div>
   </div>
-  <div style="padding:16px">
-    <button class="cancel-btn" onclick="cancelWaiting()">ยกเลิก</button>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+    <button class="action-btn" id="retry-form-btn" onclick="retryOpenForm()" style="margin-bottom:0">🔄 ลองส่งใหม่อีกครั้ง</button>
+    <button class="cancel-btn" onclick="cancelWaiting()">ยกเลิก / กลับหน้ายืนยัน</button>
   </div>
 </div>
 
