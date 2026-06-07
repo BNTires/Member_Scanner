@@ -637,7 +637,7 @@ async function handleReceiptPhoto(input){
     cloudFormData.append("file", "data:image/jpeg;base64," + base64);
     cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
     cloudFormData.append("folder", "bntires_receipts");
-    cloudFormData.append("public_id", (currentCarId||"receipt")+"_receipt");
+    cloudFormData.append("public_id", (currentCarId||"receipt")+"_bill");
 
     var res = await fetch(
       "https://api.cloudinary.com/v1_1/" + CONFIG.CLOUDINARY_CLOUD + "/image/upload",
@@ -707,7 +707,7 @@ async function handleCarPhoto(input){
     cloudFormData.append("file", "data:image/jpeg;base64," + base64);
     cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
     cloudFormData.append("folder", "bntires_car_photos");
-    cloudFormData.append("public_id", (currentCarId||"car")+"_photo");
+    cloudFormData.append("public_id", (currentCarId||"car")+"_car");
 
     var res=await fetch(
       "https://api.cloudinary.com/v1_1/"+CONFIG.CLOUDINARY_CLOUD+"/image/upload",
