@@ -3,7 +3,7 @@
 // ============================================================
 
 var CONFIG = {
-  GAS_API_URL:       "https://script.google.com/macros/s/AKfycbz8kCIxcBC3iM0JqCyp03XBzVug4D9UyAHvegGqFfxVA_L9jOrfcKBRcSLxN1WDBFpysA/exec",
+  GAS_API_URL:       "https://script.google.com/macros/s/AKfycbwKhkryeqUPbVqKDyWI1C4J4Iui-dMyCKOnXmBT2PPpSI2K-VwJulQEYNik9HHq2oTS-w/exec",
   // ── Cloudinary Config ──
   CLOUDINARY_CLOUD:  "dqgszn5b1",
   CLOUDINARY_PRESET: "Bntires",
