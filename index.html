@@ -564,33 +564,30 @@ function _resetConfirmScreen() {
 }
 
 // ── QR lookup ──
+// ★ FIXED: use the "getMemberByQR" action name, and read GAS's ACTUAL
+//   response shape (result.ok / result.fullName / result.carBrand / etc.)
+//   instead of the old imaginary shape (result.success / result.member.*).
+//   lookupCarId() in Code.gs already returns exactly this flat shape.
 function handleQR(raw){
   var carId=raw.trim().toUpperCase();
   currentCarId=carId;
   document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
   show("s-loading");
   jsonp(GAS_API_URL+"?action=getMemberByQR&carId="+encodeURIComponent(carId),function(result){
-    if(!result.success){ document.getElementById("error-msg").textContent=result.error||"ไม่พบข้อมูล"; show("s-error"); return; }
+    if(!result || !result.ok){
+      document.getElementById("error-msg").textContent=(result && result.error) || "ไม่พบข้อมูล";
+      show("s-error");
+      return;
+    }
     lookupResult=result;
-    document.getElementById("c-name").textContent    =(result.member.title||"")+" "+(result.member.firstname||"")+" "+(result.member.lastname||"");
-    document.getElementById("c-phone").textContent   =result.member.phone;
-    document.getElementById("c-memberid").textContent=result.member.id;
+    document.getElementById("c-name").textContent    =result.fullName||"";
+    document.getElementById("c-phone").textContent   =result.phone||"";
+    document.getElementById("c-memberid").textContent=result.memberId||"";
     document.getElementById("c-carid").textContent   =carId;
-    document.getElementById("c-car").textContent     =(result.car?result.car.carbrand+" "+result.car.carmodel:"");
-    document.getElementById("c-plate").textContent   =(result.car?result.car.license:"");
-    // Build params for form
-    var m=result.member, car=result.car||{};
-    var phone=m.phone;
-    if(phone&&phone[0]!=="0"&&phone.length===9) phone="0"+phone;
-    lookupResult.params={
-      first_name:m.firstname||"", last_name:m.lastname||"",
-      gender:(m.title==="นาย")?"ชาย":"หญิง",
-      phone:phone, address:m.address||"", province:m.province||"",
-      district:m.district||"", sub_district:m.subdistrict||"",
-      zip_code:m.zipcode||"", plate:car.license||"",
-      shop_name:"B.N. Tires & Max",
-      car_brand:car.carbrand||"", car_model:car.carmodel||""
-    };
+    document.getElementById("c-car").textContent     =((result.carBrand||"")+" "+(result.carModel||"")).trim();
+    document.getElementById("c-plate").textContent   =result.plate||"";
+    // GAS already builds the full params object we need for the warranty form
+    lookupResult.params = result.params || {};
     document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
     _resetConfirmScreen();
     loadTires();
