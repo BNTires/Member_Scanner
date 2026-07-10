@@ -5,8 +5,9 @@
 
 var CONFIG = {
 
-  // ── Google Apps Script API URL ──
-  GAS_API_URL: "https://script.google.com/macros/s/AKfycbwyMWsRVoSdFSFYSMtIuU-AEiiBCuB6xUjhg3CQKJBbcqHdLJgeHp-toEqE0lw8o1arqQ/exec",
+  // ── Google Apps Script API URL is now loaded from gas-urls.js ──
+  // (see <script src="https://bntires.github.io/Member_Scanner/gas-urls.js">
+  // in index.html, loaded BEFORE this file)
 
   // ── Cloudinary Config ──
   CLOUDINARY_CLOUD:  "dqgszn5b1",
