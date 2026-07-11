@@ -110,7 +110,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 <div class="screen active" id="s-brands">
   <div class="hdr">
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">Tyre Warranty</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <div class="hdr-title">Tyre Warranty</div>
+      <button id="refresh-brands-btn" onclick="loadBrands()" title="รีเฟรช" style="background:rgba(255,255,255,.2);border:none;color:white;width:28px;height:28px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s">🔄</button>
+    </div>
     <div class="hdr-sub">เลือกแบรนด์ยางก่อนสแกน QR</div>
   </div>
   <div class="content">
@@ -409,8 +412,10 @@ var carPhotoReady  = false;
 
 // ── ★ Service cards (สลับยาง / ปะยาง) — appended alongside real tire brands ──
 var SERVICE_TYPES = [
-  { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true, background:"#2563eb", textColor:"#ffffff", icon:"🔄" },
-  { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true, background:"#16a34a", textColor:"#ffffff", icon:"🔧" }
+  { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
+    background:"#fbcfe8", borderColor:"#f9a8d4", textColor:"#9d174d", icon:"🔄" },
+  { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true,
+    background:"#bbf7d0", borderColor:"#86efac", textColor:"#166534", icon:"🔧" }
 ];
 
 // ── ★ NEW: Update mileage hint based on brand requiresMileage ──
@@ -460,7 +465,7 @@ function renderBrands(brands){
     var el=document.createElement("div");
     el.className="brand-card "+(b.active?"active":"inactive");
     el.style.background  = b.active ? (b.background||"#b40000") : "white";
-    el.style.borderColor = b.active ? (b.background||"#b40000") : "#e0e0e0";
+    el.style.borderColor = b.active ? (b.borderColor||b.background||"#b40000") : "#e0e0e0";
     var imgSrc = b.imageUrl || "";
     var imgWrap = document.createElement("div");
     imgWrap.style.cssText = "width:72px;height:72px;display:flex;align-items:center;justify-content:center;background:white;border-radius:10px;padding:4px;margin-bottom:4px";
@@ -474,7 +479,7 @@ function renderBrands(brands){
     nameDiv.textContent = b.name;
     var subDiv = document.createElement("div");
     if(b.active){
-      subDiv.style.cssText = "font-size:12px;color:rgba(255,255,255,.75)";
+      subDiv.style.cssText = "font-size:12px;color:"+(b.textColor||"white")+";opacity:.75";
       subDiv.textContent = b.service ? "แตะเพื่อบันทึก →" : "แตะเพื่อสแกน →";
     } else {
       subDiv.className = "brand-soon";
@@ -489,18 +494,24 @@ function renderBrands(brands){
   });
 }
 
-// ── Load brands from GAS ──
-(function loadBrands(){
+// ── Load brands from GAS (also callable from the refresh button) ──
+function loadBrands(){
+  var btn = document.getElementById("refresh-brands-btn");
+  if (btn) {
+    btn.style.transform = "rotate(360deg)";
+    setTimeout(function(){ btn.style.transform = "rotate(0deg)"; }, 500);
+  }
   document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:#aaa;font-size:13px;grid-column:1/-1">กำลังโหลด...</div>';
   jsonp(
     GAS_API_URL+"?action=getBrands",
     function(result){
-      if(result.ok && result.brands) renderBrands(result.brands.concat(SERVICE_TYPES));
+      if(result.ok && result.brands) renderBrands(SERVICE_TYPES.concat(result.brands));
       else document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">โหลดแบรนด์ไม่ได้</div>';
     },
     function(err){ document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">Error: '+err+'</div>'; }
   );
-})();
+}
+loadBrands();
 
 // ── Navigation ──
 function show(id){
