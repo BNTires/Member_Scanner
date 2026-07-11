@@ -109,7 +109,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 <!-- Screen 1: Brand Picker -->
 <div class="screen active" id="s-brands">
   <div class="hdr" style="position:relative">
-    <button id="refresh-brands-btn" onclick="loadBrands()" title="รีเฟรช" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s">🔄</button>
+    <button id="refresh-brands-btn" onclick="hardRefresh()" title="รีเฟรชทั้งหน้า" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.25);border:none;color:white;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s">🔄</button>
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
     <div class="hdr-title">Tyre Warranty</div>
     <div class="hdr-sub">เลือกแบรนด์ยางก่อนสแกน QR</div>
@@ -411,9 +411,9 @@ var carPhotoReady  = false;
 // ── ★ Service cards (สลับยาง / ปะยาง) — appended alongside real tire brands ──
 var SERVICE_TYPES = [
   { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
-    background:"#db2777", borderColor:"#be185d", textColor:"#ffffff", icon:"🔄" },
+    background:"#be185d", borderColor:"#9d174d", textColor:"#ffffff", icon:"🔄" },
   { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true,
-    background:"#22c55e", borderColor:"#16a34a", textColor:"#ffffff", icon:"🔧" }
+    background:"#15803d", borderColor:"#166534", textColor:"#ffffff", icon:"🔧" }
 ];
 
 // ── ★ NEW: Update mileage hint based on brand requiresMileage ──
@@ -492,13 +492,29 @@ function renderBrands(brands){
   });
 }
 
-// ── Load brands from GAS (also callable from the refresh button) ──
-function loadBrands(){
+// ── ★ Hard refresh: clears caches/service workers and force-reloads the
+//    ENTIRE page with a cache-busting param, so code changes actually
+//    show up (the old refresh button only re-fetched brand data, not
+//    the page's own HTML/JS). ──
+function hardRefresh(){
   var btn = document.getElementById("refresh-brands-btn");
-  if (btn) {
-    btn.style.transform = "rotate(360deg)";
-    setTimeout(function(){ btn.style.transform = "rotate(0deg)"; }, 500);
-  }
+  if (btn) btn.style.transform = "rotate(360deg)";
+  Promise.all([
+    ('caches' in window)
+      ? caches.keys().then(function(names){ return Promise.all(names.map(function(n){ return caches.delete(n); })); })
+      : Promise.resolve(),
+    ('serviceWorker' in navigator)
+      ? navigator.serviceWorker.getRegistrations().then(function(regs){ return Promise.all(regs.map(function(r){ return r.unregister(); })); })
+      : Promise.resolve()
+  ]).then(function(){
+    window.location.href = window.location.pathname + "?_hr=" + Date.now();
+  }).catch(function(){
+    window.location.href = window.location.pathname + "?_hr=" + Date.now();
+  });
+}
+
+// ── Load brands from GAS (called on page load) ──
+function loadBrands(){
   document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:#aaa;font-size:13px;grid-column:1/-1">กำลังโหลด...</div>';
   jsonp(
     GAS_API_URL+"?action=getBrands",
