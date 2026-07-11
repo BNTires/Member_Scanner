@@ -402,10 +402,16 @@ var waitingTimer   = null;
 var selectedTire   = null;
 var waitingElapsed = 0;
 
-// ── ★ NEW: Mileage state ──
+// ── ★ NEW: mileage state ──
 var currentMileage = "";  // value entered by staff
 var carPhotoUrl    = null; // ★ second photo for brands that require it (e.g. Lenso)
 var carPhotoReady  = false;
+
+// ── ★ Service cards (สลับยาง / ปะยาง) — appended alongside real tire brands ──
+var SERVICE_TYPES = [
+  { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true, background:"#2563eb", textColor:"#ffffff", icon:"🔄" },
+  { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true, background:"#16a34a", textColor:"#ffffff", icon:"🔧" }
+];
 
 // ── ★ NEW: Update mileage hint based on brand requiresMileage ──
 function updateMileageHint() {
@@ -455,12 +461,6 @@ function renderBrands(brands){
     el.className="brand-card "+(b.active?"active":"inactive");
     el.style.background  = b.active ? (b.background||"#b40000") : "white";
     el.style.borderColor = b.active ? (b.background||"#b40000") : "#e0e0e0";
-// ── ★ Service cards (สลับยาง / ปะยาง) — appended alongside real tire brands ──
-var SERVICE_TYPES = [
-  { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true, background:"#2563eb", textColor:"#ffffff", icon:"🔄" },
-  { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true, background:"#16a34a", textColor:"#ffffff", icon:"🔧" }
-];
-
     var imgSrc = b.imageUrl || "";
     var imgWrap = document.createElement("div");
     imgWrap.style.cssText = "width:72px;height:72px;display:flex;align-items:center;justify-content:center;background:white;border-radius:10px;padding:4px;margin-bottom:4px";
@@ -648,13 +648,17 @@ function submitServiceLog(){
         document.getElementById("service-save-btn").disabled = false;
         document.getElementById("service-save-btn").textContent = "💾 บันทึก";
         var errEl = document.getElementById("service-err");
-        errEl.textContent = (result && result.error === "all_slots_full")
-          ? "บันทึกครบ 4 ครั้งแล้วสำหรับรถคันนี้ กรุณาติดต่อผู้ดูแลระบบ"
-          : "บันทึกไม่สำเร็จ: " + ((result && result.error) || "unknown error");
+        errEl.textContent = "บันทึกไม่สำเร็จ: " + ((result && result.error) || "unknown error");
         errEl.style.display = "block";
         return;
       }
       show("s-sent");
+      var descEl = document.querySelector("#s-sent .center-desc");
+      if (descEl) {
+        descEl.innerHTML = result.overwritten
+          ? "บันทึกสำเร็จ ✓<br><span style=\"color:#d97706;font-weight:600\">⚠️ รถคันนี้บันทึกบริการครบ 4 ครั้งแล้ว<br>ระบบได้เขียนทับข้อมูลครั้งที่ 1 (เก่าสุด) แทน</span>"
+          : "บันทึกสำเร็จ ✓";
+      }
     },
     function(err){
       document.getElementById("service-save-btn").disabled = false;
@@ -903,7 +907,14 @@ function pollDesktop(){
     }
     jsonp(
       GAS_API_URL+"?action=checkOpened&carId="+encodeURIComponent(currentCarId),
-      function(result){ if(result.opened){ clearInterval(waitingTimer); show("s-sent"); } },
+      function(result){
+        if(result.opened){
+          clearInterval(waitingTimer);
+          var descEl = document.querySelector("#s-sent .center-desc");
+          if (descEl) descEl.innerHTML = "Extension กำลังกรอกข้อมูลอัตโนมัติ<br>กรุณากรอกรุ่นยางบนคอมพิวเตอร์";
+          show("s-sent");
+        }
+      },
       function(){}
     );
   },3000);
