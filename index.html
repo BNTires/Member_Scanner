@@ -108,12 +108,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 
 <!-- Screen 1: Brand Picker -->
 <div class="screen active" id="s-brands">
-  <div class="hdr">
+  <div class="hdr" style="position:relative">
+    <button id="refresh-brands-btn" onclick="loadBrands()" title="รีเฟรช" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s">🔄</button>
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
-      <div class="hdr-title">Tyre Warranty</div>
-      <button id="refresh-brands-btn" onclick="loadBrands()" title="รีเฟรช" style="background:rgba(255,255,255,.2);border:none;color:white;width:28px;height:28px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s">🔄</button>
-    </div>
+    <div class="hdr-title">Tyre Warranty</div>
     <div class="hdr-sub">เลือกแบรนด์ยางก่อนสแกน QR</div>
   </div>
   <div class="content">
@@ -413,9 +411,9 @@ var carPhotoReady  = false;
 // ── ★ Service cards (สลับยาง / ปะยาง) — appended alongside real tire brands ──
 var SERVICE_TYPES = [
   { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
-    background:"#fbcfe8", borderColor:"#f9a8d4", textColor:"#9d174d", icon:"🔄" },
+    background:"#db2777", borderColor:"#be185d", textColor:"#ffffff", icon:"🔄" },
   { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true,
-    background:"#bbf7d0", borderColor:"#86efac", textColor:"#166534", icon:"🔧" }
+    background:"#22c55e", borderColor:"#16a34a", textColor:"#ffffff", icon:"🔧" }
 ];
 
 // ── ★ NEW: Update mileage hint based on brand requiresMileage ──
