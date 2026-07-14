@@ -1,782 +1,1074 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- v1780109361 -->
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tyre Warranty Portal — ระบบสมาชิก</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Tyre Warranty</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tyre Warranty">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#b40000">
+<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=1"></script>
+<script src="config.js?v=1780109361"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js?v=1780109361"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Sarabun","Helvetica Neue",Arial,sans-serif;background:#f2f2f2;min-height:100vh;padding:20px}
-.wrap{max-width:520px;margin:0 auto}
-.logo-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-.logo-circle{width:38px;height:38px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-circle svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
-.logo-text-main{font-size:15px;font-weight:700;color:#222}
-.logo-text-sub{font-size:11px;color:#888}
-.card{background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.1);overflow:hidden;margin-bottom:16px}
-.card-header{background:#cc0000;padding:22px 28px}
-.card-header h1{font-size:20px;font-weight:700;color:#fff;margin:0}
-.card-header p{font-size:13px;color:rgba(255,255,255,.85);margin-top:3px}
-.card-body{padding:28px}
-.page{display:none}.page.active{display:block}
-.page-title{font-size:18px;font-weight:700;color:#222;margin-bottom:4px}
-.page-sub{font-size:13px;color:#888;margin-bottom:20px;line-height:1.6}
-.sec-title{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 14px;border-top:1px solid #f0f0f0;padding-top:16px}
-.sec-title:first-of-type{border-top:none;padding-top:0;margin-top:0}
-.field{margin-bottom:16px}
-.row{display:flex;gap:12px}.row .field{flex:1}.row .field.narrow{flex:0 0 140px}
-label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:5px}
-label .en{font-weight:400;color:#aaa;font-size:12px}
-.en-sm{font-weight:400;opacity:.65;font-size:.72em}
-label .req{color:#cc0000;margin-left:2px}
-input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #ddd;border-radius:6px;background:#fff;color:#333;transition:border-color .15s}
-textarea{resize:vertical;min-height:72px}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#cc0000;box-shadow:0 0 0 3px rgba(204,0,0,.1)}
-select:disabled{background:#f8f8f8;color:#aaa}
-input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
-.err-msg{font-size:12px;color:#cc0000;margin-top:5px;display:none}
-.btn{width:100%;padding:12px;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;transition:opacity .15s}
-.btn-red{background:#cc0000;color:#fff}.btn-red:hover{background:#aa0000}
-.btn-outline{background:#fff;color:#cc0000;border:1.5px solid #cc0000}.btn-outline:hover{background:#fff5f5}
-.btn-ghost{background:none;color:#888;border:1px solid #e0e0e0}.btn-ghost:hover{background:#f5f5f5}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-back{background:none;border:none;cursor:pointer;font-size:13px;color:#888;font-family:inherit;display:flex;align-items:center;gap:4px;margin-bottom:14px;padding:0}
-.btn-back:hover{color:#cc0000}
-.btn-link{background:none;border:none;cursor:pointer;font-size:13px;color:#cc0000;font-family:inherit;padding:0;text-decoration:underline}
-.dots{display:inline-flex;gap:4px;align-items:center}
-.dots span{width:6px;height:6px;background:currentColor;border-radius:50%;opacity:.3;animation:blink 1s infinite}
-.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
-@keyframes blink{40%{opacity:1}}
-/* Member page */
-.member-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.avatar{width:52px;height:52px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
-.m-name{font-size:17px;font-weight:700;color:#222}
-.qr-box{background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:20px;text-align:center;margin-bottom:20px}
-.qr-box canvas{border-radius:6px;margin:0 auto 8px;display:block}
-.qr-car-label{font-size:12px;font-weight:700;color:#cc0000;margin-bottom:8px}
-.qr-hint{font-size:12px;color:#aaa;line-height:1.6}
-.car-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.car-section-ttl{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px}
-.btn-add-car{background:none;border:1px solid #cc0000;border-radius:20px;color:#cc0000;font-size:12px;font-weight:700;padding:4px 12px;cursor:pointer;font-family:inherit}
-.swiper-outer{overflow:hidden;margin-bottom:4px;touch-action:pan-y}
-.swiper-track{display:flex;transition:transform .3s ease}
-.car-card{min-width:100%;background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:16px 18px;flex-shrink:0}
-.car-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
-.car-make{font-size:16px;font-weight:700;color:#222}
-.car-model-txt{font-size:13px;color:#888;margin-top:1px}
-.car-plate{display:inline-block;background:#222;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px}
-.btn-del-car{background:none;border:none;cursor:pointer;color:#ddd;font-size:20px;line-height:1;padding:2px 4px}
-.btn-del-car:hover{color:#cc0000}
-.car-dots{display:flex;justify-content:center;gap:6px;margin-bottom:16px}
-.car-dot{width:7px;height:7px;border-radius:50%;background:#ddd;border:none;cursor:pointer;padding:0;transition:background .2s}
-.car-dot.active{background:#cc0000}
-.no-cars{text-align:center;padding:24px;color:#aaa;font-size:14px;background:#f8f8f8;border:1px solid #eee;border-radius:10px;margin-bottom:16px}
-.info-section{margin-bottom:18px}
-.info-section-ttl{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px}
-.info-grid dt{color:#888}.info-grid dd{color:#222;font-weight:600}
-.member-actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
-.action-btn{background:none;border:none;cursor:pointer;font-size:13px;color:#aaa;font-family:inherit;display:flex;align-items:center;gap:4px;padding:0}
-.action-btn:hover,.action-btn-edit{color:#cc0000}
-/* Modal */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.open{display:flex}
-.modal{background:#fff;border-radius:10px;padding:24px;width:100%;max-width:420px;position:relative;max-height:90vh;overflow-y:auto}
-.modal h3{font-size:16px;font-weight:700;color:#222;margin-bottom:4px}
-.modal-sub{font-size:13px;color:#888;margin-bottom:16px}
-.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:22px;color:#aaa;line-height:1;padding:4px}
-.modal-close:hover{color:#cc0000}
-.confirm-box{background:#fff;border-radius:10px;padding:24px;width:100%;max-width:340px;text-align:center}
-.confirm-box h3{font-size:16px;font-weight:700;margin-bottom:8px}
-.confirm-box p{font-size:13px;color:#666;margin-bottom:20px;line-height:1.6}
-.confirm-actions{display:flex;gap:10px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh}
+.screen{display:none;flex-direction:column;min-height:100vh}
+.screen.active{display:flex}
+.hdr{background:#b40000;color:white;padding:16px;text-align:center;flex-shrink:0}
+.hdr-shop{font-size:10px;letter-spacing:2px;opacity:.7;margin-bottom:3px;text-transform:uppercase}
+.hdr-title{font-size:20px;font-weight:700}
+.hdr-sub{font-size:12px;opacity:.6;margin-top:3px}
+.content{padding:16px;flex:1}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#888;margin-bottom:10px;text-transform:uppercase}
+.brand-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.brand-card{background:white;border-radius:14px;padding:16px 10px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1.5px solid #e0e0e0;-webkit-tap-highlight-color:transparent;min-height:140px;justify-content:center}
+.brand-card.active{background:#b40000;border-color:#cc0000;cursor:pointer}
+.brand-card.active:active{transform:scale(.97)}
+.brand-card.inactive{opacity:.45;cursor:not-allowed}
+.brand-logo{font-size:28px}
+.brand-name{font-size:16px;font-weight:700;color:white}
+.brand-name.muted{color:#aaa}
+.brand-tap{font-size:11px;color:rgba(255,255,255,.7)}
+.brand-soon{font-size:11px;background:#f5f5f5;color:#aaa;padding:3px 10px;border-radius:20px}
+.center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;text-align:center}
+.big-icon{width:80px;height:80px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:38px}
+.center-title{font-size:20px;font-weight:700;color:#1a0000}
+.center-desc{font-size:14px;color:#555;line-height:1.7}
+.note-text{font-size:12px;color:#aaa;line-height:1.6}
+.back-link{font-size:13px;color:#b40000;cursor:pointer;text-decoration:underline}
+.btn-primary{background:#b40000;color:white;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:280px}
+.btn-primary:active{opacity:.85}
+.btn-secondary{background:white;color:#b40000;border:2px solid #b40000;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:280px;margin-top:4px}
+.scan-hdr{background:#b40000;color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.back-btn{background:rgba(255,255,255,.2);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.scan-brand{font-size:17px;font-weight:700}
+.scan-sub{font-size:12px;opacity:.7;margin-top:1px}
+.cam-wrap{position:relative;flex:1;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:300px}
+#preview{width:100%;height:100%;object-fit:cover;display:block}
+#canvas{display:none}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.box{width:220px;height:220px;position:relative}
+.box::before,.box::after,.bl,.br{content:'';position:absolute;width:36px;height:36px;border-color:white;border-style:solid}
+.box::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.box::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+.scan-line{position:absolute;left:4px;right:4px;height:2px;background:rgba(255,255,255,.75);animation:sweep 2s ease-in-out infinite}
+@keyframes sweep{0%{top:4px}50%{top:calc(100% - 6px)}100%{top:4px}}
+.cam-hint{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:white;text-align:center;font-size:13px;padding:12px 16px}
+.status-bar{background:#b40000;color:white;padding:12px 16px;font-size:13px;flex-shrink:0;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0}
+.dot.on{background:#4ade80;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.retry-btn{display:none;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:white;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer;margin-left:8px}
+.loading-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#b40000;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:15px;color:#555;text-align:center;padding:0 24px}
+.confirm-wrap{flex:1;padding:16px;overflow-y:auto}
+.member-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
+.member-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:14px}
+.info-row:last-child{border-bottom:none}
+.info-label{color:#aaa;flex-shrink:0;margin-right:12px}
+.info-value{color:#1a0000;font-weight:500;text-align:right}
+.confirm-brand{background:#b40000;color:white;border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.confirm-brand-name{font-size:18px;font-weight:700}
+.confirm-brand-sub{font-size:12px;opacity:.7;margin-top:2px}
+.action-btn{background:#b40000;color:white;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px}
+.action-btn:active{opacity:.85}
+.action-btn:disabled{background:#ccc;cursor:not-allowed}
+.cancel-btn{background:white;color:#555;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px;font-size:15px;cursor:pointer;width:100%}
+.receipt-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
+.receipt-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.receipt-area{border:2px dashed #ccc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
+.receipt-area.has-photo{border-color:#22c55e;background:#f0fdf4}
+.receipt-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.receipt-preview{width:100%;max-height:200px;object-fit:contain;border-radius:8px;display:none;margin-top:8px}
+.receipt-status{font-size:13px;margin-top:8px}
+.receipt-status.ok{color:#16a34a;font-weight:600}
+.receipt-status.uploading{color:#b40000}
+.receipt-status.error{color:#dc2626}
+/* ★ NEW: mileage card */
+.mileage-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
+.mileage-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.mileage-card input{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:16px;font-family:inherit;color:#1a0000}
+.mileage-card input:focus{outline:none;border-color:#b40000;box-shadow:0 0 0 3px rgba(180,0,0,.1)}
+.mileage-card input.required-err{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.1)}
+.mileage-hint{font-size:12px;color:#aaa;margin-top:6px}
+.mileage-hint.required{color:#b40000;font-weight:600}
+.footer{text-align:center;padding:14px;font-size:11px;color:#aaa;flex-shrink:0}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="logo-bar">
-    <div class="logo-circle">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
-    </div>
+
+<!-- Screen 1: Brand Picker -->
+<div class="screen active" id="s-brands">
+  <div class="hdr" style="position:relative">
+    <button id="refresh-brands-btn" onclick="hardRefresh()" title="รีเฟรชทั้งหน้า" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.25);border:none;color:white;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s">🔄</button>
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">Tyre Warranty</div>
+    <div class="hdr-sub">เลือกแบรนด์ยางก่อนสแกน QR</div>
+  </div>
+  <div class="content">
+    <div class="sec-label">เลือกแบรนด์ยาง</div>
+    <div class="brand-grid" id="brand-grid"></div>
+  </div>
+  <div class="footer">B.N. Tires &amp; Max · ระบบลงทะเบียนรับประกัน</div>
+</div>
+
+<!-- Screen 2: Permission -->
+<div class="screen" id="s-permission">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title" id="perm-brand-name"></div>
+    <div class="hdr-sub">สแกน QR ลูกค้า</div>
+  </div>
+  <div class="center-wrap">
+    <div class="big-icon">📷</div>
+    <div class="center-title">ต้องการใช้กล้อง</div>
+    <div class="center-desc">แอปต้องการเข้าถึงกล้องเพื่อสแกน<br>QR code ของลูกค้า กด <b>Allow</b><br>เมื่อระบบถามอนุญาต</div>
+    <button class="btn-primary" onclick="openCamera()">📷&nbsp; เปิดกล้องสแกน QR</button>
+    <div class="note-text">หากเคยปฏิเสธ ไปที่ Settings เปิดอนุญาตกล้อง</div>
+    <button class="btn-secondary" onclick="openSearch()" style="margin-top:12px;-webkit-tap-highlight-color:rgba(0,0,0,0.1);touch-action:manipulation">🔍&nbsp; ค้นหาด้วยเบอร์/ทะเบียน</button>
+    <span class="back-link" onclick="show('s-brands')">← เปลี่ยนแบรนด์</span>
+  </div>
+</div>
+
+<!-- Screen 3: Scanner -->
+<div class="screen" id="s-scanner">
+  <div class="scan-hdr">
+    <button class="back-btn" onclick="goBack()">←</button>
     <div>
-      <div class="logo-text-main">Tyre Warranty Portal</div>
-      <div class="logo-text-sub">ระบบสมาชิกรับประกันยาง</div>
+      <div class="scan-brand" id="scan-brand-label"></div>
+      <div class="scan-sub">สแกน QR code ของลูกค้า</div>
     </div>
   </div>
+  <div class="cam-wrap">
+    <video id="preview" autoplay playsinline muted></video>
+    <canvas id="canvas"></canvas>
+    <div class="overlay">
+      <div class="box"><div class="bl"></div><div class="br"></div><div class="scan-line"></div></div>
+    </div>
+    <div class="cam-hint">จัด QR code ให้อยู่ในกรอบสีขาว</div>
+  </div>
+  <div class="status-bar">
+    <div class="dot on" id="scan-dot"></div>
+    <span id="scan-status-text">กำลังเปิดกล้อง...</span>
+    <button class="retry-btn" id="retry-btn" onclick="openCamera()">ลองอีกครั้ง</button>
+  </div>
+</div>
 
-  <!-- LOGIN PAGE -->
-  <div class="page active" id="page-login">
-    <div class="card">
-      <div class="card-header">
-        <h1>ยินดีต้อนรับ <span class="en-sm">(Welcome)</span></h1>
-        <p>กำลังตรวจสอบข้อมูล…</p>
-      </div>
-      <div class="card-body" style="text-align:center;padding:40px 28px">
-        <div id="login-loading">
-          <div style="font-size:36px;margin-bottom:12px">🔍</div>
-          <div style="font-size:14px;color:#888" id="login-msg">กำลังเข้าสู่ระบบผ่าน LINE…</div>
-          <div style="margin-top:16px"><span class="dots" style="color:#aaa"><span></span><span></span><span></span></span></div>
-        </div>
-        <div id="login-error" style="display:none">
-          <div style="font-size:32px;margin-bottom:10px">⚠️</div>
-          <div style="font-size:13px;color:#cc0000;margin-bottom:16px;line-height:1.6" id="login-error-msg"></div>
-          <button class="btn btn-red" onclick="App.retryLogin()" style="max-width:200px;margin:0 auto">ลองอีกครั้ง / Retry</button>
-        </div>
-      </div>
+<!-- Screen 3b: Manual Search -->
+<div class="screen" id="s-search">
+  <div class="scan-hdr">
+    <button class="back-btn" onclick="show('s-permission')">←</button>
+    <div>
+      <div class="scan-brand" id="search-brand-label"></div>
+      <div class="scan-sub">ค้นหาด้วยข้อมูลลูกค้า</div>
     </div>
   </div>
-
-  <!-- REGISTER PAGE -->
-  <div class="page" id="page-register">
-    <div class="card">
-      <div class="card-header">
-        <h1>สมัครสมาชิก <span class="en-sm">(Register)</span></h1>
-        <p>กรอกข้อมูลเพื่อสร้างบัญชีสมาชิก</p>
+  <div class="content">
+    <div class="member-card">
+      <h3>ค้นหาสมาชิก</h3>
+      <div class="field" style="margin-bottom:12px">
+        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">เบอร์โทรศัพท์</label>
+        <input type="tel" id="search-phone" placeholder="0812345678" autocomplete="off"
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;-webkit-user-select:text;user-select:text">
       </div>
-      <div class="card-body">
-        <div id="line-profile-bar" style="display:none;align-items:center;gap:12px;background:#f0f9f0;border:1px solid #c3e6cb;border-radius:8px;padding:12px 14px;margin-bottom:20px">
-          <img id="line-avatar" src="" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:#1e7e34" id="line-display-name"></div>
-            <div style="font-size:11px;color:#888">เข้าสู่ระบบผ่าน LINE</div>
-          </div>
-        </div>
-        <p class="sec-title">ข้อมูลส่วนตัว <span class="en-sm">(Personal info)</span></p>
-        <div class="row">
-          <div class="field narrow">
-            <label>คำนำหน้า<span class="req">*</span></label>
-            <select id="r-title">
-              <option value="">-- เลือก --</option>
-              <option value="Mr.">นาย (Mr.)</option>
-              <option value="Ms.">นางสาว (Ms.)</option>
-              <option value="Mrs.">นาง (Mrs.)</option>
-            </select>
-          </div>
-          <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
-        </div>
-        <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="r-lname" placeholder="นามสกุล"></div>
-        <div class="row">
-          <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
-          <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
-        </div>
-        <!-- ★ Address section removed — a fixed default address is now submitted automatically -->
-        <p class="sec-title">รถคันแรก <span class="en-sm">(First vehicle)</span></p>
-        <div class="row">
-          <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
-            <select id="r-carbrand" onchange="App.onCarBrandChange('r-carbrand','r-carmodel','r-brand-other-wrap','r-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
-          </div>
-          <div class="field"><label>รุ่น<span class="req">*</span></label>
-            <select id="r-carmodel" onchange="App.onCarModelChange('r-carmodel','r-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
-          </div>
-        </div>
-        <div class="field" id="r-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="r-carbrand-other"></div>
-        <div class="field" id="r-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="r-carmodel-other"></div>
-        <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="r-license" placeholder="เช่น กข 1234"></div>
-        <div class="err-msg" id="regErr"></div>
-        <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก <span class="en-sm">(Register)</span></span></button>
+      <div class="field" style="margin-bottom:12px">
+        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">ทะเบียนรถ</label>
+        <input type="text" id="search-plate" placeholder="กข 1234" autocomplete="off"
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;-webkit-user-select:text;user-select:text">
       </div>
+      <div id="search-status" style="font-size:13px;color:#b40000;margin-bottom:8px;min-height:20px"></div>
+      <button class="action-btn" onclick="doSearch()" style="margin-bottom:0">🔍 ค้นหา</button>
     </div>
-  </div>
-
-  <!-- MEMBER PAGE -->
-  <div class="page" id="page-member">
-    <div class="card">
-      <div class="card-header"><h1>หน้าสมาชิก <span class="en-sm">(My Profile)</span></h1><p>ข้อมูลสมาชิกและ QR code ของคุณ</p></div>
-      <div class="card-body">
-        <div class="member-header">
-          <div class="avatar" id="m-avatar">--</div>
-          <div><div class="m-name" id="m-fullname"></div></div>
-        </div>
-        <div class="qr-box">
-          <div class="qr-car-label" id="qr-car-label">กรุณาเลือกรถ</div>
-          <canvas id="qrCanvas" width="180" height="180"></canvas>
-          <div class="qr-hint">แสดง QR code นี้ให้เจ้าหน้าที่สแกนเพื่อลงทะเบียนรับประกัน</div>
-        </div>
-        <div class="car-section-hdr">
-          <div class="car-section-ttl">รถของฉัน <span class="en-sm">(My vehicles)</span></div>
-          <button class="btn-add-car" onclick="App.openAddCar()">+ เพิ่มรถ</button>
-        </div>
-        <div class="swiper-outer" id="swiperOuter"><div class="swiper-track" id="swiperTrack"></div></div>
-        <div class="car-dots" id="carDots"></div>
-        <div class="info-section" style="margin-top:8px">
-          <div class="info-section-ttl">ข้อมูลส่วนตัว</div>
-          <dl class="info-grid">
-            <dt>ชื่อ-นามสกุล</dt><dd id="mi-name"></dd>
-            <dt>เบอร์โทร</dt><dd id="mi-phone"></dd>
-            <dt>วันเกิด</dt><dd id="mi-birthday"></dd>
-          </dl>
-        </div>
-        <div class="member-actions">
-          <button class="action-btn action-btn-edit" onclick="App.openEdit()">✏️ แก้ไขข้อมูล <span class="en-sm">(Edit profile)</span></button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- EDIT PAGE -->
-  <div class="page" id="page-edit">
-    <div class="card">
-      <div class="card-header"><h1>แก้ไขข้อมูล <span class="en-sm">(Edit Profile)</span></h1><p>แก้ไขข้อมูลส่วนตัว</p></div>
-      <div class="card-body">
-        <button class="btn-back" onclick="App.showPage('page-member')">← กลับ <span class="en-sm">(Back)</span></button>
-        <p class="sec-title">ข้อมูลส่วนตัว <span class="en-sm">(Personal info)</span></p>
-        <div class="row">
-          <div class="field narrow"><label>Title<span class="req">*</span></label>
-            <select id="e-title"><option value="">-- เลือก --</option><option value="Mr.">นาย (Mr.)</option><option value="Ms.">นางสาว (Ms.)</option><option value="Mrs.">นาง (Mrs.)</option></select>
-          </div>
-          <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="e-fname"></div>
-        </div>
-        <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="e-lname"></div>
-        <div class="row">
-          <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="e-phone" maxlength="10"></div>
-          <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="e-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
-        </div>
-        <!-- ★ Address section removed — fixed default address stays unchanged on edit -->
-        <div class="err-msg" id="editErr"></div>
-        <div id="editOk" style="display:none;font-size:13px;color:#1e7e34;margin-top:8px;text-align:center">✓ บันทึกเรียบร้อยแล้ว</div>
-        <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล <span class="en-sm">(Save)</span></span></button>
-      </div>
+    <div id="search-results" style="display:none">
+      <div class="sec-label" style="margin-top:16px">ผลการค้นหา</div>
+      <div id="search-result-list"></div>
     </div>
   </div>
 </div>
 
-<!-- Add car modal -->
-<div class="modal-backdrop" id="addCarModal">
-  <div class="modal">
-    <button class="modal-close" onclick="App.closeAddCar()">×</button>
-    <h3>เพิ่มรถ <span class="en-sm">(Add vehicle)</span></h3>
-    <p class="modal-sub">เพิ่มรถคันใหม่เข้าในโปรไฟล์</p>
-    <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
-      <select id="m-carbrand" onchange="App.onCarBrandChange('m-carbrand','m-carmodel','m-brand-other-wrap','m-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
-    </div>
-    <div class="field"><label>รุ่น<span class="req">*</span></label>
-      <select id="m-carmodel" onchange="App.onCarModelChange('m-carmodel','m-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
-    </div>
-    <div class="field" id="m-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="m-carbrand-other"></div>
-    <div class="field" id="m-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="m-carmodel-other"></div>
-    <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="m-license" placeholder="เช่น กข 1234"></div>
-    <div class="err-msg" id="addCarErr"></div>
-    <button class="btn btn-red" id="addCarBtn" onclick="App.submitAddCar()" style="margin-top:4px"><span id="addCarLabel">บันทึก <span class="en-sm">(Save)</span></span></button>
-    <button class="btn btn-ghost" onclick="App.closeAddCar()" style="margin-top:8px">ยกเลิก / Cancel</button>
+<!-- Screen 4: Loading -->
+<div class="screen" id="s-loading">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">กำลังค้นหาข้อมูล...</div>
+  </div>
+  <div class="loading-wrap">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loading-text">กำลังค้นหาข้อมูลสมาชิก...</div>
   </div>
 </div>
 
-<!-- Confirm delete modal -->
-<div class="modal-backdrop" id="confirmModal">
-  <div class="confirm-box">
-    <h3>ลบรถออก?</h3>
-    <p id="confirmMsg"></p>
-    <div class="confirm-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="App.closeConfirm()">ยกเลิก</button>
-      <button class="btn btn-red" style="flex:1" onclick="App.confirmDelete()">ลบ</button>
+<!-- Screen 5: Confirm + Receipt -->
+<div class="screen" id="s-confirm">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">พบข้อมูลแล้ว ✓</div>
+    <div class="hdr-sub">ถ่ายรูปใบเสร็จแล้วกดเปิดฟอร์ม</div>
+  </div>
+  <div class="confirm-wrap">
+    <div class="confirm-brand">
+      <div style="font-size:32px">🏷️</div>
+      <div>
+        <div class="confirm-brand-name" id="confirm-brand-name"></div>
+        <div class="confirm-brand-sub">แบรนด์ที่จะลงทะเบียน</div>
+      </div>
     </div>
+
+    <!-- Tire Selector -->
+    <div class="member-card" id="tire-card">
+      <h3>🔵 เลือกยางที่เปลี่ยน</h3>
+      <div id="tire-loading" style="font-size:13px;color:#888">กำลังโหลดข้อมูลยาง...</div>
+      <div id="tire-list"></div>
+      <div id="tire-selected" style="display:none;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 12px;font-size:14px;color:#166534;font-weight:600;margin-top:8px"></div>
+      <div style="font-size:12px;color:#aaa;margin-top:6px">ไม่บังคับ — เลือกได้ถ้าฟอร์มของแบรนด์นี้ต้องการข้อมูลรุ่น/ขนาดยาง</div>
+    </div>
+
+    <!-- ★ NEW: Mileage Card -->
+    <div class="mileage-card" id="mileage-card">
+      <h3>🔢 เลขไมล์ปัจจุบัน</h3>
+      <input type="number" id="mileage-input" placeholder="กรอกเลขไมล์ (กม.)" inputmode="numeric">
+      <div class="mileage-hint" id="mileage-hint">ไม่บังคับ — กรอกหรือปล่อยว่างได้</div>
+    </div>
+
+    <div class="receipt-card">
+      <h3>📎 ภาพใบเสร็จ</h3>
+      <div class="receipt-area" id="receipt-area">
+        <input type="file" accept="image/*" capture="environment" id="receipt-input" onchange="handleReceiptPhoto(this)">
+        <div id="receipt-placeholder">
+          <div style="font-size:32px;margin-bottom:8px">📸</div>
+          <div style="font-size:14px;color:#555;font-weight:600">แตะเพื่อถ่ายรูปใบเสร็จ</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
+        </div>
+        <img id="receipt-preview" class="receipt-preview">
+      </div>
+      <div class="receipt-status" id="receipt-status"></div>
+    </div>
+
+    <!-- ★ Car photo card — shown only for brands with requiresCarPhoto -->
+    <div class="receipt-card" id="car-photo-card" style="display:none">
+      <h3>📸 รูปรถยนต์</h3>
+      <div class="receipt-area" id="car-photo-area">
+        <input type="file" accept="image/*" capture="environment" id="car-photo-input" onchange="handleCarPhoto(this)">
+        <div id="car-photo-placeholder">
+          <div style="font-size:32px;margin-bottom:8px">🚗</div>
+          <div style="font-size:14px;color:#555;font-weight:600">แตะเพื่อถ่ายรูปรถ</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
+        </div>
+        <img id="car-photo-preview" class="receipt-preview">
+      </div>
+      <div class="receipt-status" id="car-photo-status"></div>
+    </div>
+
+    <div class="member-card">
+      <h3>ข้อมูลสมาชิก</h3>
+      <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="c-name"></span></div>
+      <div class="info-row"><span class="info-label">เบอร์โทร</span><span class="info-value" id="c-phone"></span></div>
+      <div class="info-row"><span class="info-label">Member ID</span><span class="info-value" id="c-memberid"></span></div>
+    </div>
+    <div class="member-card">
+      <h3>ข้อมูลรถยนต์</h3>
+      <div class="info-row"><span class="info-label">Car ID</span><span class="info-value" id="c-carid"></span></div>
+      <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="c-car"></span></div>
+      <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="c-plate"></span></div>
+    </div>
+
+    <button class="action-btn" id="open-form-btn" onclick="openWarrantyForm()" disabled>
+      📎 กรุณาถ่ายรูปใบเสร็จก่อน
+    </button>
+    <button class="cancel-btn" onclick="show('s-brands')">← เลือกแบรนด์ใหม่</button>
+
+    <!-- Debug panel -->
+    <div id="debug-panel" style="background:#1a1a1a;color:#4ade80;padding:12px;border-radius:8px;font-size:11px;font-family:monospace;margin-top:10px;display:none">
+      <div style="color:#fff;font-weight:bold;margin-bottom:6px">🔍 Debug Info</div>
+      <div id="debug-text"></div>
+    </div>
+    <button onclick="showDebug()" style="background:#333;color:white;border:none;border-radius:8px;padding:8px;width:100%;font-size:12px;margin-top:6px;cursor:pointer">🔍 Show Debug</button>
   </div>
 </div>
 
-<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=1"></script>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- Screen 5b: Log Service (สลับยาง / ปะยาง) -->
+<div class="screen" id="s-service">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title" id="service-title">บันทึกบริการ</div>
+    <div class="hdr-sub">พบข้อมูลแล้ว ✓</div>
+  </div>
+  <div class="confirm-wrap">
+    <div class="confirm-brand" id="service-brand-banner">
+      <div style="font-size:32px" id="service-icon">🔄</div>
+      <div>
+        <div class="confirm-brand-name" id="service-brand-name"></div>
+        <div class="confirm-brand-sub">บริการที่จะบันทึก</div>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <h3>ข้อมูลสมาชิก</h3>
+      <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="sv-name"></span></div>
+      <div class="info-row"><span class="info-label">เบอร์โทร</span><span class="info-value" id="sv-phone"></span></div>
+    </div>
+    <div class="member-card">
+      <h3>ข้อมูลรถยนต์</h3>
+      <div class="info-row"><span class="info-label">Car ID</span><span class="info-value" id="sv-carid"></span></div>
+      <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="sv-car"></span></div>
+      <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="sv-plate"></span></div>
+    </div>
+
+    <div class="mileage-card" id="service-mileage-card">
+      <h3>🔢 เลขไมล์ปัจจุบัน</h3>
+      <input type="number" id="service-mileage-input" placeholder="กรอกเลขไมล์ (กม.) — ไม่บังคับ" inputmode="numeric">
+      <div class="mileage-hint">ไม่บังคับ — กรอกหรือปล่อยว่างได้</div>
+    </div>
+
+    <div class="err-msg" id="service-err" style="color:#dc2626;font-size:13px;margin-bottom:10px;display:none"></div>
+
+    <button class="action-btn" id="service-save-btn" onclick="submitServiceLog()">💾 บันทึก</button>
+    <button class="cancel-btn" onclick="show('s-brands')">← เลือกบริการใหม่</button>
+  </div>
+</div>
+
+<!-- Screen 6: Error -->
+<div class="screen" id="s-error">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">เกิดข้อผิดพลาด</div>
+  </div>
+  <div class="center-wrap">
+    <div class="big-icon">⚠️</div>
+    <div class="center-title">เกิดข้อผิดพลาด</div>
+    <div class="center-desc" id="error-msg"></div>
+    <button class="btn-primary" id="retry-error-btn" onclick="if(typeof retryOpenForm==='function')retryOpenForm()">🔄 ลองส่งใหม่อีกครั้ง</button>
+    <button class="btn-secondary" onclick="show('s-confirm')">← กลับหน้ายืนยัน</button>
+    <button class="btn-secondary" onclick="show('s-brands')" style="margin-top:4px">← กลับหน้าแรก</button>
+  </div>
+</div>
+
+<!-- Screen 7: Waiting for desktop -->
+<div class="screen" id="s-waiting">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">กำลังเปิดบนคอมพิวเตอร์</div>
+    <div class="hdr-sub">รอสักครู่...</div>
+  </div>
+  <div class="loading-wrap">
+    <div class="spinner"></div>
+    <div class="loading-text" id="waiting-text">รอให้คอมพิวเตอร์เปิดฟอร์ม...</div>
+    <div style="font-size:12px;color:#aaa;margin-top:8px;text-align:center;padding:0 32px">
+      ตรวจสอบให้แน่ใจว่าเปิดหน้า Desktop Opener บนคอมพิวเตอร์แล้ว
+    </div>
+    <div id="waiting-debug" style="font-size:10px;color:#ffcc00;margin-top:8px;text-align:center;padding:0 16px;word-break:break-all"></div>
+    <div id="screen-log" style="font-size:10px;color:#88ff88;margin-top:8px;padding:0 16px;word-break:break-all;text-align:left;background:rgba(0,0,0,0.3);border-radius:8px;padding:8px"></div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+    <button class="action-btn" id="retry-form-btn" onclick="if(typeof retryOpenForm==='function')retryOpenForm()" style="margin-bottom:0">🔄 ลองส่งใหม่อีกครั้ง</button>
+    <button class="cancel-btn" onclick="cancelWaiting()">ยกเลิก / กลับหน้ายืนยัน</button>
+  </div>
+</div>
+
+<!-- Screen 8: Success -->
+<div class="screen" id="s-sent">
+  <div class="hdr">
+    <div class="hdr-shop">B.N. Tires &amp; Max</div>
+    <div class="hdr-title">ส่งไปยังคอมพิวเตอร์แล้ว ✓</div>
+  </div>
+  <div class="center-wrap">
+    <div class="big-icon" style="background:#dcfce7">✅</div>
+    <div class="center-title" style="color:#166534">เปิดฟอร์มบนคอมพิวเตอร์แล้ว!</div>
+    <div class="center-desc">Extension กำลังกรอกข้อมูลอัตโนมัติ<br>กรุณากรอกรุ่นยางบนคอมพิวเตอร์</div>
+    <button class="btn-primary" onclick="show('s-brands')">← ลงทะเบียนรายถัดไป</button>
+  </div>
+</div>
+
 <script>
-// ── CONFIG ──────────────────────────────────────────────────
-var LIFF_ID    = "2010142778-E4fdEFh0";
-var API_URL    = GAS_URLS.memberPortalApi;
+// ── Loaded from config.js ──
+var GAS_API_URL = GAS_URLS.warrantyApi;
+var BRANDS      = CONFIG.BRANDS;
 
-// ★ Fixed default address — every member gets this, no longer typed by the customer
-var FIXED_ADDRESS      = "3/47";
-var FIXED_REGION       = "ภาคกลาง";
-var FIXED_PROVINCE     = "สมุทรปราการ";
-var FIXED_DISTRICT     = "บางพลี";
-var FIXED_SUBDISTRICT  = "บางพลีใหญ่";
-var FIXED_ZIP          = "10540";
+var selectedBrand  = null;
+var lookupResult   = null;
+var stream         = null;
+var scanTimer      = null;
+var receiptReady   = false;
+var currentCarId   = null;
+var receiptUrl     = null;
+var waitingTimer   = null;
+var selectedTire   = null;
+var waitingElapsed = 0;
 
-// ── STATE ────────────────────────────────────────────────────
-var _member      = null;
-var _cars        = [];
-var _carIdx      = 0;
-var _delCarId    = null;
-var _lineProfile = null;
-var _clientData  = null;
-var _carData     = [];
+// ── ★ NEW: mileage state ──
+var currentMileage = "";  // value entered by staff
+var carPhotoUrl    = null; // ★ second photo for brands that require it (e.g. Lenso)
+var carPhotoReady  = false;
 
-// ── API helpers ──────────────────────────────────────────────
-function apiGet(params, retries) {
-  retries = retries || 0;
-  var qs = Object.keys(params).map(function(k){ return k+"="+encodeURIComponent(params[k]); }).join("&");
-  return fetch(API_URL+"?"+qs, { redirect:"follow" })
-    .then(function(r){
-      if (!r.ok) throw new Error("HTTP "+r.status);
-      return r.json();
-    })
-    .catch(function(err) {
-      if (retries < 2) {
-        // GAS sometimes fails on first call due to cold start — retry
-        return new Promise(function(resolve) { setTimeout(resolve, 1000); })
-          .then(function() { return apiGet(params, retries+1); });
-      }
-      throw err;
-    });
+// ── ★ Service cards (สลับยาง / ปะยาง) — appended alongside real tire brands ──
+var SERVICE_TYPES = [
+  { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
+    background:"#be185d", borderColor:"#9d174d", textColor:"#ffffff", icon:"🔄" },
+  { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true,
+    background:"#15803d", borderColor:"#166534", textColor:"#ffffff", icon:"🔧" }
+];
+
+// ── ★ NEW: Update mileage hint based on brand requiresMileage ──
+function updateMileageHint() {
+  // Show/hide car photo card
+  var cardEl = document.getElementById("car-photo-card");
+  if (cardEl) cardEl.style.display = (selectedBrand && selectedBrand.requiresCarPhoto) ? "block" : "none";
+  var required = selectedBrand && selectedBrand.requiresMileage;
+  var hint  = document.getElementById("mileage-hint");
+  var input = document.getElementById("mileage-input");
+  if (required) {
+    hint.textContent  = "⚠️ จำเป็นต้องกรอกสำหรับแบรนด์นี้";
+    hint.className    = "mileage-hint required";
+  } else {
+    hint.textContent  = "ไม่บังคับ — กรอกหรือปล่อยว่างได้";
+    hint.className    = "mileage-hint";
+  }
+  input.classList.remove("required-err");
 }
 
-function apiPost(data) {
-  return fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify(data),
-    redirect: "follow"
-  }).then(function(r){ return r.json(); });
+// ── ★ NEW: Check if form is ready to open ──
+function checkFormReady() {
+  if (!receiptReady) return;
+  var requiresMileage   = selectedBrand && selectedBrand.requiresMileage;
+  var requiresCarPhoto  = selectedBrand && selectedBrand.requiresCarPhoto;
+  var mileage = document.getElementById("mileage-input").value.trim();
+
+  if (requiresMileage && !mileage) {
+    document.getElementById("open-form-btn").disabled    = true;
+    document.getElementById("open-form-btn").textContent = "⚠️ กรุณากรอกเลขไมล์ก่อน";
+    return;
+  }
+  if (requiresCarPhoto && !carPhotoReady) {
+    document.getElementById("open-form-btn").disabled    = true;
+    document.getElementById("open-form-btn").textContent = "⚠️ กรุณาถ่ายรูปรถก่อน";
+    return;
+  }
+  document.getElementById("open-form-btn").disabled    = false;
+  document.getElementById("open-form-btn").textContent = "🔗 เปิดฟอร์มลงทะเบียน " + (selectedBrand ? selectedBrand.name : "");
 }
 
-// ── UI helpers ───────────────────────────────────────────────
-var App = {};
+// ── Brand grid ──
+function renderBrands(brands){
+  var grid=document.getElementById("brand-grid");
+  grid.innerHTML="";
+  brands.forEach(function(b){
+    var el=document.createElement("div");
+    el.className="brand-card "+(b.active?"active":"inactive");
+    el.style.background  = b.active ? (b.background||"#b40000") : "white";
+    el.style.borderColor = b.active ? (b.borderColor||b.background||"#b40000") : "#e0e0e0";
+    var imgSrc = b.imageUrl || "";
+    var imgWrap = document.createElement("div");
+    imgWrap.style.cssText = "width:72px;height:72px;display:flex;align-items:center;justify-content:center;background:white;border-radius:10px;padding:4px;margin-bottom:4px";
+    var img = document.createElement("img");
+    img.src = imgSrc || "";
+    img.style.cssText = "width:64px;height:64px;object-fit:contain";
+    img.onerror = function(){ imgWrap.style.display="none"; };
+    imgWrap.appendChild(img);
+    var nameDiv = document.createElement("div");
+    nameDiv.style.cssText = "font-size:17px;font-weight:800;letter-spacing:0.5px;color:"+(b.active?(b.textColor||"white"):"#aaa");
+    nameDiv.textContent = b.name;
+    var subDiv = document.createElement("div");
+    if(b.active){
+      subDiv.style.cssText = "font-size:12px;color:"+(b.textColor||"white")+";opacity:.75";
+      subDiv.textContent = b.service ? "แตะเพื่อบันทึก →" : "แตะเพื่อสแกน →";
+    } else {
+      subDiv.className = "brand-soon";
+      subDiv.textContent = "เร็วๆ นี้";
+    }
+    if(imgSrc) el.appendChild(imgWrap);
+    else { var icon=document.createElement("div"); icon.style.cssText="width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:36px"; icon.textContent=b.icon||"🔘"; el.appendChild(icon); }
+    el.appendChild(nameDiv);
+    el.appendChild(subDiv);
+    if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
+    grid.appendChild(el);
+  });
+}
 
-App.showPage = function(id) {
-  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+// ── ★ Hard refresh: clears caches/service workers and force-reloads the
+//    ENTIRE page with a cache-busting param, so code changes actually
+//    show up (the old refresh button only re-fetched brand data, not
+//    the page's own HTML/JS). ──
+function hardRefresh(){
+  var btn = document.getElementById("refresh-brands-btn");
+  if (btn) btn.style.transform = "rotate(360deg)";
+  Promise.all([
+    ('caches' in window)
+      ? caches.keys().then(function(names){ return Promise.all(names.map(function(n){ return caches.delete(n); })); })
+      : Promise.resolve(),
+    ('serviceWorker' in navigator)
+      ? navigator.serviceWorker.getRegistrations().then(function(regs){ return Promise.all(regs.map(function(r){ return r.unregister(); })); })
+      : Promise.resolve()
+  ]).then(function(){
+    window.location.href = window.location.pathname + "?_hr=" + Date.now();
+  }).catch(function(){
+    window.location.href = window.location.pathname + "?_hr=" + Date.now();
+  });
+}
+
+// ── Load brands from GAS (called on page load) ──
+function loadBrands(){
+  document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:#aaa;font-size:13px;grid-column:1/-1">กำลังโหลด...</div>';
+  jsonp(
+    GAS_API_URL+"?action=getBrands",
+    function(result){
+      if(result.ok && result.brands) renderBrands(SERVICE_TYPES.concat(result.brands));
+      else document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">โหลดแบรนด์ไม่ได้</div>';
+    },
+    function(err){ document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">Error: '+err+'</div>'; }
+  );
+}
+loadBrands();
+
+// ── Navigation ──
+function show(id){
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
   document.getElementById(id).classList.add("active");
-  window.scrollTo(0,0);
-};
-
-function showErr(id,msg){ var e=document.getElementById(id); e.textContent=msg; e.style.display="block"; }
-function hideErr(id){ document.getElementById(id).style.display="none"; }
-function fmtPhone(p){ p=String(p||"").replace(/\D/g,""); return p.length===10?p.slice(0,3)+"-"+p.slice(3,6)+"-"+p.slice(6):p; }
-function fmtBirthday(v){
-  if(!v) return "—";
-  try{ var d=new Date(v); return d.toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}); }
-  catch(e){ return v; }
-}
-function setLoading(btnId,lblId,on,txt){
-  var b=document.getElementById(btnId),l=document.getElementById(lblId);
-  b.disabled=on; l.innerHTML=on?'<span class="dots"><span></span><span></span><span></span></span>':txt;
-}
-function resetSel(id,ph){
-  var s=document.getElementById(id); while(s.options.length)s.remove(0);
-  var o=document.createElement("option"); o.value=""; o.textContent=ph; s.appendChild(o);
 }
 
-// ── ★ Birthday mask: fixed __/__/____ template — slashes never move,
-//    underscores get replaced by typed digits, cursor auto-skips slashes ──
-var DATE_MASK = "__/__/____";
-var DATE_DIGIT_POS = [0,1,3,4,6,7,8,9]; // indices in the mask that hold digits
+function pickBrand(brand){
+  selectedBrand=brand;
+  document.getElementById("perm-brand-name").textContent=brand.name;
+  document.getElementById("scan-brand-label").textContent=brand.name;
+  document.getElementById("confirm-brand-name").textContent=brand.name;
+  show("s-permission");
+}
 
-function attachDateMask(inputId) {
-  var el = document.getElementById(inputId);
-  if (!el) return;
-  if (!el.value) el.value = DATE_MASK;
+function goBack(){ stopCamera(); show("s-brands"); }
 
-  el.addEventListener("focus", function() {
-    if (!el.value) el.value = DATE_MASK;
-    var pos = DATE_DIGIT_POS[0];
-    setTimeout(function(){ el.setSelectionRange(pos, pos); }, 0);
-  });
+// ── Camera ──
+async function openCamera(){
+  document.getElementById("retry-btn").style.display="none";
+  setStatus("กำลังเปิดกล้อง...",true);
+  show("s-scanner"); stopCamera();
+  try {
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
+    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
+    var vid=document.getElementById("preview");
+    vid.srcObject=stream; await vid.play();
+    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
+    scanTimer=setInterval(tick,250);
+  } catch(err){
+    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
+    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
+    document.getElementById("retry-btn").style.display="inline-block";
+  }
+}
 
-  el.addEventListener("click", function() {
-    var pos = el.selectionStart;
-    var nearest = DATE_DIGIT_POS.reduce(function(a,b){
-      return Math.abs(b-pos) < Math.abs(a-pos) ? b : a;
-    });
-    el.setSelectionRange(nearest, nearest);
-  });
+function stopCamera(){
+  clearInterval(scanTimer); scanTimer=null;
+  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+}
 
-  el.addEventListener("keydown", function(e) {
-    if (e.key === "Backspace") {
-      e.preventDefault();
-      var pos = el.selectionStart;
-      var chars = el.value.split("");
-      for (var i = pos - 1; i >= 0; i--) {
-        if (DATE_DIGIT_POS.indexOf(i) !== -1) {
-          chars[i] = "_";
-          el.value = chars.join("");
-          el.setSelectionRange(i, i);
-          break;
-        }
+function tick(){
+  var vid=document.getElementById("preview");
+  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
+  var cvs=document.getElementById("canvas");
+  cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
+  var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
+  var img=ctx.getImageData(0,0,cvs.width,cvs.height);
+  var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
+  if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
+}
+
+function setStatus(msg,active){
+  document.getElementById("scan-status-text").textContent=msg;
+  var dot=document.getElementById("scan-dot");
+  if(active) dot.classList.add("on"); else dot.classList.remove("on");
+}
+
+function showDebug(){
+  var panel=document.getElementById("debug-panel");
+  var text=document.getElementById("debug-text");
+  panel.style.display=panel.style.display==="none"?"block":"none";
+  text.innerHTML=
+    "currentCarId: "+currentCarId+"<br>"+
+    "receiptReady: "+receiptReady+"<br>"+
+    "receiptUrl: "+(receiptUrl?receiptUrl.substring(0,30)+"...":"null")+"<br>"+
+    "lookupResult: "+(lookupResult?"✅":"null")+"<br>"+
+    "selectedBrand: "+(selectedBrand?selectedBrand.name:"null")+"<br>"+
+    "requiresMileage: "+(selectedBrand?selectedBrand.requiresMileage:"null")+"<br>"+
+    "mileage: "+document.getElementById("mileage-input").value+"<br>"+
+    "selectedTire: "+(selectedTire?selectedTire.label:"null");
+}
+
+// ── JSONP helper ──
+function jsonp(url,onSuccess,onError){
+  var cb="cb_"+Date.now();
+  var s=document.createElement("script");
+  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },30000);
+  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
+  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
+  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
+  document.body.appendChild(s);
+}
+
+// ── ★ UPDATED: Reset confirm screen helper ──
+function _resetConfirmScreen() {
+  receiptReady = false; receiptUrl = null;
+  document.getElementById("receipt-area").classList.remove("has-photo");
+  document.getElementById("receipt-preview").style.display   = "none";
+  document.getElementById("receipt-placeholder").style.display = "block";
+  document.getElementById("receipt-status").textContent      = "";
+  document.getElementById("receipt-status").className        = "receipt-status";
+  document.getElementById("open-form-btn").disabled          = true;
+  document.getElementById("open-form-btn").textContent       = "📎 กรุณาถ่ายรูปใบเสร็จก่อน";
+  document.getElementById("receipt-input").value             = "";
+  document.getElementById("mileage-input").value             = "";  // ★ reset mileage
+  carPhotoUrl   = null; carPhotoReady = false;
+  document.getElementById("car-photo-area").classList.remove("has-photo");
+  document.getElementById("car-photo-preview").style.display    = "none";
+  document.getElementById("car-photo-placeholder").style.display = "block";
+  document.getElementById("car-photo-status").textContent       = "";
+  document.getElementById("car-photo-input").value              = "";
+  // Show car photo card only if brand requires it
+  document.getElementById("car-photo-card").style.display = (selectedBrand && selectedBrand.requiresCarPhoto) ? "block" : "none";
+  document.getElementById("mileage-input").classList.remove("required-err");
+  selectedTire = null;
+  document.getElementById("tire-selected").style.display = "none";
+  updateMileageHint(); // ★ update hint for current brand
+}
+
+// ── ★ Service log flow (สลับยาง / ปะยาง) ──
+function showServiceScreen(result, carId){
+  document.getElementById("service-title").textContent    = selectedBrand.name;
+  document.getElementById("service-icon").textContent     = selectedBrand.icon || "🔧";
+  document.getElementById("service-brand-name").textContent = selectedBrand.name;
+  document.getElementById("service-brand-banner").style.background = selectedBrand.background || "#2563eb";
+  document.getElementById("sv-name").textContent  = result.fullName||"";
+  document.getElementById("sv-phone").textContent = result.phone||"";
+  document.getElementById("sv-carid").textContent = carId;
+  document.getElementById("sv-car").textContent   = ((result.carBrand||"")+" "+(result.carModel||"")).trim();
+  document.getElementById("sv-plate").textContent = result.plate||"";
+  document.getElementById("service-mileage-card").style.display = selectedBrand.requiresMileage ? "block" : "none";
+  document.getElementById("service-mileage-input").value = "";
+  document.getElementById("service-err").style.display = "none";
+  document.getElementById("service-save-btn").disabled = false;
+  document.getElementById("service-save-btn").textContent = "💾 บันทึก";
+  show("s-service");
+}
+
+function submitServiceLog(){
+  if(!currentCarId || !selectedBrand) return;
+  var mileage = selectedBrand.requiresMileage
+    ? document.getElementById("service-mileage-input").value.trim()
+    : "";
+  document.getElementById("service-save-btn").disabled = true;
+  document.getElementById("service-save-btn").textContent = "⏳ กำลังบันทึก...";
+  document.getElementById("service-err").style.display = "none";
+
+  jsonp(
+    GAS_API_URL+"?action=logService&carId="+encodeURIComponent(currentCarId)
+      +"&serviceType="+encodeURIComponent(selectedBrand.name)
+      +"&mileage="+encodeURIComponent(mileage),
+    function(result){
+      if(!result || !result.ok){
+        document.getElementById("service-save-btn").disabled = false;
+        document.getElementById("service-save-btn").textContent = "💾 บันทึก";
+        var errEl = document.getElementById("service-err");
+        errEl.textContent = "บันทึกไม่สำเร็จ: " + ((result && result.error) || "unknown error");
+        errEl.style.display = "block";
+        return;
       }
+      show("s-sent");
+      var descEl = document.querySelector("#s-sent .center-desc");
+      if (descEl) {
+        descEl.innerHTML = result.overwritten
+          ? "บันทึกสำเร็จ ✓<br><span style=\"color:#d97706;font-weight:600\">⚠️ รถคันนี้บันทึกบริการครบ 4 ครั้งแล้ว<br>ระบบได้เขียนทับข้อมูลครั้งที่ 1 (เก่าสุด) แทน</span>"
+          : "บันทึกสำเร็จ ✓";
+      }
+    },
+    function(err){
+      document.getElementById("service-save-btn").disabled = false;
+      document.getElementById("service-save-btn").textContent = "💾 บันทึก";
+      var errEl = document.getElementById("service-err");
+      errEl.textContent = "เชื่อมต่อไม่ได้: " + err;
+      errEl.style.display = "block";
+    }
+  );
+}
+
+// ── QR lookup ──
+// ★ FIXED: use the "getMemberByQR" action name, and read GAS's ACTUAL
+//   response shape (result.ok / result.fullName / result.carBrand / etc.)
+//   instead of the old imaginary shape (result.success / result.member.*).
+//   lookupCarId() in Code.gs already returns exactly this flat shape.
+function handleQR(raw){
+  var carId=raw.trim().toUpperCase();
+  currentCarId=carId;
+  document.getElementById("loading-text").textContent="กำลังค้นหา "+carId+"...";
+  show("s-loading");
+  jsonp(GAS_API_URL+"?action=getMemberByQR&carId="+encodeURIComponent(carId),function(result){
+    if(!result || !result.ok){
+      document.getElementById("error-msg").textContent=(result && result.error) || "ไม่พบข้อมูล";
+      show("s-error");
       return;
     }
-    if (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Tab") return;
-    if (!/^[0-9]$/.test(e.key)) { e.preventDefault(); return; }
-    e.preventDefault();
-    var pos = el.selectionStart;
-    var validPositions = DATE_DIGIT_POS.filter(function(p){ return p >= pos; });
-    if (!validPositions.length) return;
-    var idx = validPositions[0];
-    var chars = el.value.split("");
-    chars[idx] = e.key;
-    el.value = chars.join("");
-    var nextPositions = DATE_DIGIT_POS.filter(function(p){ return p > idx; });
-    var nextPos = nextPositions.length ? nextPositions[0] : idx + 1;
-    el.setSelectionRange(nextPos, nextPos);
-  });
-}
+    lookupResult=result;
+    document.getElementById("c-name").textContent    =result.fullName||"";
+    document.getElementById("c-phone").textContent   =result.phone||"";
+    document.getElementById("c-memberid").textContent=result.memberId||"";
+    document.getElementById("c-carid").textContent   =carId;
+    document.getElementById("c-car").textContent     =((result.carBrand||"")+" "+(result.carModel||"")).trim();
+    document.getElementById("c-plate").textContent   =result.plate||"";
+    // GAS already builds the full params object we need for the warranty form
+    lookupResult.params = result.params || {};
 
-// ── ★ Validates + parses the masked input. Returns:
-//    { empty:true }                      — nothing typed
-//    { empty:false, valid:false }        — typed but not a real date
-//    { empty:false, valid:true, iso:"YYYY-MM-DD" } — good, converted from
-//      Buddhist Era to Gregorian automatically if year > 2400 ──
-function parseBirthdayInput(inputId) {
-  var val = document.getElementById(inputId).value || "";
-  if (!val || val === DATE_MASK) return { empty: true };
-  if (val.indexOf("_") !== -1) return { empty: false, valid: false };
-
-  var digits = val.replace(/\D/g, "");
-  if (digits.length !== 8) return { empty: false, valid: false };
-
-  var day   = parseInt(digits.slice(0, 2), 10);
-  var month = parseInt(digits.slice(2, 4), 10);
-  var year  = parseInt(digits.slice(4, 8), 10);
-  if (year > 2400) year -= 543; // Buddhist Era → Gregorian
-
-  if (month < 1 || month > 12) return { empty: false, valid: false };
-  var daysInMonth = new Date(year, month, 0).getDate();
-  if (day < 1 || day > daysInMonth) return { empty: false, valid: false };
-  if (year < 1900 || year > new Date().getFullYear()) return { empty: false, valid: false };
-
-  var mm = String(month).padStart(2, "0");
-  var dd = String(day).padStart(2, "0");
-  return { empty: false, valid: true, iso: year + "-" + mm + "-" + dd };
-}
-
-// ── ★ Converts a stored ISO date back into the DD/MM/YYYY mask for display ──
-function isoToDisplayDate(iso) {
-  if (!iso) return DATE_MASK;
-  var parts = String(iso).split("-");
-  if (parts.length !== 3) return DATE_MASK;
-  return parts[2].slice(0, 2) + "/" + parts[1] + "/" + parts[0];
-}
-
-// ── App init ─────────────────────────────────────────────────
-App.retryLogin = function() {
-  document.getElementById("login-error").style.display  = "none";
-  document.getElementById("login-loading").style.display = "block";
-  App.start();
-};
-
-App.start = function() {
-  document.getElementById("login-msg").textContent = "Step 1: กำลัง init LIFF…";
-  liff.init({ liffId: LIFF_ID })
-    .then(function() {
-      document.getElementById("login-msg").textContent = "Step 2: กำลังดึงโปรไฟล์…";
-      return liff.getProfile();
-    })
-    .then(function(profile) {
-      document.getElementById("login-msg").textContent = "กำลังโหลดข้อมูล…";
-      _lineProfile = profile;
-
-      // Load all data — each call handles its own retry via apiGet
-      return Promise.all([
-        apiGet({ action:"checkLineUser", lineUserId:profile.userId })
-          .catch(function(){ return { exists:false, error:"checkLineUser failed" }; }),
-        apiGet({ action:"getCarData" })
-          .catch(function(){ return { success:false, brands:[] }; })
-      ]);
-    })
-    .then(function(results) {
-      var memberRes = results[0];
-      var carRes    = results[1];
-
-      if (carRes.success && carRes.brands)  _carData    = carRes.brands;
-
-      if (memberRes.exists) {
-        _member = memberRes.member;
-        _cars   = memberRes.cars || [];
-        App.showMemberPage();
-      } else {
-        App.showRegisterPage();
-      }
-    })
-    .catch(function(err) {
-      document.getElementById("login-loading").style.display = "none";
-      document.getElementById("login-error-msg").innerHTML   = "Error: "+(err.message||String(err));
-      document.getElementById("login-error").style.display   = "block";
-    });
-};
-
-// ── Populate car brand dropdowns ──────────────────────────────
-function _populateRegions() {
-  var brandSelIds = ["r-carbrand","m-carbrand"];
-  brandSelIds.forEach(function(id){
-    var sel=document.getElementById(id); if(!sel) return;
-    while(sel.options.length) sel.remove(0);
-    var ph=document.createElement("option"); ph.value=""; ph.textContent="-- เลือกยี่ห้อ --"; sel.appendChild(ph);
-    _carData.forEach(function(b){ var o=document.createElement("option"); o.value=b.name; o.textContent=b.name; sel.appendChild(o); });
-    var oo=document.createElement("option"); oo.value="__other__"; oo.textContent="อื่นๆ (Other)"; sel.appendChild(oo);
-  });
-}
-
-// ── Car cascade ──────────────────────────────────────────────
-App.onCarBrandChange = function(brandId, modelId, brandWrapId, modelWrapId) {
-  var b=document.getElementById(brandId).value;
-  var mS=document.getElementById(modelId);
-  document.getElementById(brandWrapId).style.display="none";
-  document.getElementById(modelWrapId).style.display="none";
-  while(mS.options.length)mS.remove(0);
-  var ph=document.createElement("option");ph.value="";ph.textContent=b?"-- เลือกรุ่น --":"-- เลือกยี่ห้อก่อน --";mS.appendChild(ph);
-  mS.disabled=!b;
-  if(b==="__other__"){document.getElementById(brandWrapId).style.display="block";document.getElementById(modelWrapId).style.display="block";mS.disabled=true;return;}
-  if(!b) return;
-  var brand=_carData.filter(function(x){return x.name===b;})[0];
-  if(!brand) return;
-  brand.models.forEach(function(m){var o=document.createElement("option");o.value=m;o.textContent=m;mS.appendChild(o);});
-  var oo=document.createElement("option");oo.value="__other__";oo.textContent="อื่นๆ (Other)";mS.appendChild(oo);
-};
-App.onCarModelChange = function(modelId, wrapId) {
-  document.getElementById(wrapId).style.display=document.getElementById(modelId).value==="__other__"?"block":"none";
-};
-
-// ── Register ─────────────────────────────────────────────────
-App.showRegisterPage = function() {
-  if(_lineProfile && _lineProfile.pictureUrl){
-    document.getElementById("line-avatar").src               = _lineProfile.pictureUrl;
-    document.getElementById("line-display-name").textContent = _lineProfile.displayName||"";
-    document.getElementById("line-profile-bar").style.display="flex";
-  }
-  _populateRegions();
-  // Warn if dropdown data didn't load
-  if (!_carData.length) {
-    showErr("regErr","ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
-    setTimeout(function() {
-      // Retry loading missing data
-      apiGet({action:"getCarData"}).then(function(r){
-        if(r.success){ _carData=r.brands; _populateRegions(); hideErr("regErr"); }
-      });
-    }, 1500);
-  }
-  App.showPage("page-register");
-};
-
-App.submitRegister = function() {
-  hideErr("regErr");
-  var title=document.getElementById("r-title").value;
-  var fname=document.getElementById("r-fname").value.trim();
-  var lname=document.getElementById("r-lname").value.trim();
-  var phone=document.getElementById("r-phone").value.trim();
-  var bd=parseBirthdayInput("r-birthday");
-  var license=document.getElementById("r-license").value.trim();
-  var carbrand=document.getElementById("r-carbrand").value;
-  var carmodel=document.getElementById("r-carmodel").value;
-  if(carbrand==="__other__") carbrand=document.getElementById("r-carbrand-other").value.trim();
-  if(carmodel==="__other__") carmodel=document.getElementById("r-carmodel-other").value.trim();
-
-  if(!bd.empty && !bd.valid){
-    showErr("regErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
-  }
-  var birthday = bd.valid ? bd.iso : "";
-
-  if(!title||!fname||!lname||!phone||!birthday||!license||!carbrand||!carmodel){
-    var missing=[];
-    if(!title)missing.push("คำนำหน้า");if(!fname)missing.push("ชื่อ");if(!lname)missing.push("นามสกุล");
-    if(!phone)missing.push("เบอร์โทร");if(!birthday)missing.push("วันเกิด");
-    if(!license)missing.push("ทะเบียน");
-    if(!carbrand)missing.push("ยี่ห้อรถ");if(!carmodel)missing.push("รุ่นรถ");
-    showErr("regErr","กรุณากรอก: "+missing.join(", ")); return;
-  }
-
-  setLoading("regBtn","regLabel",true,"");
-  apiPost({ action:"saveMember", data:{
-    lineUserId:_lineProfile?_lineProfile.userId:"",
-    title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday,
-    // ★ Fixed default address — no longer typed by the customer
-    address:FIXED_ADDRESS,region:FIXED_REGION,province:FIXED_PROVINCE,district:FIXED_DISTRICT,
-    subdistrict:FIXED_SUBDISTRICT,zipcode:FIXED_ZIP,
-    carbrand:carbrand,carmodel:carmodel,license:license
-  }})
-  .then(function(res){
-    setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>");
-    if(!res.success){
-      var msg = "เกิดข้อผิดพลาด: "+res.error;
-      if(res.error==="duplicate_line")   msg = "บัญชี LINE นี้มีสมาชิกอยู่แล้ว";
-      if(res.error==="duplicate_phone")  msg = "เบอร์โทรนี้มีสมาชิกอยู่แล้วในระบบ";
-      if(res.error==="duplicate_plate")  msg = "ทะเบียนรถนี้มีอยู่ในระบบแล้ว กรุณาตรวจสอบ";
-      showErr("regErr",msg); return;
+    if (selectedBrand && selectedBrand.service) {
+      showServiceScreen(result, carId);
+      return;
     }
-    _member=res.member; _cars=res.cars;
-    App.showMemberPage();
-  })
-  .catch(function(err){ setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>"); showErr("regErr","Error: "+(err.message||err)); });
-};
 
-// ── Member page ──────────────────────────────────────────────
-App.showMemberPage = function() {
-  var full=_member.title+" "+_member.firstname+" "+_member.lastname;
-  var ini=((_member.firstname||"?")[0]+(_member.lastname||"?")[0]).toUpperCase();
-  document.getElementById("m-avatar").textContent   = ini;
-  document.getElementById("m-fullname").textContent  = full;
-  document.getElementById("mi-name").textContent     = full;
-  document.getElementById("mi-phone").textContent    = fmtPhone(_member.phone);
-  document.getElementById("mi-birthday").textContent = fmtBirthday(_member.birthday);
-  _carIdx=0; _renderSwiper();
-  App.showPage("page-member");
-
-  // ★ Deep link: if opened via ?action=addcar (e.g. from the LINE bot's
-  //   "+ เพิ่มรถ" button), jump straight into the Add Car modal.
-  var params = new URLSearchParams(window.location.search);
-  if (params.get("action") === "addcar") {
-    App.openAddCar();
-  }
-};
-
-App.updateMemberInfo = function(m) {
-  _member=m;
-  var full=m.title+" "+m.firstname+" "+m.lastname;
-  var ini=((m.firstname||"?")[0]+(m.lastname||"?")[0]).toUpperCase();
-  document.getElementById("m-avatar").textContent   = ini;
-  document.getElementById("m-fullname").textContent  = full;
-  document.getElementById("mi-name").textContent     = full;
-  document.getElementById("mi-phone").textContent    = fmtPhone(m.phone);
-  document.getElementById("mi-birthday").textContent = fmtBirthday(m.birthday);
-};
-
-// ── Car swiper ───────────────────────────────────────────────
-function _renderSwiper() {
-  var track=document.getElementById("swiperTrack"),dots=document.getElementById("carDots");
-  track.innerHTML=""; dots.innerHTML="";
-  if(!_cars.length){
-    track.innerHTML='<div class="no-cars">ยังไม่มีรถ กด "+ เพิ่มรถ" เพื่อเพิ่มรถคันแรก</div>';
-    document.getElementById("qr-car-label").textContent="ยังไม่มีรถ";
-    _clearQR(); return;
-  }
-  _cars.forEach(function(car,idx){
-    var card=document.createElement("div"); card.className="car-card";
-    card.innerHTML='<div class="car-card-top"><div><div class="car-make">'+car.carbrand+'</div><div class="car-model-txt">'+car.carmodel+'</div></div>'+
-      '<button class="btn-del-car" onclick="App.askDelete(\''+car.id+'\',\''+car.carbrand+' '+car.carmodel+'\')">×</button></div>'+
-      '<span class="car-plate">'+car.license+'</span>';
-    track.appendChild(card);
-    var dot=document.createElement("button"); dot.className="car-dot"+(idx===_carIdx?" active":"");
-    dot.onclick=(function(i){return function(){_goTo(i);};})(idx);
-    dots.appendChild(dot);
+    document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
+    _resetConfirmScreen();
+    loadTires();
+    show("s-confirm");
+  },function(err){
+    document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err;
+    show("s-error");
   });
-  _goTo(_carIdx,false); _initSwipe();
 }
 
-function _goTo(idx,animate) {
-  if(idx<0)idx=0; if(idx>=_cars.length)idx=_cars.length-1;
-  _carIdx=idx;
-  var track=document.getElementById("swiperTrack");
-  track.style.transition=animate===false?"none":"transform .3s ease";
-  track.style.transform="translateX(-"+(idx*100)+"%)";
-  document.querySelectorAll(".car-dot").forEach(function(d,i){d.classList.toggle("active",i===idx);});
-  var car=_cars[idx];
-  document.getElementById("qr-car-label").textContent=car.carbrand+" "+car.carmodel+" · "+car.license;
-  _generateQR(car);
-}
+// ── Receipt upload via Cloudinary ──
+async function handleReceiptPhoto(input){
+  if(!input.files||!input.files[0]) return;
+  var file=input.files[0];
+  var statusEl=document.getElementById("receipt-status");
+  var previewEl=document.getElementById("receipt-preview");
+  var areaEl=document.getElementById("receipt-area");
 
-function _initSwipe(){
-  var outer=document.getElementById("swiperOuter"),sx=0,dragging=false;
-  outer.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;},{passive:true});
-  outer.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40){dx<0?_goTo(_carIdx+1):_goTo(_carIdx-1);}});
-  outer.addEventListener("mousedown",function(e){dragging=true;sx=e.clientX;});
-  outer.addEventListener("mouseup",function(e){if(!dragging)return;dragging=false;var dx=e.clientX-sx;if(Math.abs(dx)>40){dx<0?_goTo(_carIdx+1):_goTo(_carIdx-1);}});
-  outer.addEventListener("mouseleave",function(){dragging=false;});
-}
+  var reader=new FileReader();
+  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("receipt-placeholder").style.display="none"; };
+  reader.readAsDataURL(file);
 
-function _generateQR(car){
-  var canvas=document.getElementById("qrCanvas"),ctx=canvas.getContext("2d");
-  ctx.clearRect(0,0,180,180);
-  if(typeof QRCode!=="undefined"){
-    var tmp=document.createElement("div");
-    new QRCode(tmp,{text:car.id,width:180,height:180,colorDark:"#000",colorLight:"#fff"});
-    setTimeout(function(){var img=tmp.querySelector("img")||tmp.querySelector("canvas");if(img){var i=new Image();i.onload=function(){ctx.drawImage(i,0,0,180,180);};i.src=img.src||img.toDataURL();}},150);
+  statusEl.className="receipt-status uploading";
+  statusEl.textContent="⏳ กำลังบีบอัดรูปภาพ...";
+  document.getElementById("open-form-btn").disabled=true;
+
+  try {
+    var base64=await new Promise(function(resolve){
+      var img=new window.Image();
+      img.onload=function(){
+        var c=document.createElement("canvas");
+        var MAX=CONFIG.IMAGE_MAX_PX,w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+        c.width=w; c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(c.toDataURL("image/jpeg",CONFIG.IMAGE_QUALITY).split(",")[1]);
+      };
+      img.src=URL.createObjectURL(file);
+    });
+
+    statusEl.textContent="⏳ กำลังอัพโหลด...";
+
+    var cloudFormData = new FormData();
+    cloudFormData.append("file", "data:image/jpeg;base64," + base64);
+    cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
+    cloudFormData.append("folder", "bntires_receipts");
+    cloudFormData.append("public_id", (currentCarId||"receipt")+"_bill");
+
+    var res = await fetch(
+      "https://api.cloudinary.com/v1_1/" + CONFIG.CLOUDINARY_CLOUD + "/image/upload",
+      { method: "POST", body: cloudFormData }
+    );
+    var data = await res.json();
+    if (data.error) throw new Error(data.error.message || "Cloudinary upload failed");
+
+    receiptUrl = data.secure_url;
+    receiptReady = true;
+    areaEl.classList.add("has-photo");
+    statusEl.className="receipt-status ok";
+    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
+
+    // Save receipt URL to GAS (non-blocking)
+    jsonp(
+      GAS_API_URL+"?action=saveReceiptUrl&carId="+encodeURIComponent(currentCarId)+"&url="+encodeURIComponent(receiptUrl),
+      function(r){ console.log("saveReceiptUrl:", r.ok ? "ok" : r.error); },
+      function(e){ console.log("saveReceiptUrl error:", e); }
+    );
+
+    // ★ Use checkFormReady instead of directly enabling button
+    checkFormReady();
+
+    // ★ Listen for mileage input changes to recheck readiness
+    document.getElementById("mileage-input").oninput = checkFormReady;
+
+  } catch(err){
+    statusEl.className="receipt-status error";
+    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
   }
 }
-function _clearQR(){var ctx=document.getElementById("qrCanvas").getContext("2d");ctx.fillStyle="#f0f0f0";ctx.fillRect(0,0,180,180);}
 
-// ── Add car ──────────────────────────────────────────────────
-App.openAddCar = function(){
-  document.getElementById("m-carbrand").selectedIndex=0;
-  resetSel("m-carmodel","-- เลือกยี่ห้อก่อน --");
-  document.getElementById("m-carmodel").disabled=true;
-  document.getElementById("m-license").value="";
-  document.getElementById("m-brand-other-wrap").style.display="none";
-  document.getElementById("m-model-other-wrap").style.display="none";
-  hideErr("addCarErr");
-  document.getElementById("addCarModal").classList.add("open");
-};
-App.closeAddCar = function(){ document.getElementById("addCarModal").classList.remove("open"); };
+// ── ★ handleCarPhoto — second photo upload (e.g. Lenso car photo) ──
+async function handleCarPhoto(input){
+  if(!input.files||!input.files[0]) return;
+  var file=input.files[0];
+  var statusEl  = document.getElementById("car-photo-status");
+  var previewEl = document.getElementById("car-photo-preview");
+  var areaEl    = document.getElementById("car-photo-area");
 
-App.submitAddCar = function(){
-  hideErr("addCarErr");
-  var carbrand=document.getElementById("m-carbrand").value;
-  var carmodel=document.getElementById("m-carmodel").value;
-  var license=document.getElementById("m-license").value.trim();
-  if(carbrand==="__other__") carbrand=document.getElementById("m-carbrand-other").value.trim();
-  if(carmodel==="__other__") carmodel=document.getElementById("m-carmodel-other").value.trim();
-  if(!carbrand||!carmodel||!license){showErr("addCarErr","กรุณากรอกข้อมูลให้ครบ");return;}
-  setLoading("addCarBtn","addCarLabel",true,"");
-  apiGet({action:"addCar",memberId:_member.id,carbrand:carbrand,carmodel:carmodel,license:license})
-    .then(function(res){
-      setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");
-      if(!res.success){showErr("addCarErr",res.error==="duplicate_plate"?"ทะเบียนนี้มีในระบบแล้ว":"Error: "+res.error);return;}
-      _cars.push(res.car); _carIdx=_cars.length-1;
-      App.closeAddCar(); _renderSwiper();
-    })
-    .catch(function(err){setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");showErr("addCarErr","Error: "+(err.message||err));});
-};
+  var reader=new FileReader();
+  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("car-photo-placeholder").style.display="none"; };
+  reader.readAsDataURL(file);
 
-// ── Delete car ───────────────────────────────────────────────
-App.askDelete = function(carId,label){
-  _delCarId=carId;
-  document.getElementById("confirmMsg").innerHTML="ต้องการลบ <strong>"+label+"</strong> ออกจากโปรไฟล์?";
-  document.getElementById("confirmModal").classList.add("open");
-};
-App.closeConfirm = function(){ document.getElementById("confirmModal").classList.remove("open"); _delCarId=null; };
-App.confirmDelete = function(){
-  if(!_delCarId)return; var id=_delCarId; App.closeConfirm();
-  apiGet({action:"deleteCar",carId:id,memberId:_member.id})
-    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderSwiper();}});
-};
+  statusEl.className="receipt-status uploading";
+  statusEl.textContent="⏳ กำลังบีบอัดรูปรถ...";
+  document.getElementById("open-form-btn").disabled=true;
 
-// ── Edit ─────────────────────────────────────────────────────
-App.openEdit = function() {
-  var m=_member;
-  function _sel(id,val){var el=document.getElementById(id);if(!el)return;for(var i=0;i<el.options.length;i++){if(el.options[i].value===val){el.selectedIndex=i;return;}}}
-  _sel("e-title",m.title);
-  document.getElementById("e-fname").value   = m.firstname||"";
-  document.getElementById("e-lname").value   = m.lastname||"";
-  document.getElementById("e-phone").value   = m.phone||"";
-  document.getElementById("e-birthday").value= isoToDisplayDate(m.birthday);
-  hideErr("editErr");
-  document.getElementById("editOk").style.display="none";
-  App.showPage("page-edit");
-};
+  try {
+    var base64=await new Promise(function(resolve){
+      var img=new window.Image();
+      img.onload=function(){
+        var c=document.createElement("canvas");
+        var MAX=CONFIG.IMAGE_MAX_PX,w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+        c.width=w; c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(c.toDataURL("image/jpeg",CONFIG.IMAGE_QUALITY).split(",")[1]);
+      };
+      img.src=URL.createObjectURL(file);
+    });
 
-App.saveEdit = function(){
-  hideErr("editErr");
-  document.getElementById("editOk").style.display="none";
-  var title=document.getElementById("e-title").value;
-  var fname=document.getElementById("e-fname").value.trim();
-  var lname=document.getElementById("e-lname").value.trim();
-  var phone=document.getElementById("e-phone").value.trim();
-  var bd=parseBirthdayInput("e-birthday");
-  if(!bd.empty && !bd.valid){
-    showErr("editErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
+    statusEl.textContent="⏳ กำลังอัพโหลด...";
+
+    var cloudFormData=new FormData();
+    cloudFormData.append("file", "data:image/jpeg;base64," + base64);
+    cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
+    cloudFormData.append("folder", "bntires_car_photos");
+    cloudFormData.append("public_id", (currentCarId||"car")+"_car");
+
+    var res=await fetch(
+      "https://api.cloudinary.com/v1_1/"+CONFIG.CLOUDINARY_CLOUD+"/image/upload",
+      { method:"POST", body:cloudFormData }
+    );
+    var data=await res.json();
+    if(data.error) throw new Error(data.error.message||"Cloudinary upload failed");
+
+    carPhotoUrl   = data.secure_url;
+    carPhotoReady = true;
+    areaEl.classList.add("has-photo");
+    statusEl.className="receipt-status ok";
+    statusEl.textContent="✅ อัพโหลดสำเร็จ";
+    checkFormReady();
+
+  } catch(err){
+    statusEl.className="receipt-status error";
+    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
   }
-  var birthday = bd.valid ? bd.iso : "";
-  if(!title||!fname||!lname||!phone||!birthday){
-    showErr("editErr","กรุณากรอกข้อมูลให้ครบถ้วน"); return;
-  }
-  setLoading("saveEditBtn","saveEditLabel",true,"");
-  // ★ Address fields are no longer editable here — the member's address
-  //   stays whatever was already saved (fixed default for new signups).
-  apiPost({action:"updateMember",data:{memberId:_member.id,title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday}})
-    .then(function(res){
-      setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล <span class=\"en-sm\">(Save)</span>");
-      if(!res.success){showErr("editErr","เกิดข้อผิดพลาด: "+res.error);return;}
-      _member.title=title;_member.firstname=fname;_member.lastname=lname;
-      _member.phone=phone;_member.birthday=birthday;
-      App.updateMemberInfo(_member);
-      document.getElementById("editOk").style.display="block";
-      setTimeout(function(){document.getElementById("editOk").style.display="none";},3000);
-    })
-    .catch(function(err){setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล <span class=\"en-sm\">(Save)</span>");showErr("editErr","Error: "+(err.message||err));});
-};
+}
 
-// ── Start ────────────────────────────────────────────────────
-window.addEventListener("load", function() {
-  attachDateMask("r-birthday");
-  attachDateMask("e-birthday");
-  App.start();
-});
+// ── ★ UPDATED: openWarrantyForm — includes mileage ──
+function openWarrantyForm(){
+  if(!lookupResult||!selectedBrand||!receiptReady) return;
+
+  // ★ Validate mileage if required
+  var mileage = document.getElementById("mileage-input").value.trim();
+  if (selectedBrand.requiresMileage && !mileage) {
+    document.getElementById("mileage-input").classList.add("required-err");
+    document.getElementById("mileage-input").focus();
+    return;
+  }
+  document.getElementById("mileage-input").classList.remove("required-err");
+  currentMileage = mileage;
+
+  var p = Object.assign({}, lookupResult.params);
+  p.car_id = currentCarId;
+  if (receiptUrl)   p.receipt_url = receiptUrl;
+  if (mileage)      p.mileage     = mileage;  // ★ pass mileage to extension
+  if (carPhotoUrl)  p.car_photo_url = carPhotoUrl; // ★ pass car photo URL
+  if (selectedTire) {
+    p.tire_model  = selectedTire.model;
+    p.tire_width  = selectedTire.width;
+    p.tire_aspect = selectedTire.aspect;
+    p.tire_rim    = selectedTire.rim;
+  }
+
+  var qs = Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
+    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
+  var warrantyUrl = selectedBrand.url + (selectedBrand.url.includes("?") ? "&" : "?") + qs;
+
+  document.getElementById("waiting-text").textContent = "กำลังส่งไปยังคอมพิวเตอร์...";
+  document.getElementById("waiting-debug").textContent = "mileage: "+(mileage||"(ว่าง)")+" | receipt: "+(receiptUrl?"ok":"null");
+  show("s-waiting");
+  waitingElapsed = 0;
+
+  jsonp(
+    GAS_API_URL+"?action=pushUrl&carId="+encodeURIComponent(currentCarId)+"&url="+encodeURIComponent(warrantyUrl),
+    function(result){
+      if(result.ok){
+        // ★ Update car mileage in GAS (non-blocking)
+        if (mileage) {
+          jsonp(
+            GAS_API_URL+"?action=updateCarMileage&carId="+encodeURIComponent(currentCarId)+"&mileage="+encodeURIComponent(mileage),
+            function(r){ console.log("updateCarMileage:", r.ok ? "ok" : r.error); },
+            function(e){ console.log("updateCarMileage error:", e); }
+          );
+        }
+        document.getElementById("waiting-text").textContent = "รอให้คอมพิวเตอร์เปิดฟอร์ม...";
+        pollDesktop();
+      } else {
+        showWaitingError("ส่ง URL ไม่สำเร็จ: "+(result.error||""));
+      }
+    },
+    function(err){ showWaitingError("เชื่อมต่อ GAS ไม่ได้: "+err); }
+  );
+}
+
+function pollDesktop(){
+  waitingTimer=setInterval(function(){
+    waitingElapsed+=3;
+    document.getElementById("waiting-text").textContent="รอให้คอมพิวเตอร์เปิดฟอร์ม... ("+waitingElapsed+"s)";
+    if(waitingElapsed>=CONFIG.WAITING_TIMEOUT_S){
+      clearInterval(waitingTimer);
+      showWaitingError("หมดเวลา — ตรวจสอบว่าเปิด Desktop Opener บนคอมพิวเตอร์แล้ว");
+      return;
+    }
+    jsonp(
+      GAS_API_URL+"?action=checkOpened&carId="+encodeURIComponent(currentCarId),
+      function(result){
+        if(result.opened){
+          clearInterval(waitingTimer);
+          var descEl = document.querySelector("#s-sent .center-desc");
+          if (descEl) descEl.innerHTML = "Extension กำลังกรอกข้อมูลอัตโนมัติ<br>กรุณากรอกรุ่นยางบนคอมพิวเตอร์";
+          show("s-sent");
+        }
+      },
+      function(){}
+    );
+  },3000);
+}
+
+function cancelWaiting(){ clearInterval(waitingTimer); show("s-confirm"); }
+function showWaitingError(msg){ clearInterval(waitingTimer); document.getElementById("error-msg").textContent=msg; show("s-error"); }
+
+function retryOpenForm(){
+  clearInterval(waitingTimer);
+  if(!lookupResult||!selectedBrand||!receiptReady){ show("s-confirm"); return; }
+  openWarrantyForm();
+}
+
+// ── Load tires ──
+function loadTires(){
+  if(!selectedBrand) return;
+  document.getElementById("tire-loading").style.display="block";
+  document.getElementById("tire-list").innerHTML="";
+  jsonp(
+    GAS_API_URL+"?action=getTires&brand="+encodeURIComponent(selectedBrand.name.toUpperCase()),
+    function(result){
+      document.getElementById("tire-loading").style.display="none";
+      if(result.error||!result.tires||result.tires.length===0){
+        document.getElementById("tire-loading").textContent="ไม่พบข้อมูลยางในวันนี้";
+        document.getElementById("tire-loading").style.display="block";
+        return;
+      }
+      var list=document.getElementById("tire-list");
+      result.tires.forEach(function(t){
+        var btn=document.createElement("button");
+        btn.type="button";
+        btn.style.cssText="width:100%;text-align:left;background:white;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0.1)";
+        btn.innerHTML='<span style="font-weight:700;color:#1a0000">'+t.model+'</span> <span style="color:#888">'+t.width+'/'+t.aspect+'R'+t.rim+'</span>';
+        btn.addEventListener("click",function(){
+          selectedTire=t;
+          list.querySelectorAll("button").forEach(function(b){ b.style.borderColor="#e0e0e0"; b.style.background="white"; });
+          btn.style.borderColor="#b40000"; btn.style.background="#fff5f5";
+          document.getElementById("tire-selected").style.display="block";
+          document.getElementById("tire-selected").textContent="✅ เลือก: "+t.label;
+        });
+        list.appendChild(btn);
+      });
+    },
+    function(err){
+      document.getElementById("tire-loading").textContent="โหลดยางไม่ได้: "+err;
+    }
+  );
+}
+
+// ── Manual Search ──
+function openSearch(){
+  document.getElementById("search-brand-label").textContent = selectedBrand ? selectedBrand.name : "";
+  document.getElementById("search-phone").value = "";
+  document.getElementById("search-plate").value = "";
+  document.getElementById("search-status").textContent = "";
+  document.getElementById("search-results").style.display = "none";
+  document.getElementById("search-result-list").innerHTML = "";
+  show("s-search");
+}
+
+function doSearch(){
+  var phone = document.getElementById("search-phone").value.trim();
+  var plate = document.getElementById("search-plate").value.trim().toUpperCase();
+  var statusEl = document.getElementById("search-status");
+  if(!phone && !plate){ statusEl.textContent = "กรุณากรอกเบอร์โทรหรือทะเบียนรถ"; return; }
+  statusEl.textContent = "กำลังค้นหา...";
+  document.getElementById("search-results").style.display = "none";
+  jsonp(
+    GAS_API_URL + "?action=search" +
+    (phone ? "&phone=" + encodeURIComponent(phone) : "") +
+    (plate ? "&plate=" + encodeURIComponent(plate) : ""),
+    function(result){
+      if(result.error){ statusEl.textContent = "❌ " + result.error; return; }
+      if(!result.results || result.results.length === 0){ statusEl.textContent = "ไม่พบข้อมูล"; return; }
+      statusEl.textContent = "พบ " + result.results.length + " รายการ";
+      renderSearchResults(result.results);
+    },
+    function(err){ statusEl.textContent = "❌ เชื่อมต่อไม่ได้: " + err; }
+  );
+}
+
+function renderSearchResults(results){
+  var list = document.getElementById("search-result-list");
+  list.innerHTML = "";
+  results.forEach(function(r){
+    var el = document.createElement("div");
+    el.className = "member-card";
+    el.style.cssText = "cursor:pointer;margin-bottom:8px";
+    el.innerHTML =
+      '<div style="font-size:15px;font-weight:700;color:#1a0000;margin-bottom:4px">' + r.fullName + '</div>' +
+      '<div style="font-size:13px;color:#888">' + r.phone + ' · ' + r.carBrand + ' ' + r.carModel + '</div>' +
+      '<div style="font-size:12px;color:#aaa;margin-top:2px">ทะเบียน: ' + r.plate + ' · CarID: ' + r.carId + '</div>';
+    el.addEventListener("click", function(){
+      currentCarId = r.carId;
+      lookupResult = r;
+
+      if (selectedBrand && selectedBrand.service) {
+        showServiceScreen(r, r.carId);
+        return;
+      }
+
+      document.getElementById("c-name").textContent     = r.fullName;
+      document.getElementById("c-phone").textContent    = r.phone;
+      document.getElementById("c-memberid").textContent = r.memberId;
+      document.getElementById("c-carid").textContent    = r.carId;
+      document.getElementById("c-car").textContent      = r.carBrand + " " + r.carModel;
+      document.getElementById("c-plate").textContent    = r.plate;
+      document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
+      _resetConfirmScreen();
+      loadTires();
+      show("s-confirm");
+    });
+    list.appendChild(el);
+  });
+  document.getElementById("search-results").style.display = "block";
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  });
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){ caches.delete(k); });
+  });
+}
 </script>
 </body>
 </html>
