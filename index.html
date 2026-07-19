@@ -995,7 +995,13 @@ function openCarAddForm(){
   document.getElementById("ca-plate").value = "";
   document.getElementById("ca-err").textContent = "";
   resetVehicleBrandSelect("ca-brand","ca-model","ca-brand-other","ca-model-other");
-  ensureVehicleBrandData(function(){ populateVehicleBrandSelect("ca-brand"); });
+  ensureVehicleBrandData(function(){
+    populateVehicleBrandSelect("ca-brand");
+    // ★ NEW: surface a clear error instead of silently showing an empty dropdown
+    if (!_vehicleBrandData.length) {
+      document.getElementById("ca-err").textContent = "⚠️ โหลดรายชื่อยี่ห้อรถไม่ได้ — ตรวจสอบชื่อชีต Car_Brands&Models หรือลองรีเฟรชหน้า";
+    }
+  });
   show("s-caradd");
 }
 
@@ -1033,6 +1039,10 @@ function openCarEditForm(car){
   ensureVehicleBrandData(function(){
     populateVehicleBrandSelect("ce-brand");
     selectVehicleBrandModel("ce-brand","ce-model", car.carBrand, car.carModel);
+    // ★ NEW: surface a clear error instead of silently showing an empty dropdown
+    if (!_vehicleBrandData.length) {
+      document.getElementById("ce-err").textContent = "⚠️ โหลดรายชื่อยี่ห้อรถไม่ได้ — ตรวจสอบชื่อชีต Car_Brands&Models หรือลองรีเฟรชหน้า";
+    }
   });
   show("s-caredit");
 }
