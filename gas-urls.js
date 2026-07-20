@@ -12,16 +12,25 @@
 //  remote executable code) — it instead fetches gas-urls.json below,
 //  which holds the exact same values as plain data. Keep both files
 //  in sync whenever a URL changes.
+//
+//  ★ FIXED: the two URLs below were swapped (each one was assigned to
+//  the WRONG key — warrantyApi held the Member Portal API's URL and
+//  vice versa). This caused the register page's brand dropdown to hit
+//  the Warranty API (no getCarData handler → "ไม่พบ action หรือ carId"),
+//  and the staff scanner's QR/tire-brand calls to hit the Member Portal
+//  API instead (no lookupCarId/getMemberCars handler there). Verify each
+//  URL below against its own comment before saving, since this is exactly
+//  the kind of mismatch that's bitten this project before.
 // ============================================================
 
 var GAS_URLS = {
   // Apps Script project titled "Member" — contains the Warranty API /
-  // QR-scanner backend: pushUrl, popUrl, lookupCarId, getBrands, getTires,
-  // saveWarrantyNumber, updateCarMileage
-  warrantyApi: "https://script.google.com/macros/s/AKfycbzlHJSUIK393i0Y1-0XxSrr0PwNQqEVRiS64z1CDgD6GCSdXgSov6GxlD2TK2fBOU08Lw/exec",
+  // QR-scanner backend: pushUrl, popUrl, lookupCarId, getMemberCars,
+  // getBrands, getTires, saveWarrantyNumber, updateCarMileage
+  warrantyApi: "https://script.google.com/macros/s/AKfycbwisNTnsUD61a2HjFbXHl4SMSKgdm24b69HURQzM9SIQj80kPFtWOyFEIxKgr_drWZb/exec",
 
   // Apps Script project titled "Member_Scanner" — contains the Member
   // Portal API backend: checkLineUser, saveMember, updateMember, addCar,
-  // deleteCar, getMemberByQR, getCarData
-  memberPortalApi: "https://script.google.com/macros/s/AKfycbwisNTnsUD61a2HjFbXHl4SMSKgdm24b69HURQzM9SIQj80kPFtWOyFEIxKgr_drWZb/exec"
+  // deleteCar, updateCarInfo, getMemberByQR, getCarData (→ getCarBrandsData)
+  memberPortalApi: "https://script.google.com/macros/s/AKfycbzlHJSUIK393i0Y1-0XxSrr0PwNQqEVRiS64z1CDgD6GCSdXgSov6GxlD2TK2fBOU08Lw/exec"
 };
