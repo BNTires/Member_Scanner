@@ -1,1071 +1,637 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>B.N.Tires&amp;Max Member Page</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Sarabun","Helvetica Neue",Arial,sans-serif;background:#f2f2f2;min-height:100vh;padding:20px}
-.wrap{max-width:520px;margin:0 auto}
-.logo-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-.logo-circle{width:38px;height:38px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-circle svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
-.logo-text-main{font-size:15px;font-weight:700;color:#222}
-.logo-text-sub{font-size:11px;color:#888}
-.card{background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.1);overflow:hidden;margin-bottom:16px}
-.card-header{background:#cc0000;padding:22px 28px}
-.card-header h1{font-size:20px;font-weight:700;color:#fff;margin:0}
-.card-header p{font-size:13px;color:rgba(255,255,255,.85);margin-top:3px}
-.card-body{padding:28px}
-.page{display:none}.page.active{display:block}
-.page-title{font-size:18px;font-weight:700;color:#222;margin-bottom:4px}
-.page-sub{font-size:13px;color:#888;margin-bottom:20px;line-height:1.6}
-.sec-title{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 14px;border-top:1px solid #f0f0f0;padding-top:16px}
-.sec-title:first-of-type{border-top:none;padding-top:0;margin-top:0}
-.field{margin-bottom:16px}
-.row{display:flex;gap:12px}.row .field{flex:1}.row .field.narrow{flex:0 0 140px}
-label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:5px}
-label .en{font-weight:400;color:#aaa;font-size:12px}
-.en-sm{font-weight:400;opacity:.65;font-size:.72em}
-label .req{color:#cc0000;margin-left:2px}
-input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #ddd;border-radius:6px;background:#fff;color:#333;transition:border-color .15s}
-textarea{resize:vertical;min-height:72px}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#cc0000;box-shadow:0 0 0 3px rgba(204,0,0,.1)}
-select:disabled{background:#f8f8f8;color:#aaa}
-input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
-.err-msg{font-size:12px;color:#cc0000;margin-top:5px;display:none}
-.btn{width:100%;padding:12px;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;transition:opacity .15s}
-.btn-red{background:#cc0000;color:#fff}.btn-red:hover{background:#aa0000}
-.btn-outline{background:#fff;color:#cc0000;border:1.5px solid #cc0000}.btn-outline:hover{background:#fff5f5}
-.btn-ghost{background:none;color:#888;border:1px solid #e0e0e0}.btn-ghost:hover{background:#f5f5f5}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-back{background:#fff;border:1.5px solid #cc0000;color:#cc0000;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;padding:8px 14px;border-radius:8px}
-.btn-back:active{background:#fff5f5}
-.btn-link{background:none;border:none;cursor:pointer;font-size:13px;color:#cc0000;font-family:inherit;padding:0;text-decoration:underline}
-.dots{display:inline-flex;gap:4px;align-items:center}
-.dots span{width:6px;height:6px;background:currentColor;border-radius:50%;opacity:.3;animation:blink 1s infinite}
-.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
-@keyframes blink{40%{opacity:1}}
-.progress-track{width:100%;max-width:280px;height:8px;background:#f0f0f0;border-radius:4px;margin:0 auto;overflow:hidden}
-.progress-fill{height:100%;width:8%;background:#cc0000;border-radius:4px;transition:width .4s ease}
-/* Member page */
-.avatar{width:52px;height:52px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
-/* ── Member page redesign: full-bleed banner + name bar + tabbed body + bottom nav ── */
-.mem-header-banner{margin:-20px -20px 0 -20px;line-height:0}
-.mem-header-banner img{width:100%;display:block}
-.mem-name-bar{background:#f0f0f0;padding:16px 20px 12px;margin:0 -20px}
-.mem-name-bar .mem-name{font-size:19px;font-weight:700;color:#1a1a1a;display:inline-block;border-bottom:3px solid #cc0000;padding-bottom:4px}
-.mem-body-card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:16px 0 105px;padding:24px 20px;min-height:300px}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.qr-box{text-align:center}
-.qr-box canvas{border-radius:6px;margin:0 auto 10px;display:block}
-.qr-hint{font-size:12px;color:#aaa}
-.btn-outline{background:#fff;color:#cc0000;border:1.5px solid #cc0000;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit}
-.btn-outline:active{background:#fff5f5}
-.mem-bottom-nav{background:#cc0000;display:flex;justify-content:space-around;align-items:flex-end;padding:8px 8px 8px;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:520px;box-sizing:border-box;z-index:50}
-.nav-item{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;color:#fff;font-size:10px;font-weight:700;flex:0 0 auto;width:84px;padding:6px 4px;min-height:48px;-webkit-tap-highlight-color:transparent;transition:transform .15s}
-.nav-item .nav-icon-wrap{width:50px;height:50px;display:flex;align-items:center;justify-content:center}
-.nav-item svg{width:40px;height:40px;stroke:#1a1a1a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.nav-item.active{transform:translateY(-25px)}
-.nav-item.active .nav-icon-wrap{width:75px;height:75px;background:#fff;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.3);margin-bottom:2px}
-.nav-item.active svg{width:42px;height:42px;stroke:#cc0000;stroke-width:2.2}
-.car-card{background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px}
-.car-card-logo{width:40px;height:40px;object-fit:contain;background:white;border-radius:8px;padding:3px;border:1px solid rgba(0,0,0,.08);flex-shrink:0}
-.car-card-info{flex:1;min-width:0;display:flex;align-items:baseline;gap:6px;overflow:hidden}
-.car-make{font-size:15px;font-weight:700;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.car-model-txt{font-size:13px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.car-plate{display:inline-block;background:#222;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;flex-shrink:0}
-.no-cars{text-align:center;padding:24px;color:#aaa;font-size:14px;background:#f8f8f8;border:1px solid #eee;border-radius:10px}
-.info-section{margin-bottom:18px}
-.info-section-ttl{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:14px}
-.info-grid dt{color:#888}.info-grid dd{color:#222;font-weight:600}
-/* ── Vehicle history ── */
-.hist-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
-.hist-row:last-child{border-bottom:none}
-.hist-row.hist-head{font-weight:700;color:#888;font-size:11px;text-transform:uppercase}
-.hist-label{color:#333;font-weight:600;flex:2}
-.hist-date{color:#888;flex:1;text-align:right}
-.hist-mileage{color:#aaa;flex:1;text-align:right}
-.hist-empty{text-align:center;padding:16px;color:#aaa;font-size:13px;background:#f8f8f8;border-radius:8px}
-.hist-tire-info{font-size:13px;color:#444;margin-bottom:10px;line-height:1.7}
-/* Modal */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.open{display:flex}
-.modal{background:#fff;border-radius:10px;padding:24px;width:100%;max-width:420px;position:relative;max-height:90vh;overflow-y:auto}
-.modal h3{font-size:16px;font-weight:700;color:#222;margin-bottom:4px}
-.modal-sub{font-size:13px;color:#888;margin-bottom:16px}
-.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:22px;color:#aaa;line-height:1;padding:4px}
-.modal-close:hover{color:#cc0000}
-.confirm-box{background:#fff;border-radius:10px;padding:24px;width:100%;max-width:340px;text-align:center}
-.confirm-box h3{font-size:16px;font-weight:700;margin-bottom:8px}
-.confirm-box p{font-size:13px;color:#666;margin-bottom:20px;line-height:1.6}
-.confirm-actions{display:flex;gap:10px}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="logo-bar">
-    <div class="logo-circle">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
-    </div>
-    <div>
-      <div class="logo-text-main">B.N.Tires&amp;Max</div>
-      <div class="logo-text-sub">Member Page</div>
-    </div>
-  </div>
+// ============================================================
+//  B.N. Tires & Max — Warranty API + Desktop Push System
+// ============================================================
 
-  <!-- LOGIN PAGE -->
-  <div class="page active" id="page-login">
-    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
-    <div class="mem-body-card" style="text-align:center;padding:48px 28px;margin-top:24px">
-      <div id="login-loading">
-        <div style="font-size:36px;margin-bottom:12px">🔍</div>
-        <div style="font-size:14px;color:#888;margin-bottom:16px" id="login-msg">กำลังเข้าสู่ระบบผ่าน LINE…</div>
-        <div class="progress-track"><div class="progress-fill" id="login-progress-fill"></div></div>
-      </div>
-      <div id="login-error" style="display:none">
-        <div style="font-size:32px;margin-bottom:10px">⚠️</div>
-        <div style="font-size:13px;color:#cc0000;margin-bottom:16px;line-height:1.6" id="login-error-msg"></div>
-        <button class="btn btn-red" onclick="App.retryLogin()" style="max-width:200px;margin:0 auto">ลองอีกครั้ง</button>
-      </div>
-    </div>
-  </div>
+var MEMBER_SHEET_ID = "1tyg0cIcn50ORK8BlKhJjIcCZeQIl21cPdeZN9wjV4io";
+var SHOP_NAME       = "B.N.Tires&Max";
+var SHOP_PROVINCE   = "สมุทรปราการ";
 
-  <!-- REGISTER PAGE -->
-  <div class="page" id="page-register">
-    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
-    <div class="mem-body-card" style="margin-top:16px">
-      <p class="sec-title" style="margin-top:0">สมัครสมาชิก</p>
-      <div id="line-profile-bar" style="display:none;align-items:center;gap:12px;background:#f0f9f0;border:1px solid #c3e6cb;border-radius:8px;padding:12px 14px;margin-bottom:20px">
-        <img id="line-avatar" src="" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
-        <div>
-          <div style="font-size:13px;font-weight:700;color:#1e7e34" id="line-display-name"></div>
-          <div style="font-size:11px;color:#888">เข้าสู่ระบบผ่าน LINE</div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="field narrow">
-          <label>คำนำหน้า<span class="req">*</span></label>
-          <select id="r-title">
-            <option value="">-- เลือก --</option>
-            <option value="Mr.">นาย (Mr.)</option>
-            <option value="Ms.">นางสาว (Ms.)</option>
-            <option value="Mrs.">นาง (Mrs.)</option>
-          </select>
-        </div>
-        <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
-      </div>
-      <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="r-lname" placeholder="นามสกุล"></div>
-      <div class="row">
-        <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
-        <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
-      </div>
-      <div id="debug-cardata" style="font-size:11px;color:#aaa;background:#f8f8f8;border-radius:6px;padding:8px 10px;margin-bottom:12px"></div>
-      <p class="sec-title">รถคันแรก</p>
-      <div class="row">
-        <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
-          <select id="r-carbrand" onchange="App.onCarBrandChange('r-carbrand','r-carmodel','r-brand-other-wrap','r-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
-          <img id="r-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
-        </div>
-        <div class="field"><label>รุ่น<span class="req">*</span></label>
-          <select id="r-carmodel" onchange="App.onCarModelChange('r-carmodel','r-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
-        </div>
-      </div>
-      <div class="field" id="r-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="r-carbrand-other"></div>
-      <div class="field" id="r-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="r-carmodel-other"></div>
-      <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="r-license" placeholder="เช่น กข 1234"></div>
-      <div class="field"><label>จังหวัดป้ายทะเบียน<span class="req">*</span></label>
-        <select id="r-plate-province"><option value="">-- เลือกจังหวัด --</option></select>
-      </div>
-      <div class="err-msg" id="regErr"></div>
-      <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก</span></button>
-    </div>
-  </div>
-
-  <!-- MEMBER PAGE — redesigned: header banner + name + 3 tabs (QR / Car / Personal) + bottom nav -->
-  <div class="page" id="page-member">
-    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
-    <div class="mem-name-bar"><div class="mem-name" id="m-fullname"></div></div>
-
-    <div class="mem-body-card">
-      <!-- Tab: QR -->
-      <div class="tab-panel active" id="tab-qr">
-        <div class="qr-box">
-          <canvas id="qrCanvas" width="200" height="200"></canvas>
-          <div class="qr-hint">แสดง QR code นี้ให้เจ้าหน้าที่สแกน</div>
-        </div>
-      </div>
-
-      <!-- Tab: Car — two sub-views: a picker list (multi-car) and a
-           detail view (single car, or after picking from the list) -->
-      <div class="tab-panel" id="tab-car">
-        <div id="car-list-view">
-          <div id="car-list-items"></div>
-        </div>
-        <div id="car-detail-view" style="display:none">
-          <div id="car-selected-summary"></div>
-          <button class="btn-outline" id="change-car-btn" onclick="_showCarList()" style="margin-top:10px">เปลี่ยนรถ</button>
-          <div class="info-section" id="history-section" style="margin-top:20px">
-            <div class="info-section-ttl">ประวัติ</div>
-            <div class="hist-tire-info" id="history-tire-info"></div>
-            <div id="history-table-wrap"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab: Personal Info -->
-      <div class="tab-panel" id="tab-personal">
-        <dl class="info-grid">
-          <dt>คำนำหน้า</dt><dd id="mi-title"></dd>
-          <dt>ชื่อ</dt><dd id="mi-firstname"></dd>
-          <dt>นามสกุล</dt><dd id="mi-lastname"></dd>
-          <dt>เบอร์โทร</dt><dd id="mi-phone"></dd>
-          <dt>วันเกิด</dt><dd id="mi-birthday"></dd>
-        </dl>
-        <button class="btn-outline" style="margin-top:16px" onclick="App.openEdit()">✏️ แก้ไขข้อมูล</button>
-      </div>
-    </div>
-
-    <div class="mem-bottom-nav">
-      <button class="nav-item active" id="nav-tab-qr" onclick="App.switchTab('tab-qr')">
-        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14.5" y="14.5" width="2.5" height="2.5"/><rect x="18" y="14.5" width="2.5" height="2.5"/><rect x="14.5" y="18" width="2.5" height="2.5"/><rect x="18" y="18" width="2.5" height="2.5"/></svg></div>
-        <span>สมาชิก</span>
-      </button>
-      <button class="nav-item" id="nav-tab-car" onclick="App.switchTab('tab-car')">
-        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M3 13l1.4-4.3A2 2 0 0 1 6.3 7.3h11.4a2 2 0 0 1 1.9 1.4L21 13"/><path d="M3 13h18v3.5a1.2 1.2 0 0 1-1.2 1.2H19a1.2 1.2 0 0 1-1.2-1.2V16H6.2v.5A1.2 1.2 0 0 1 5 17.7H4.2A1.2 1.2 0 0 1 3 16.5V13z"/><circle cx="7" cy="15" r="1"/><circle cx="17" cy="15" r="1"/></svg></div>
-        <span>รถยนต์</span>
-      </button>
-      <button class="nav-item" id="nav-tab-personal" onclick="App.switchTab('tab-personal')">
-        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5 15.5c0-1.6 1.6-2.8 3.5-2.8s3.5 1.2 3.5 2.8"/><line x1="14" y1="9.5" x2="18" y2="9.5"/><line x1="14" y1="13" x2="18" y2="13"/></svg></div>
-        <span>ข้อมูลส่วนตัว</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- EDIT PAGE -->
-  <div class="page" id="page-edit">
-    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
-    <div class="mem-body-card" style="margin-top:16px;margin-bottom:24px">
-      <button class="btn-back" onclick="App.showPage('page-member')">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        กลับ
-      </button>
-      <p class="sec-title" style="margin-top:0">แก้ไขข้อมูลส่วนตัว</p>
-      <div class="row">
-        <div class="field narrow"><label>Title<span class="req">*</span></label>
-          <select id="e-title"><option value="">-- เลือก --</option><option value="Mr.">นาย (Mr.)</option><option value="Ms.">นางสาว (Ms.)</option><option value="Mrs.">นาง (Mrs.)</option></select>
-        </div>
-        <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="e-fname"></div>
-      </div>
-      <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="e-lname"></div>
-      <div class="row">
-        <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="e-phone" maxlength="10"></div>
-        <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="e-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
-      </div>
-      <div class="err-msg" id="editErr"></div>
-      <div id="editOk" style="display:none;font-size:13px;color:#1e7e34;margin-top:8px;text-align:center">✓ บันทึกเรียบร้อยแล้ว</div>
-      <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล</span></button>
-    </div>
-  </div>
-</div>
-
-<!-- Add car modal -->
-<div class="modal-backdrop" id="addCarModal">
-  <div class="modal">
-    <button class="modal-close" onclick="App.closeAddCar()">×</button>
-    <h3>เพิ่มรถ <span class="en-sm">(Add vehicle)</span></h3>
-    <p class="modal-sub">เพิ่มรถคันใหม่เข้าในโปรไฟล์</p>
-    <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
-      <select id="m-carbrand" onchange="App.onCarBrandChange('m-carbrand','m-carmodel','m-brand-other-wrap','m-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
-      <img id="m-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
-    </div>
-    <div class="field"><label>รุ่น<span class="req">*</span></label>
-      <select id="m-carmodel" onchange="App.onCarModelChange('m-carmodel','m-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
-    </div>
-    <div class="field" id="m-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="m-carbrand-other"></div>
-    <div class="field" id="m-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="m-carmodel-other"></div>
-    <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="m-license" placeholder="เช่น กข 1234"></div>
-    <div class="err-msg" id="addCarErr"></div>
-    <button class="btn btn-red" id="addCarBtn" onclick="App.submitAddCar()" style="margin-top:4px"><span id="addCarLabel">บันทึก <span class="en-sm">(Save)</span></span></button>
-    <button class="btn btn-ghost" onclick="App.closeAddCar()" style="margin-top:8px">ยกเลิก / Cancel</button>
-  </div>
-</div>
-
-
-
-<!-- Confirm delete modal -->
-<div class="modal-backdrop" id="confirmModal">
-  <div class="confirm-box">
-    <h3>ลบรถออก?</h3>
-    <p id="confirmMsg"></p>
-    <div class="confirm-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="App.closeConfirm()">ยกเลิก</button>
-      <button class="btn btn-red" style="flex:1" onclick="App.confirmDelete()">ลบ</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=2"></script>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-// ── CONFIG ──────────────────────────────────────────────────
-var LIFF_ID    = "2010142778-E4fdEFh0";
-var API_URL    = GAS_URLS.memberPortalApi;
-
-// ★ Fixed default address — every member gets this, no longer typed by the customer
-var FIXED_ADDRESS      = "3/47";
-var FIXED_REGION       = "ภาคกลาง";
-var FIXED_PROVINCE     = "สมุทรปราการ";
-var FIXED_DISTRICT     = "บางพลี";
-var FIXED_SUBDISTRICT  = "บางพลีใหญ่";
-var FIXED_ZIP          = "10540";
-
-// ── ★ NEW: All 77 Thai provinces, for the license plate's registering
-//    province dropdown (distinct from FIXED_PROVINCE above, which is
-//    the member's own home address province, not the car's plate). ──
-var THAI_PROVINCES = [
-  "กรุงเทพมหานคร","กระบี่","กาญจนบุรี","กาฬสินธุ์","กำแพงเพชร","ขอนแก่น","จันทบุรี","ฉะเชิงเทรา",
-  "ชลบุรี","ชัยนาท","ชัยภูมิ","ชุมพร","เชียงราย","เชียงใหม่","ตรัง","ตราด","ตาก","นครนายก",
-  "นครปฐม","นครพนม","นครราชสีมา","นครศรีธรรมราช","นครสวรรค์","นนทบุรี","นราธิวาส","น่าน",
-  "บึงกาฬ","บุรีรัมย์","ปทุมธานี","ประจวบคีรีขันธ์","ปราจีนบุรี","ปัตตานี","พระนครศรีอยุธยา",
-  "พังงา","พัทลุง","พิจิตร","พิษณุโลก","เพชรบุรี","เพชรบูรณ์","แพร่","ภูเก็ต","มหาสารคาม",
-  "มุกดาหาร","แม่ฮ่องสอน","ยโสธร","ยะลา","ร้อยเอ็ด","ระนอง","ระยอง","ราชบุรี","ลพบุรี","ลำปาง",
-  "ลำพูน","เลย","ศรีสะเกษ","สกลนคร","สงขลา","สตูล","สมุทรปราการ","สมุทรสงคราม","สมุทรสาคร",
-  "สระแก้ว","สระบุรี","สิงห์บุรี","สุโขทัย","สุพรรณบุรี","สุราษฎร์ธานี","สุรินทร์","หนองคาย",
-  "หนองบัวลำภู","อ่างทอง","อำนาจเจริญ","อุดรธานี","อุตรดิตถ์","อุทัยธานี","อุบลราชธานี"
-];
-function _populateProvinceSelect(selectId){
-  var sel = document.getElementById(selectId);
-  if (!sel) return;
-  while (sel.options.length) sel.remove(0);
-  var ph = document.createElement("option"); ph.value=""; ph.textContent="-- เลือกจังหวัด --"; sel.appendChild(ph);
-  THAI_PROVINCES.forEach(function(p){ var o=document.createElement("option"); o.value=p; o.textContent=p; sel.appendChild(o); });
-}
-
-// ── STATE ────────────────────────────────────────────────────
-var _member      = null;
-var _cars        = [];
-var _carIdx      = 0;
-var _delCarId    = null;
-var _lineProfile = null;
-var _clientData  = null;
-var _carData     = [];
-var _carDataError = ""; // ★ NEW — last error from getCarData, shown to staff/customer instead of a generic message
-
-// ── API helpers ──────────────────────────────────────────────
-function apiGet(params, retries) {
-  retries = retries || 0;
-  var qs = Object.keys(params).map(function(k){ return k+"="+encodeURIComponent(params[k]); }).join("&");
-  return fetch(API_URL+"?"+qs, { redirect:"follow" })
-    .then(function(r){
-      if (!r.ok) throw new Error("HTTP "+r.status);
-      return r.json();
-    })
-    .catch(function(err) {
-      if (retries < 2) {
-        // GAS sometimes fails on first call due to cold start — retry
-        return new Promise(function(resolve) { setTimeout(resolve, 1000); })
-          .then(function() { return apiGet(params, retries+1); });
-      }
-      throw err;
-    });
-}
-
-function apiPost(data) {
-  return fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify(data),
-    redirect: "follow"
-  }).then(function(r){ return r.json(); });
-}
-
-// ── UI helpers ───────────────────────────────────────────────
-var App = {};
-
-App.showPage = function(id) {
-  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
-  document.getElementById(id).classList.add("active");
-  var logoBar = document.querySelector(".logo-bar");
-  var pagesWithOwnBanner = ["page-login","page-register","page-member","page-edit"];
-  if (logoBar) logoBar.style.display = pagesWithOwnBanner.indexOf(id) !== -1 ? "none" : "flex";
-  window.scrollTo(0,0);
-};
-
-function showErr(id,msg){ var e=document.getElementById(id); e.textContent=msg; e.style.display="block"; }
-function hideErr(id){ document.getElementById(id).style.display="none"; }
-function fmtPhone(p){ p=String(p||"").replace(/\D/g,""); return p.length===10?p.slice(0,3)+"-"+p.slice(3,6)+"-"+p.slice(6):p; }
-
-// ── Convert stored English title (Mr./Ms./Mrs.) to Thai for display ──
-function thaiTitle(title) {
-  title = String(title || "").trim();
-  if (title === "Mr.")  return "นาย";
-  if (title === "Ms.")  return "นางสาว";
-  if (title === "Mrs.") return "นาง";
-  return title; // fallback: show whatever was stored (e.g. old Thai-titled members)
-}
-function fmtBirthday(v){
-  if(!v) return "—";
-  try{ var d=new Date(v); return d.toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}); }
-  catch(e){ return v; }
-}
-function setLoading(btnId,lblId,on,txt){
-  var b=document.getElementById(btnId),l=document.getElementById(lblId);
-  b.disabled=on; l.innerHTML=on?'<span class="dots"><span></span><span></span><span></span></span>':txt;
-}
-function resetSel(id,ph){
-  var s=document.getElementById(id); while(s.options.length)s.remove(0);
-  var o=document.createElement("option"); o.value=""; o.textContent=ph; s.appendChild(o);
-}
-
-// ── ★ Birthday mask: fixed __/__/____ template — slashes never move,
-//    underscores get replaced by typed digits, cursor auto-skips slashes ──
-var DATE_MASK = "__/__/____";
-var DATE_DIGIT_POS = [0,1,3,4,6,7,8,9]; // indices in the mask that hold digits
-
-function attachDateMask(inputId) {
-  var el = document.getElementById(inputId);
-  if (!el) return;
-  if (!el.value) el.value = DATE_MASK;
-
-  el.addEventListener("focus", function() {
-    if (!el.value) el.value = DATE_MASK;
-    var pos = DATE_DIGIT_POS[0];
-    setTimeout(function(){ el.setSelectionRange(pos, pos); }, 0);
-  });
-
-  el.addEventListener("click", function() {
-    var pos = el.selectionStart;
-    var nearest = DATE_DIGIT_POS.reduce(function(a,b){
-      return Math.abs(b-pos) < Math.abs(a-pos) ? b : a;
-    });
-    el.setSelectionRange(nearest, nearest);
-  });
-
-  el.addEventListener("keydown", function(e) {
-    if (e.key === "Backspace") {
-      e.preventDefault();
-      var pos = el.selectionStart;
-      var chars = el.value.split("");
-      for (var i = pos - 1; i >= 0; i--) {
-        if (DATE_DIGIT_POS.indexOf(i) !== -1) {
-          chars[i] = "_";
-          el.value = chars.join("");
-          el.setSelectionRange(i, i);
-          break;
-        }
-      }
-      return;
+// ── ★ NEW: Loose header-based column lookup — matches ignoring
+//    case/whitespace, so "CarBrand" in code matches an actual header
+//    of "Car Brand" in the sheet, etc. Added after the CarColor column
+//    was deleted from Cars (shifting every column after it) broke both
+//    the raw-index writes below AND the header lookups that assumed
+//    header text without spaces. Use this everywhere instead of
+//    headers.indexOf(...) or hardcoded column numbers, so future
+//    column changes in the sheet don't silently corrupt data again.
+//
+//    targetName can be a single string OR an array of candidate names
+//    tried in order — used for fields whose header text has already
+//    changed more than once in this project (e.g. License / LicensePlate
+//    / License Plate / Plate all mean the same column). ──
+function _findColLoose(headers, targetName) {
+  var candidates = Array.isArray(targetName) ? targetName : [targetName];
+  for (var c = 0; c < candidates.length; c++) {
+    var name = candidates[c];
+    var exact = headers.indexOf(name);
+    if (exact !== -1) return exact;
+    var norm = String(name).replace(/\s+/g,"").toLowerCase();
+    for (var i = 0; i < headers.length; i++) {
+      if (String(headers[i]||"").replace(/\s+/g,"").toLowerCase() === norm) return i;
     }
-    if (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Tab") return;
-    if (!/^[0-9]$/.test(e.key)) { e.preventDefault(); return; }
-    e.preventDefault();
-    var pos = el.selectionStart;
-    var validPositions = DATE_DIGIT_POS.filter(function(p){ return p >= pos; });
-    if (!validPositions.length) return;
-    var idx = validPositions[0];
-    var chars = el.value.split("");
-    chars[idx] = e.key;
-    el.value = chars.join("");
-    var nextPositions = DATE_DIGIT_POS.filter(function(p){ return p > idx; });
-    var nextPos = nextPositions.length ? nextPositions[0] : idx + 1;
-    el.setSelectionRange(nextPos, nextPos);
-  });
-}
-
-// ── ★ Validates + parses the masked input. Returns:
-//    { empty:true }                      — nothing typed
-//    { empty:false, valid:false }        — typed but not a real date
-//    { empty:false, valid:true, iso:"YYYY-MM-DD" } — good, converted from
-//      Buddhist Era to Gregorian automatically if year > 2400 ──
-function parseBirthdayInput(inputId) {
-  var val = document.getElementById(inputId).value || "";
-  if (!val || val === DATE_MASK) return { empty: true };
-  if (val.indexOf("_") !== -1) return { empty: false, valid: false };
-
-  var digits = val.replace(/\D/g, "");
-  if (digits.length !== 8) return { empty: false, valid: false };
-
-  var day   = parseInt(digits.slice(0, 2), 10);
-  var month = parseInt(digits.slice(2, 4), 10);
-  var year  = parseInt(digits.slice(4, 8), 10);
-  if (year > 2400) year -= 543; // Buddhist Era → Gregorian
-
-  if (month < 1 || month > 12) return { empty: false, valid: false };
-  var daysInMonth = new Date(year, month, 0).getDate();
-  if (day < 1 || day > daysInMonth) return { empty: false, valid: false };
-  if (year < 1900 || year > new Date().getFullYear()) return { empty: false, valid: false };
-
-  var mm = String(month).padStart(2, "0");
-  var dd = String(day).padStart(2, "0");
-  return { empty: false, valid: true, iso: year + "-" + mm + "-" + dd };
-}
-
-// ── ★ NEW: Validates a Thai mobile number — must be exactly 10 digits
-//    and start with 0 (e.g. 0812345678). Rejects anything else instead
-//    of silently accepting numbers missing the leading 0. ──
-function isValidThaiPhone(phone) {
-  var digits = String(phone || "").replace(/\D/g, "");
-  return /^0\d{9}$/.test(digits);
-}
-
-// ── Converts a stored birthday value back into the DD/MM/YYYY mask for
-//    display. Handles both a clean "YYYY-MM-DD" string AND cases where
-//    Google Sheets silently auto-converted the stored value into a Date
-//    (which comes back as a verbose string like "Fri Jun 15 1990...")
-//    — without this fallback, opening Edit on an existing member showed
-//    a blank date instead of their actual birthday. ──
-function isoToDisplayDate(iso) {
-  if (!iso) return DATE_MASK;
-  var parts = String(iso).split("-");
-  if (parts.length === 3 && /^\d{4}$/.test(parts[0])) {
-    return parts[2].slice(0, 2) + "/" + parts[1].slice(0,2) + "/" + parts[0];
   }
-  // Fallback: not a clean "YYYY-MM-DD" string — try parsing it directly.
-  var d = new Date(iso);
-  if (isNaN(d.getTime())) return DATE_MASK;
-  var dd = String(d.getDate()).padStart(2, "0");
-  var mm = String(d.getMonth() + 1).padStart(2, "0");
-  return dd + "/" + mm + "/" + d.getFullYear();
+  return -1;
 }
 
-// ── ★ NEW: Render vehicle history for a given car — tire info +
-//    a merged table of "เปลี่ยนยาง" plus every logged service, numbered
-//    per service type. Called whenever the current car changes. ──
-function _renderHistory(car) {
-  var infoEl = document.getElementById("history-tire-info");
-  var wrapEl = document.getElementById("history-table-wrap");
-  if (!infoEl || !wrapEl) return;
+// ── Known synonyms for the license-plate column — its header text has
+//    changed more than once already (LicensePlate → License), so every
+//    lookup tries this whole list instead of a single exact name. ──
+var LICENSE_COL_NAMES = ["License", "License Plate", "LicensePlate", "Plate"];
 
-  if (!car) {
-    infoEl.innerHTML = "";
-    wrapEl.innerHTML = '<div class="hist-empty">ยังไม่มีรถ</div>';
-    return;
+function doGet(e) {
+  var params   = (e && e.parameter) ? e.parameter : {};
+  var action      = params.action      || "";
+  var carId       = params.carId       || params.carid || "";
+  var receiptCarId = params.receiptCarId || "";
+  var callback    = params.callback    || "";
+  var result;
+
+  // Handle receiptCarId directly — bypass normal routing
+  if (receiptCarId) {
+    result = getReceiptUrl(receiptCarId);
+    var json2 = JSON.stringify(result);
+    if (callback) return ContentService.createTextOutput(callback+"("+json2+")").setMimeType(ContentService.MimeType.JAVASCRIPT);
+    return ContentService.createTextOutput(json2).setMimeType(ContentService.MimeType.JSON);
   }
 
-  var tireLine = [car.tireSize, car.tireBrand, car.tireModel].filter(Boolean).join(" ");
-  var bits = [];
-  if (tireLine) bits.push("🛞 " + tireLine);
-  if (car.warrantyNumber) bits.push("เลขรับประกัน: " + car.warrantyNumber);
-  if (car.warrantyExpiry) bits.push('<span style="color:#cc0000">หมดประกัน(อุบัติเหตุ): ' + car.warrantyExpiry + '</span>');
-  infoEl.innerHTML = bits.join("<br>");
+  if      (action === "uploadChunk")      result = handleChunk(params);
+  else if (action === "saveReceiptUrl")   result = saveReceiptUrl(params.carId||"", params.url||"");
+  else if (action === "getReceiptUrl")    result = getReceiptUrl(params.carId||"");
+  else if (action === "getReceipt")       return serveReceipt(carId);
+  else if (action === "deleteReceipt")    result = deleteReceipt(carId);
+  else if (action === "pushUrl")          result = pushUrl(carId, params.url||"");
+  else if (action === "popUrl")           result = popUrl();
+  else if (action === "confirmOpened")    result = confirmOpened(carId);
+  else if (action === "checkOpened")      result = checkOpened(carId);
+  else if (action === "getBrands")        result = getBrands();
+  else if (action === "getTires")         result = getTires(params.brand||"");
+  else if (action === "search")           result = searchMembers(params.phone||"", params.plate||"");
+  else if (action === "getMemberCars")    result = getMemberCars(params.memberId||params.carId||"");
+  else if (action === "updateCarMileage") result = updateCarMileage(params.carId||"", params.mileage||"");
+  else if (action === "saveWarrantyNumber") result = saveWarrantyNumber(params.carId||"", params.warrantyNumber||"");
+  else if (action === "saveTireInfo")       result = saveTireInfo(params.carId||"", params.tireBrand||"", params.tireModel||"", params.tireSize||"");
+  else if (action === "logService")         result = logService(params.carId||"", params.serviceType||"", params.mileage||"");
+  else if (carId)                         result = lookupCarId(carId);
+  else                                    result = { error: "ไม่พบ action หรือ carId" };
 
-  var rows = [];
-  if (car.changedTireDate) {
-    rows.push({ label: "เปลี่ยนยาง", date: car.changedTireDate, mileage: car.changedTireMileage });
+  var json = JSON.stringify(result);
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + "(" + json + ")")
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
   }
-  var typeCounters = {};
-  (car.services || []).forEach(function(s) {
-    typeCounters[s.type] = (typeCounters[s.type] || 0) + 1;
-    rows.push({ label: s.type + " " + typeCounters[s.type], date: s.date, mileage: s.mileage });
-  });
-
-  if (!rows.length) {
-    wrapEl.innerHTML = '<div class="hist-empty">ยังไม่มีประวัติ</div>';
-    return;
-  }
-
-  wrapEl.innerHTML =
-    '<div class="hist-row hist-head"><div class="hist-label">รายการ</div><div class="hist-date">วันที่</div><div class="hist-mileage">เลขไมล์</div></div>' +
-    rows.map(function(r) {
-      return '<div class="hist-row"><div class="hist-label">' + r.label + '</div>' +
-        '<div class="hist-date">' + (r.date || "-") + '</div>' +
-        '<div class="hist-mileage">' + (r.mileage ? String(r.mileage) : "-") + '</div></div>';
-    }).join("");
+  return ContentService
+    .createTextOutput(json)
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ── App init ─────────────────────────────────────────────────
-App.retryLogin = function() {
-  document.getElementById("login-error").style.display  = "none";
-  document.getElementById("login-loading").style.display = "block";
-  App.start();
-};
+// ── pushUrl — phone saves URL for desktop to pick up ──
+function pushUrl(carId, url) {
+  try {
+    if (!carId || !url) return { error: "ขาด carId หรือ url" };
+    var cache = CacheService.getScriptCache();
+    cache.put("pending_url",   url,   120);
+    cache.put("pending_carId", carId, 120);
+    cache.put("opened_"+carId, "no",  120);
+    return { ok: true };
+  } catch(e) { return { error: e.message }; }
+}
 
-App.start = function() {
-  App.showPage("page-login"); // ensure logo-bar hides immediately (page-login has its own banner)
-  clearInterval(_progressTrickleTimer); // safety: clear any lingering trickle from a previous run
-  _setLoginProgress(8);
-  document.getElementById("login-msg").textContent = "Step 1: กำลัง init LIFF…";
-  liff.init({ liffId: LIFF_ID })
-    .then(function() {
-      _setLoginProgress(35);
-      document.getElementById("login-msg").textContent = "Step 2: กำลังดึงโปรไฟล์…";
-      return liff.getProfile();
-    })
-    .then(function(profile) {
-      document.getElementById("login-msg").textContent = "กำลังโหลดข้อมูล…";
-      _lineProfile = profile;
-      _startProgressTrickle(65, 92); // creep slowly while waiting for the longest step
+// ── popUrl — desktop polls for new URL ──
+function popUrl() {
+  try {
+    var cache = CacheService.getScriptCache();
+    var url   = cache.get("pending_url");
+    var carId = cache.get("pending_carId");
+    if (!url) return { ok: true, url: null };
+    cache.remove("pending_url");
+    cache.remove("pending_carId");
+    return { ok: true, url: url, carId: carId };
+  } catch(e) { return { error: e.message }; }
+}
 
-      // Load all data — each call handles its own retry via apiGet
-      return Promise.all([
-        apiGet({ action:"checkLineUser", lineUserId:profile.userId })
-          .catch(function(){ return { exists:false, error:"checkLineUser failed" }; }),
-        apiGet({ action:"getCarData" })
-          .catch(function(err){ return { success:false, brands:[], error:"เชื่อมต่อไม่ได้: "+(err.message||err) }; }) // ★ FIXED — used to swallow the real error
-      ]);
-    })
-    .then(function(results) {
-      _stopProgressTrickle(100); // snap to done now that the data has actually arrived
-      var memberRes = results[0];
-      var carRes    = results[1];
+// ── confirmOpened — desktop confirms it opened the form ──
+function confirmOpened(carId) {
+  try {
+    if (!carId) return { error: "ขาด carId" };
+    var cache = CacheService.getScriptCache();
+    cache.put("opened_"+carId, "yes", 120);
+    return { ok: true };
+  } catch(e) { return { error: e.message }; }
+}
 
-      if (carRes.success && carRes.brands)  _carData    = carRes.brands;
-      else                                   _carDataError = carRes.error || ""; // ★ NEW
-      _populateRegions(); // ★ FIX: always populate brand dropdowns (both r-carbrand
-                           //   and m-carbrand) here, not just when going to Register —
-                           //   previously this only ran in showRegisterPage(), so
-                           //   returning members who go straight to showMemberPage()
-                           //   never had the Add Car modal's dropdown populated.
+// ── checkOpened — phone polls to see if desktop opened ──
+function checkOpened(carId) {
+  try {
+    if (!carId) return { error: "ขาด carId" };
+    var cache  = CacheService.getScriptCache();
+    var opened = cache.get("opened_"+carId);
+    return { ok: true, opened: opened === "yes" };
+  } catch(e) { return { error: e.message }; }
+}
 
-      if (memberRes.exists) {
-        _member = memberRes.member;
-        _cars   = memberRes.cars || [];
-        App.showMemberPage();
-      } else {
-        App.showRegisterPage();
+// ── updateCarMileage — write date+mileage to Cars sheet, clear swap cols ──
+function updateCarMileage(carId, mileage) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    if (!carId) return { ok: false, error: "missing carId" };
+    var ss    = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var sheet = ss.getSheetByName("Cars");
+    if (!sheet) return { ok: false, error: "Cars sheet not found" };
+    var data    = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var colDate    = _findColLoose(headers, "Changed Tire Date");
+    var colMileage = _findColLoose(headers, "Changed Tire Mileage");
+    if (colDate === -1 || colMileage === -1) return { ok:false, error:"ไม่พบคอลัมน์ Changed Tire Date/Mileage ในชีต" };
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toUpperCase() === carId) {
+        sheet.getRange(i+1, colDate+1).setValue(new Date());
+        sheet.getRange(i+1, colMileage+1).setValue(mileage !== "" ? Number(mileage) : "");
+        return { ok: true };
       }
-    })
-    .catch(function(err) {
-      _stopProgressTrickle(); // stop the trickle timer without forcing a jump on failure
-      document.getElementById("login-loading").style.display = "none";
-      document.getElementById("login-error-msg").innerHTML   = "Error: "+(err.message||String(err));
-      document.getElementById("login-error").style.display   = "block";
+    }
+    return { ok: false, error: "car not found: " + carId };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+// ── saveWarrantyNumber — write the brand-issued warranty number to Cars sheet ──
+function saveWarrantyNumber(carId, warrantyNumber) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    if (!carId || !warrantyNumber) return { ok: false, error: "missing carId or warrantyNumber" };
+    var ss    = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var sheet = ss.getSheetByName("Cars");
+    if (!sheet) return { ok: false, error: "Cars sheet not found" };
+    var data    = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var col = _findColLoose(headers, "Warranty Number");
+    if (col === -1) return { ok:false, error:"ไม่พบคอลัมน์ Warranty Number ในชีต" };
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toUpperCase() === carId) {
+        sheet.getRange(i+1, col+1).setValue(warrantyNumber);
+        return { ok: true };
+      }
+    }
+    return { ok: false, error: "car not found: " + carId };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+// ── saveTireInfo — writes tire brand/model/size into their Cars sheet columns.
+// Called when a warranty registration completes, e.g. brand="Atlas",
+// model="AT100", size="195/65R15" ──
+function saveTireInfo(carId, tireBrand, tireModel, tireSize) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    if (!carId || (!tireBrand && !tireModel && !tireSize)) {
+      return { ok: false, error: "missing carId or tire info" };
+    }
+    var ss    = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var sheet = ss.getSheetByName("Cars");
+    if (!sheet) return { ok: false, error: "Cars sheet not found" };
+    var data    = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var colBrand = _findColLoose(headers, "Tire Brand");
+    var colModel = _findColLoose(headers, "Tire Model");
+    var colSize  = _findColLoose(headers, "Tire Size");
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toUpperCase() === carId) {
+        var row = i + 1;
+        if (tireBrand && colBrand !== -1) sheet.getRange(row, colBrand+1).setValue(tireBrand);
+        if (tireModel && colModel !== -1) sheet.getRange(row, colModel+1).setValue(tireModel);
+        if (tireSize  && colSize  !== -1) sheet.getRange(row, colSize+1).setValue(tireSize);
+        return { ok: true };
+      }
+    }
+    return { ok: false, error: "car not found: " + carId };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+// ── logService — records สลับยาง/ปะยาง into the next open service slot.
+// If all 4 slots are already full, overwrites the 1st (oldest) slot and
+// flags that it happened, so the frontend can tell the staff. Slot base
+// columns are found by header ("1st Service"/"2nd Service"/etc.) rather
+// than hardcoded numbers, so this survives future column changes. Each
+// slot spans 3 consecutive columns: Service / Tire Date / Mileage. ──
+function logService(carId, serviceType, mileage) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    if (!carId || !serviceType) return { ok: false, error: "missing carId or serviceType" };
+    var ss    = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var sheet = ss.getSheetByName("Cars");
+    if (!sheet) return { ok: false, error: "Cars sheet not found" };
+    var data    = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var bases = ["1st Service","2nd Service","3rd Service","4th Service"].map(function(h){
+      return _findColLoose(headers, h);
     });
-};
+    var slots = bases.filter(function(b){ return b !== -1; }).map(function(b){ return [b, b+1, b+2]; });
+    if (!slots.length) return { ok:false, error:"ไม่พบคอลัมน์ 1st/2nd/3rd/4th Service ในชีต" };
 
-function _setLoginProgress(pct){
-  var el = document.getElementById("login-progress-fill");
-  if (el) el.style.width = pct + "%";
-}
-
-// ── ★ NEW: Progress "trickle" — instead of holding still then snapping
-//    straight to 100%, slowly ease the bar toward a ceiling (never quite
-//    reaching it) while the actual longest-running step is still in
-//    flight, then jump to the real value once it resolves. Makes the
-//    longest wait (loading member + car data) feel less stalled. ──
-var _progressTrickleTimer = null;
-function _startProgressTrickle(from, ceiling){
-  clearInterval(_progressTrickleTimer);
-  var current = from;
-  _setLoginProgress(current);
-  _progressTrickleTimer = setInterval(function(){
-    var remaining = ceiling - current;
-    if (remaining <= 0.5) return;
-    current += remaining * 0.15; // eases off as it nears the ceiling
-    _setLoginProgress(current);
-  }, 350);
-}
-function _stopProgressTrickle(finalPct){
-  clearInterval(_progressTrickleTimer);
-  _progressTrickleTimer = null;
-  if (finalPct !== undefined) _setLoginProgress(finalPct);
-}
-
-
-// ── Populate car brand dropdowns ──────────────────────────────
-function _populateRegions() {
-  var brandSelIds = ["r-carbrand","m-carbrand"];
-  brandSelIds.forEach(function(id){
-    var sel=document.getElementById(id); if(!sel) return;
-    while(sel.options.length) sel.remove(0);
-    var ph=document.createElement("option"); ph.value=""; ph.textContent="-- เลือกยี่ห้อ --"; sel.appendChild(ph);
-    _carData.forEach(function(b){ var o=document.createElement("option"); o.value=b.name; o.textContent=b.name; sel.appendChild(o); });
-    var oo=document.createElement("option"); oo.value="__other__"; oo.textContent="อื่นๆ (Other)"; sel.appendChild(oo);
-  });
-}
-
-// ── Car cascade ──────────────────────────────────────────────
-// ★ NEW: Look up a brand's logo URL from _carData (loaded via
-//    getCarData → now backed by the "Car_Brands&Models" sheet).
-function _carBrandLogo(name){
-  var found = _carData.filter(function(b){ return b.name.toLowerCase()===String(name||"").toLowerCase(); })[0];
-  return found ? found.imageUrl : "";
-}
-App.onCarBrandChange = function(brandId, modelId, brandWrapId, modelWrapId) {
-  var b=document.getElementById(brandId).value;
-  var mS=document.getElementById(modelId);
-  document.getElementById(brandWrapId).style.display="none";
-  document.getElementById(modelWrapId).style.display="none";
-  while(mS.options.length)mS.remove(0);
-  var ph=document.createElement("option");ph.value="";ph.textContent=b?"-- เลือกรุ่น --":"-- เลือกยี่ห้อก่อน --";mS.appendChild(ph);
-  mS.disabled=!b;
-  // ★ NEW: show/hide the brand logo preview next to the select
-  var logoImg = document.getElementById(brandId.split("-")[0]+"-brand-logo");
-  if (logoImg) {
-    var logoUrl = (b && b!=="__other__") ? _carBrandLogo(b) : "";
-    if (logoUrl) { logoImg.src = logoUrl; logoImg.style.display = "inline-block"; }
-    else { logoImg.style.display = "none"; }
-  }
-  if(b==="__other__"){document.getElementById(brandWrapId).style.display="block";document.getElementById(modelWrapId).style.display="block";mS.disabled=true;return;}
-  if(!b) return;
-  var brand=_carData.filter(function(x){return x.name===b;})[0];
-  if(!brand) return;
-  brand.models.forEach(function(m){var o=document.createElement("option");o.value=m;o.textContent=m;mS.appendChild(o);});
-  var oo=document.createElement("option");oo.value="__other__";oo.textContent="อื่นๆ (Other)";mS.appendChild(oo);
-};
-App.onCarModelChange = function(modelId, wrapId) {
-  document.getElementById(wrapId).style.display=document.getElementById(modelId).value==="__other__"?"block":"none";
-};
-
-// ── Register ─────────────────────────────────────────────────
-App.showRegisterPage = function() {
-  if(_lineProfile && _lineProfile.pictureUrl){
-    document.getElementById("line-avatar").src               = _lineProfile.pictureUrl;
-    document.getElementById("line-display-name").textContent = _lineProfile.displayName||"";
-    document.getElementById("line-profile-bar").style.display="flex";
-  }
-  _populateRegions();
-  _populateProvinceSelect("r-plate-province");
-  document.getElementById("r-plate-province").selectedIndex = 0;
-  document.getElementById("r-brand-logo").style.display="none"; // ★ NEW
-  // ★ TEMP DEBUG: visible on-page status line (no dev tools needed) —
-  //   shows exactly how many brands loaded, the select's actual option
-  //   count, and any backend error, so this can be screenshotted directly
-  //   from a phone/LINE in-app browser. Safe to remove once diagnosed.
-  document.getElementById("debug-cardata").textContent =
-    "Debug: _carData=" + _carData.length +
-    " | r-carbrand options=" + document.getElementById("r-carbrand").options.length +
-    (_carDataError ? " | error: " + _carDataError : "");
-  // Warn if dropdown data didn't load — show the real backend error (which
-  // now includes diagnostic info like actual sheet names found) instead of
-  // a generic message, so this is actually debuggable.
-  if (!_carData.length) {
-    showErr("regErr", _carDataError || "ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
-    setTimeout(function() {
-      // Retry loading missing data
-      apiGet({action:"getCarData"}).then(function(r){
-        if(r.success && r.brands && r.brands.length){
-          _carData=r.brands; _populateRegions(); hideErr("regErr");
-          document.getElementById("debug-cardata").textContent = "Debug: _carData=" + _carData.length + " (loaded on retry)";
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toUpperCase() === carId) {
+        var row = i + 1;
+        for (var s = 0; s < slots.length; s++) {
+          var typeCol = slots[s][0];
+          var existing = sheet.getRange(row, typeCol+1).getValue();
+          if (!existing) {
+            writeServiceSlot(sheet, row, slots[s], serviceType, mileage);
+            return { ok: true, slot: s + 1, overwritten: false };
+          }
         }
-        else {
-          _carDataError = r.error || _carDataError;
-          showErr("regErr", _carDataError || "โหลดไม่สำเร็จ");
-          document.getElementById("debug-cardata").textContent = "Debug: retry failed | error: " + (_carDataError || "unknown");
+        // All slots full — overwrite the oldest (1st) slot instead of blocking
+        writeServiceSlot(sheet, row, slots[0], serviceType, mileage);
+        return { ok: true, slot: 1, overwritten: true };
+      }
+    }
+    return { ok: false, error: "car not found: " + carId };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+// slot indices here are 0-indexed (from _findColLoose); +1 to get getRange's 1-indexed column
+function writeServiceSlot(sheet, row, slot, serviceType, mileage) {
+  sheet.getRange(row, slot[0]+1).setValue(serviceType);
+  sheet.getRange(row, slot[1]+1).setValue(new Date());
+  if (mileage !== "" && mileage !== undefined && mileage !== null) {
+    sheet.getRange(row, slot[2]+1).setValue(Number(mileage));
+  } else {
+    sheet.getRange(row, slot[2]+1).clearContent();
+  }
+}
+
+// ── handleChunk — receive base64 chunks ──
+function handleChunk(params) {
+  try {
+    var carId = (params.carId || "").trim().toUpperCase();
+    var chunk = params.chunk  || "";
+    var idx   = parseInt(params.idx   || "0");
+    var total = parseInt(params.total || "1");
+    if (!carId || !chunk) return { error: "ขาดข้อมูล" };
+
+    var cache = CacheService.getScriptCache();
+    cache.put("receipt_chunk_"+carId+"_"+idx, chunk, 300);
+
+    if (idx < total - 1) return { ok: true, received: idx+1, total: total };
+
+    var full = "";
+    for (var i = 0; i < total; i++) {
+      var c = cache.get("receipt_chunk_"+carId+"_"+i);
+      if (!c) return { error: "ขาดชิ้นที่ "+i };
+      full += c;
+    }
+    for (var j = 0; j < total; j++) cache.remove("receipt_chunk_"+carId+"_"+j);
+
+    var folder   = getFolderOrCreate();
+    var filename = carId + ".jpg";
+    var existing = folder.getFilesByName(filename);
+    while (existing.hasNext()) existing.next().setTrashed(true);
+    var decoded = Utilities.base64Decode(full);
+    var blob    = Utilities.newBlob(decoded, "image/jpeg", filename);
+    var file    = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return { ok: true, fileId: file.getId(), filename: filename };
+  } catch(e) { return { error: "handleChunk: "+e.message }; }
+}
+
+// ── serveReceipt ──
+function serveReceipt(carId) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    var folder = getFolderOrCreate();
+    var file = null;
+    [".jpg",".jpeg",".png"].forEach(function(ext){
+      if (!file) { var f=folder.getFilesByName(carId+ext); if(f.hasNext()) file=f.next(); }
+    });
+    if (!file) return ContentService.createTextOutput(JSON.stringify({error:"ไม่พบภาพ: "+carId})).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      ok:true, base64:Utilities.base64Encode(file.getBlob().getBytes()),
+      mimeType:file.getMimeType(), filename:file.getName(), fileId:file.getId()
+    })).setMimeType(ContentService.MimeType.JSON);
+  } catch(e) { return ContentService.createTextOutput(JSON.stringify({error:e.message})).setMimeType(ContentService.MimeType.JSON); }
+}
+
+// ── deleteReceipt ──
+function deleteReceipt(carId) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    var folder=getFolderOrCreate(), deleted=0;
+    [".jpg",".jpeg",".png"].forEach(function(ext){
+      var f=folder.getFilesByName(carId+ext);
+      while(f.hasNext()){f.next().setTrashed(true);deleted++;}
+    });
+    return { ok:true, deleted:deleted };
+  } catch(e) { return {error:e.message}; }
+}
+
+// ── getFolderOrCreate ──
+function getFolderOrCreate() {
+  var f = DriveApp.getFoldersByName("BNTires_Receipts");
+  if (f.hasNext()) return f.next();
+  return DriveApp.createFolder("BNTires_Receipts");
+}
+
+// ── saveReceiptUrl ──
+function saveReceiptUrl(carId, url) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    if (!carId || !url) return { error: "ขาด carId หรือ url" };
+    var cache = CacheService.getScriptCache();
+    cache.put("receipt_url_"+carId, url, 7200);
+    return { ok: true };
+  } catch(e) { return { error: e.message }; }
+}
+
+// ── getReceiptUrl ──
+function getReceiptUrl(carId) {
+  try {
+    carId = (carId||"").trim().toUpperCase();
+    var cache = CacheService.getScriptCache();
+    var url   = cache.get("receipt_url_"+carId);
+    if (!url) return { error: "ไม่พบ receipt URL สำหรับ: "+carId };
+    return { ok: true, url: url };
+  } catch(e) { return { error: e.message }; }
+}
+
+// ── getBrands — fetch brand config from Brands sheet ──
+// Columns: A=Name, B=ImageUrl, C=WarrantyURL, D=Background, E=TextColor, F=RequiresMileage
+function getBrands() {
+  try {
+    var ss    = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var sheet = ss.getSheetByName("Brands");
+    if (!sheet) return { error: "ไม่พบ Sheet: Brands" };
+
+    var data   = sheet.getDataRange().getValues();
+    var brands = [];
+
+    for (var i = 1; i < data.length; i++) {
+      var row  = data[i];
+      var name = String(row[0] || "").trim();
+      if (!name) continue;
+
+      var imageUrl        = String(row[1] || "").trim();
+      var warrantyUrl     = String(row[2] || "").trim();
+      var background      = String(row[3] || "#333333").trim();
+      var textColor       = String(row[4] || "#FFFFFF").trim();
+      var requiresMileage  = row[5] === true || String(row[5]).toUpperCase() === "TRUE";
+      var requiresCarPhoto = row[6] === true || String(row[6]).toUpperCase() === "TRUE";
+
+      // Convert Google Drive URL → lh3 CDN (works without auth)
+      if (imageUrl.includes("drive.google.com")) {
+        var match = imageUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) imageUrl = "https://lh3.googleusercontent.com/d/" + match[1];
+      }
+
+      brands.push({
+        id:              name.toLowerCase().replace(/\s+/g, "_"),
+        name:            name,
+        imageUrl:        imageUrl,
+        url:             warrantyUrl,
+        background:      background,
+        textColor:       textColor,
+        requiresMileage:  requiresMileage,
+        requiresCarPhoto: requiresCarPhoto,
+        active:           warrantyUrl !== ""
+      });
+    }
+
+    return { ok: true, brands: brands };
+  } catch(e) { return { error: e.message }; }
+}
+
+// ── getTires — fetch today's tires by brand from Tires sheet ──
+function getTires(brand) {
+  try {
+    brand = (brand||"").trim().toUpperCase();
+    if (!brand) return { error: "ไม่พบ brand" };
+
+    var ss    = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var sheet = ss.getSheetByName("Tires");
+    if (!sheet) return { error: "ไม่พบ Sheet: Tires" };
+
+    var data  = sheet.getDataRange().getValues();
+    var tires = [];
+
+    for (var i = 1; i < data.length; i++) {
+      var row       = data[i];
+      var rowAmount = row[6] || 0;                                // col G: Qty
+      var rowBrand  = String(row[7]  || "").trim().toUpperCase(); // col H: Alias Brand
+      var rowModel  = String(row[8]  || "").trim();                // col I: Alias Model
+      var rowWidth  = String(row[9]  || "").trim();                // col J: Width
+      var rowAspect = String(row[10] || "").trim();                // col K: Aspect
+      var rowRim    = String(row[11] || "").trim();                // col L: Rim
+
+      if (!rowBrand || rowBrand !== brand) continue;
+      if (!rowModel && !rowWidth) continue;
+      if (Number(rowAmount) <= 0) continue;
+
+      tires.push({
+        model:  rowModel,
+        width:  rowWidth,
+        aspect: rowAspect,
+        rim:    rowRim,
+        amount: rowAmount,
+        label:  rowModel + " " + rowWidth + "/" + rowAspect + "R" + rowRim
+      });
+    }
+
+    return { ok: true, brand: brand, tires: tires };
+  } catch(e) { return { error: e.message }; }
+}
+
+// ── searchMembers — search by phone or license plate ──
+function searchMembers(phone, plate) {
+  try {
+    phone = (phone||"").trim();
+    plate = (plate||"").trim().toUpperCase();
+    if (!phone && !plate) return { error: "กรุณากรอกเบอร์โทรหรือทะเบียนรถ" };
+
+    var ss          = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var memberSheet = ss.getSheetByName("Members");
+    var carSheet    = ss.getSheetByName("Cars");
+    if (!memberSheet || !carSheet) return { error: "ไม่พบ Sheet" };
+
+    var memberData    = memberSheet.getDataRange().getValues();
+    var memberHeaders = memberData[0];
+    var carData       = carSheet.getDataRange().getValues();
+    var carHeaders    = carData[0];
+
+    var results = [];
+    var matchedMemberIds = [];
+
+    for (var i = 1; i < memberData.length; i++) {
+      var row      = memberData[i];
+      var rowPhone = String(row[_findColLoose(memberHeaders,"Phone")]||"").trim();
+      var rowId    = String(row[_findColLoose(memberHeaders,"MemberID")]||"").trim().toUpperCase();
+      if (phone && rowPhone.includes(phone)) matchedMemberIds.push(rowId);
+    }
+
+    for (var j = 1; j < carData.length; j++) {
+      var crow        = carData[j];
+      var rowPlate    = String(crow[_findColLoose(carHeaders,LICENSE_COL_NAMES)]||"").trim().toUpperCase();
+      var rowCarId    = String(crow[_findColLoose(carHeaders,"CarID")]||"").trim().toUpperCase();
+      var rowMemberId = String(crow[_findColLoose(carHeaders,"MemberID")]||"").trim().toUpperCase();
+      var rowStatus   = String(crow[_findColLoose(carHeaders,"Status")]||"").trim().toLowerCase();
+
+      if (rowStatus === "inactive" || rowStatus === "deleted") continue;
+
+      var matchByPlate  = plate && rowPlate.replace(/\s/g,"").includes(plate.replace(/\s/g,""));
+      var matchByMember = matchedMemberIds.indexOf(rowMemberId) >= 0;
+      if (!matchByPlate && !matchByMember) continue;
+
+      var mRow = null;
+      for (var k = 1; k < memberData.length; k++) {
+        if (String(memberData[k][_findColLoose(memberHeaders,"MemberID")]||"").trim().toUpperCase() === rowMemberId) {
+          mRow = memberData[k]; break;
+        }
+      }
+      if (!mRow) continue;
+
+      function mf(col){ var idx=_findColLoose(memberHeaders,col); return idx>=0?String(mRow[idx]||"").trim():""; }
+      function cf(col){ var idx=_findColLoose(carHeaders,col);    return idx>=0?String(crow[idx]||"").trim():""; }
+
+      var title = mf("Title"), fn = mf("FirstName"), ln = mf("LastName");
+      var gender = (title==="นาย")?"ชาย":"หญิง";
+      var today  = new Date();
+      var pd     = String(today.getDate()).padStart(2,"0")+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+today.getFullYear();
+
+      results.push({
+        ok: true,
+        memberId: rowMemberId,
+        carId:    rowCarId,
+        fullName: title+" "+fn+" "+ln,
+        phone:    mf("Phone"),
+        plate:    cf(LICENSE_COL_NAMES),
+        carBrand: cf("Car Brand"),
+        carModel: cf("Car Model"),
+        // ★ address/province/district/sub_district/zip_code removed —
+        //   these are now hardcoded in content.js / content_conti.js
+        params: {
+          first_name: fn, last_name: ln, gender: gender,
+          phone: mf("Phone"),
+          plate: cf(LICENSE_COL_NAMES), car_brand: cf("Car Brand"), car_model: cf("Car Model"),
+          birthday: fmtDate(mRow[_findColLoose(memberHeaders,"Birthday")]),
+          purchase_date: pd, shop_name: SHOP_NAME, province_shop: SHOP_PROVINCE
         }
       });
-    }, 1500);
-  }
-  App.showPage("page-register");
-};
 
-App.submitRegister = function() {
-  hideErr("regErr");
-  var title=document.getElementById("r-title").value;
-  var fname=document.getElementById("r-fname").value.trim();
-  var lname=document.getElementById("r-lname").value.trim();
-  var phone=document.getElementById("r-phone").value.trim();
-  var bd=parseBirthdayInput("r-birthday");
-  var license=document.getElementById("r-license").value.trim();
-  var plateProvince=document.getElementById("r-plate-province").value;
-  var carbrand=document.getElementById("r-carbrand").value;
-  var carmodel=document.getElementById("r-carmodel").value;
-  if(carbrand==="__other__") carbrand=document.getElementById("r-carbrand-other").value.trim();
-  if(carmodel==="__other__") carmodel=document.getElementById("r-carmodel-other").value.trim();
-
-  if(!bd.empty && !bd.valid){
-    showErr("regErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
-  }
-  var birthday = bd.valid ? bd.iso : "";
-
-  if(!title||!fname||!lname||!phone||!birthday||!license||!plateProvince||!carbrand||!carmodel){
-    var missing=[];
-    if(!title)missing.push("คำนำหน้า");if(!fname)missing.push("ชื่อ");if(!lname)missing.push("นามสกุล");
-    if(!phone)missing.push("เบอร์โทร");if(!birthday)missing.push("วันเกิด");
-    if(!license)missing.push("ทะเบียน");if(!plateProvince)missing.push("จังหวัดป้ายทะเบียน");
-    if(!carbrand)missing.push("ยี่ห้อรถ");if(!carmodel)missing.push("รุ่นรถ");
-    showErr("regErr","กรุณากรอก: "+missing.join(", ")); return;
-  }
-  if(!isValidThaiPhone(phone)){
-    showErr("regErr","เบอร์โทรไม่ถูกต้อง กรุณากรอกเบอร์ 10 หลักที่ขึ้นต้นด้วย 0 (เช่น 0812345678)"); return;
-  }
-
-  setLoading("regBtn","regLabel",true,"");
-  apiPost({ action:"saveMember", data:{
-    lineUserId:_lineProfile?_lineProfile.userId:"",
-    title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday,
-    // ★ Fixed default address — no longer typed by the customer
-    address:FIXED_ADDRESS,region:FIXED_REGION,province:FIXED_PROVINCE,district:FIXED_DISTRICT,
-    subdistrict:FIXED_SUBDISTRICT,zipcode:FIXED_ZIP,
-    carbrand:carbrand,carmodel:carmodel,license:license,plateProvince:plateProvince
-  }})
-  .then(function(res){
-    setLoading("regBtn","regLabel",false,"สมัครสมาชิก");
-    if(!res.success){
-      var msg = "เกิดข้อผิดพลาด: "+res.error;
-      if(res.error==="duplicate_line")   msg = "บัญชี LINE นี้มีสมาชิกอยู่แล้ว";
-      if(res.error==="duplicate_phone")  msg = "เบอร์โทรนี้มีสมาชิกอยู่แล้วในระบบ";
-      if(res.error==="duplicate_plate")  msg = "ทะเบียนรถนี้มีอยู่ในระบบแล้ว กรุณาตรวจสอบ";
-      showErr("regErr",msg); return;
+      if (results.length >= 5) break;
     }
-    _member=res.member; _cars=res.cars;
-    App.showMemberPage();
-  })
-  .catch(function(err){ setLoading("regBtn","regLabel",false,"สมัครสมาชิก"); showErr("regErr","Error: "+(err.message||err)); });
-};
 
-// ── Member page ──────────────────────────────────────────────
-App.showMemberPage = function() {
-  var full=thaiTitle(_member.title)+" "+_member.firstname+" "+_member.lastname;
-  document.getElementById("m-fullname").textContent   = full;
-  document.getElementById("mi-title").textContent     = thaiTitle(_member.title);
-  document.getElementById("mi-firstname").textContent = _member.firstname;
-  document.getElementById("mi-lastname").textContent  = _member.lastname;
-  document.getElementById("mi-phone").textContent     = fmtPhone(_member.phone);
-  document.getElementById("mi-birthday").textContent  = fmtBirthday(_member.birthday);
-  _generateMemberQR(); // one QR per member, not per car
-  _carIdx=0;
-  App.switchTab("tab-qr"); // always land on the QR tab first
-  App.showPage("page-member");
-
-  // Deep link: if opened via ?action=addcar (e.g. from the LINE bot's
-  // "+ เพิ่มรถ" button), jump straight into the Add Car modal.
-  var params = new URLSearchParams(window.location.search);
-  if (params.get("action") === "addcar") {
-    App.openAddCar();
-  }
-};
-
-App.updateMemberInfo = function(m) {
-  _member=m;
-  var full=thaiTitle(m.title)+" "+m.firstname+" "+m.lastname;
-  document.getElementById("m-fullname").textContent   = full;
-  document.getElementById("mi-title").textContent     = thaiTitle(m.title);
-  document.getElementById("mi-firstname").textContent = m.firstname;
-  document.getElementById("mi-lastname").textContent  = m.lastname;
-  document.getElementById("mi-phone").textContent     = fmtPhone(m.phone);
-  document.getElementById("mi-birthday").textContent  = fmtBirthday(m.birthday);
-};
-
-// ── Tab switching (QR / Car / Personal Info) ───────────────────
-App.switchTab = function(tabId){
-  document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.toggle("active", p.id===tabId); });
-  document.querySelectorAll(".nav-item").forEach(function(n){ n.classList.toggle("active", n.id==="nav-"+tabId); });
-  // Every time the car tab is opened, start from the picker list when
-  // there's more than one car — don't stay on whatever was picked last.
-  if (tabId === "tab-car") _renderCarTab();
-};
-
-// ── Car tab: with 0 cars, shows an empty state. With exactly 1 car,
-//    skips the picker entirely and shows that car directly. With 2+
-//    cars, always opens on the picker list first (see switchTab above);
-//    tapping a car switches to the detail view, and "เปลี่ยนรถ" goes
-//    back to the list. ──
-function _renderCarTab(){
-  var listView   = document.getElementById("car-list-view");
-  var detailView = document.getElementById("car-detail-view");
-
-  if (!_cars.length) {
-    listView.style.display = "none";
-    detailView.style.display = "block";
-    document.getElementById("car-selected-summary").innerHTML =
-      '<div class="no-cars">ยังไม่มีรถในระบบ — กรุณาติดต่อร้านเพื่อเพิ่มรถของคุณ</div>';
-    document.getElementById("change-car-btn").style.display = "none";
-    _renderHistory(null);
-    return;
-  }
-
-  if (_cars.length === 1) {
-    _showCarDetail(0);
-    return;
-  }
-
-  _showCarList();
+    return { ok: true, results: results };
+  } catch(e) { return { error: e.message }; }
 }
 
-function _showCarList(){
-  document.getElementById("car-detail-view").style.display = "none";
-  document.getElementById("car-list-view").style.display = "block";
-  var container = document.getElementById("car-list-items");
-  container.innerHTML = "";
-  _cars.forEach(function(car, idx){
-    var el = document.createElement("div");
-    el.style.cursor = "pointer";
-    el.style.marginBottom = "10px";
-    el.innerHTML = _carCardHtml(car);
-    el.addEventListener("click", function(){ _showCarDetail(idx); });
-    container.appendChild(el);
-  });
+// ── Format a date value as DD/MM/YYYY ──
+function fmtDate(val) {
+  if (!val) return "";
+  var d = (val instanceof Date) ? val : new Date(val);
+  if (isNaN(d.getTime())) return String(val);
+  return String(d.getDate()).padStart(2,"0") + "/" +
+         String(d.getMonth()+1).padStart(2,"0") + "/" +
+         d.getFullYear();
 }
 
-function _showCarDetail(idx){
-  _carIdx = idx;
-  var car = _cars[idx];
-  document.getElementById("car-list-view").style.display = "none";
-  document.getElementById("car-detail-view").style.display = "block";
-  document.getElementById("change-car-btn").style.display = _cars.length > 1 ? "block" : "none";
-  document.getElementById("car-selected-summary").innerHTML = _carCardHtml(car);
-  _renderHistory(car);
+// ── ★ NEW: getMemberCars — QR now encodes the MemberID only (not a specific
+//    car), so after scanning the staff app first needs the list of this
+//    member's cars to let staff pick one. Accepts either a bare MemberID
+//    (new QR format) or a legacy CarID (old format, e.g. "M250101001C01")
+//    — the C-suffix is stripped by the caller before this is invoked, but
+//    strip again here defensively. ──
+function getMemberCars(memberId) {
+  try {
+    memberId = (memberId||"").trim().toUpperCase().replace(/C\d+$/,"");
+    if (!memberId) return { error: "ไม่พบ MemberID" };
+    var ss = SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var ms = ss.getSheetByName("Members"), cs = ss.getSheetByName("Cars");
+    if (!ms) return { error: "ไม่พบ Sheet: Members" };
+    if (!cs) return { error: "ไม่พบ Sheet: Cars" };
+
+    var md = ms.getDataRange().getValues(), mh = md[0], mr = null;
+    for (var i = 1; i < md.length; i++) {
+      if (String(md[i][_findColLoose(mh,"MemberID")]||"").trim().toUpperCase() === memberId) { mr = md[i]; break; }
+    }
+    if (!mr) return { error: "ไม่พบสมาชิก: " + memberId };
+
+    function mf(c){ var idx=_findColLoose(mh,c); return idx>=0?String(mr[idx]||"").trim():""; }
+    var title = mf("Title"), fn = mf("FirstName"), ln = mf("LastName"), ph = mf("Phone");
+    var gender = (title === "นาย") ? "ชาย" : "หญิง";
+
+    var cd = cs.getDataRange().getValues(), ch = cd[0];
+    var cars = [];
+    for (var j = 1; j < cd.length; j++) {
+      var crow = cd[j];
+      function cf(c){ var idx=_findColLoose(ch,c); return idx>=0?String(crow[idx]||"").trim():""; }
+      if (String(crow[_findColLoose(ch,"MemberID")]||"").trim().toUpperCase() !== memberId) continue;
+      if (cf("Status").toLowerCase() === "deleted") continue;
+      cars.push({
+        carId:    cf("CarID"),
+        carBrand: cf("Car Brand"),
+        carModel: cf("Car Model"),
+        plate:    cf(LICENSE_COL_NAMES)
+      });
+    }
+
+    var today = new Date();
+    var pd = String(today.getDate()).padStart(2,"0")+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+today.getFullYear();
+
+    return {
+      ok: true,
+      memberId: memberId,
+      fullName: (title+" "+fn+" "+ln).trim(),
+      phone: ph,
+      cars: cars,
+      // Shared param set reused once staff picks a specific car —
+      // car-specific fields (plate/brand/model) get merged in later
+      // by lookupCarId() when a car is actually selected.
+      baseParams: {
+        first_name: fn, last_name: ln, gender: gender, phone: ph,
+        birthday: fmtDate(mr[_findColLoose(mh,"Birthday")]),
+        purchase_date: pd, shop_name: SHOP_NAME, province_shop: SHOP_PROVINCE
+      }
+    };
+  } catch(e) { return { error: "getMemberCars: " + e.message }; }
 }
 
-// ── Shared markup for a single car row (logo | brand | model | plate) —
-//    used by both the car detail summary and the picker list ──
-function _carCardHtml(car){
-  var logo = _carBrandLogo(car.carbrand);
-  var logoHtml = logo
-    ? '<img src="'+logo+'" alt="" class="car-card-logo" onerror="this.style.display=\'none\'">'
-    : '';
-  var provinceHtml = car.plateProvince
-    ? '<span style="font-size:10px;color:#aaa;margin-top:3px">'+car.plateProvince+'</span>'
-    : '';
-  return '<div class="car-card">'+logoHtml+
-    '<div class="car-card-info">'+
-      '<span class="car-make">'+car.carbrand+'</span>'+
-      '<span class="car-model-txt">'+car.carmodel+'</span>'+
-    '</div>'+
-    '<div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0">'+
-      '<span class="car-plate">'+car.license+'</span>'+
-      provinceHtml+
-    '</div>'+
-  '</div>';
+// ── lookupCarId ──
+function lookupCarId(carId) {
+  try {
+    carId=(carId||"").trim().toUpperCase();
+    if(!carId) return {error:"ไม่พบ CarID"};
+    var match=carId.match(/^(.+)(C\d+)$/i);
+    if(!match) return {error:"รูปแบบ CarID ไม่ถูกต้อง: "+carId};
+    var memberId=match[1].toUpperCase();
+    var ss=SpreadsheetApp.openById(MEMBER_SHEET_ID);
+    var ms=ss.getSheetByName("Members"), cs=ss.getSheetByName("Cars");
+    if(!ms) return {error:"ไม่พบ Sheet: Members"};
+    if(!cs) return {error:"ไม่พบ Sheet: Cars"};
+    var md=ms.getDataRange().getValues(), mh=md[0], mr=null;
+    for(var i=1;i<md.length;i++){
+      if(String(md[i][_findColLoose(mh,"MemberID")]||"").trim().toUpperCase()===memberId){mr=md[i];break;}
+    }
+    if(!mr) return {error:"ไม่พบสมาชิก: "+memberId};
+    var cd=cs.getDataRange().getValues(), ch=cd[0], cr=null;
+    for(var j=1;j<cd.length;j++){
+      if(String(cd[j][_findColLoose(ch,"CarID")]||"").trim().toUpperCase()===carId){cr=cd[j];break;}
+    }
+    if(!cr) return {error:"ไม่พบรถ: "+carId};
+    function mf(c){var i=_findColLoose(mh,c);return i>=0?String(mr[i]||"").trim():"";}
+    function cf(c){var i=_findColLoose(ch,c);return i>=0?String(cr[i]||"").trim():"";}
+    var title=mf("Title"),fn=mf("FirstName"),ln=mf("LastName"),
+        ph=mf("Phone"),
+        cb=cf("Car Brand"),cm=cf("Car Model"),pl=cf(LICENSE_COL_NAMES),
+        gd=(title==="นาย")?"ชาย":"หญิง";
+    var today=new Date();
+    var pd=String(today.getDate()).padStart(2,"0")+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+today.getFullYear();
+    // ★ address/province/district/sub_district/zip_code removed —
+    //   these are now hardcoded in content.js / content_conti.js
+    return {
+      ok:true, memberId:memberId, carId:carId,
+      fullName:title+" "+fn+" "+ln, phone:ph, plate:pl, carBrand:cb, carModel:cm,
+      params:{
+        first_name:fn, last_name:ln, gender:gd, phone:ph,
+        birthday:fmtDate(mr[_findColLoose(mh,"Birthday")]), plate:pl,
+        car_brand:cb, car_model:cm, purchase_date:pd,
+        shop_name:SHOP_NAME, province_shop:SHOP_PROVINCE
+      }
+    };
+  } catch(e){return {error:"เกิดข้อผิดพลาด: "+e.message};}
 }
-
-// ── QR now encodes the MemberID only, not a specific car. Staff scan
-//    this once, then pick which of the member's cars applies on the
-//    scanner side — so this only needs to run once per member. ──
-function _generateMemberQR(){
-  if (!_member || !_member.id) return;
-  var canvas=document.getElementById("qrCanvas"),ctx=canvas.getContext("2d");
-  ctx.clearRect(0,0,200,200);
-  if(typeof QRCode!=="undefined"){
-    var tmp=document.createElement("div");
-    new QRCode(tmp,{text:_member.id,width:200,height:200,colorDark:"#000",colorLight:"#fff"});
-    setTimeout(function(){var img=tmp.querySelector("img")||tmp.querySelector("canvas");if(img){var i=new Image();i.onload=function(){ctx.drawImage(i,0,0,200,200);};i.src=img.src||img.toDataURL();}},150);
-  }
-}
-function _clearQR(){var ctx=document.getElementById("qrCanvas").getContext("2d");ctx.fillStyle="#f0f0f0";ctx.fillRect(0,0,200,200);}
-
-// ── Add car ──────────────────────────────────────────────────
-App.openAddCar = function(){
-  document.getElementById("m-carbrand").selectedIndex=0;
-  resetSel("m-carmodel","-- เลือกยี่ห้อก่อน --");
-  document.getElementById("m-carmodel").disabled=true;
-  document.getElementById("m-license").value="";
-  document.getElementById("m-brand-other-wrap").style.display="none";
-  document.getElementById("m-model-other-wrap").style.display="none";
-  document.getElementById("m-brand-logo").style.display="none"; // ★ NEW
-  hideErr("addCarErr");
-  // ★ NEW: warn (and retry) if brand/model dropdown data never loaded,
-  //   instead of silently showing an empty dropdown with no explanation
-  if (!_carData.length) {
-    showErr("addCarErr", _carDataError || "ข้อมูลยี่ห้อรถโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
-    apiGet({action:"getCarData"}).then(function(r){
-      if(r.success && r.brands && r.brands.length){ _carData=r.brands; _populateRegions(); hideErr("addCarErr"); }
-      else { _carDataError = r.error || _carDataError; showErr("addCarErr", _carDataError || "โหลดไม่สำเร็จ"); }
-    });
-  }
-  document.getElementById("addCarModal").classList.add("open");
-};
-App.closeAddCar = function(){ document.getElementById("addCarModal").classList.remove("open"); };
-
-App.submitAddCar = function(){
-  hideErr("addCarErr");
-  var carbrand=document.getElementById("m-carbrand").value;
-  var carmodel=document.getElementById("m-carmodel").value;
-  var license=document.getElementById("m-license").value.trim();
-  if(carbrand==="__other__") carbrand=document.getElementById("m-carbrand-other").value.trim();
-  if(carmodel==="__other__") carmodel=document.getElementById("m-carmodel-other").value.trim();
-  if(!carbrand||!carmodel||!license){showErr("addCarErr","กรุณากรอกข้อมูลให้ครบ");return;}
-  setLoading("addCarBtn","addCarLabel",true,"");
-  apiGet({action:"addCar",memberId:_member.id,carbrand:carbrand,carmodel:carmodel,license:license})
-    .then(function(res){
-      setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");
-      if(!res.success){showErr("addCarErr",res.error==="duplicate_plate"?"ทะเบียนนี้มีในระบบแล้ว":"Error: "+res.error);return;}
-      _cars.push(res.car); _carIdx=_cars.length-1;
-      App.closeAddCar(); _renderCarTab();
-    })
-    .catch(function(err){setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");showErr("addCarErr","Error: "+(err.message||err));});
-};
-
-// ── Delete car ───────────────────────────────────────────────
-App.askDelete = function(carId,label){
-  _delCarId=carId;
-  document.getElementById("confirmMsg").innerHTML="ต้องการลบ <strong>"+label+"</strong> ออกจากโปรไฟล์?";
-  document.getElementById("confirmModal").classList.add("open");
-};
-App.closeConfirm = function(){ document.getElementById("confirmModal").classList.remove("open"); _delCarId=null; };
-App.confirmDelete = function(){
-  if(!_delCarId)return; var id=_delCarId; App.closeConfirm();
-  apiGet({action:"deleteCar",carId:id,memberId:_member.id})
-    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderCarTab();}});
-};
-
-// ── Edit ─────────────────────────────────────────────────────
-App.openEdit = function() {
-  var m=_member;
-  function _sel(id,val){var el=document.getElementById(id);if(!el)return;for(var i=0;i<el.options.length;i++){if(el.options[i].value===val){el.selectedIndex=i;return;}}}
-  _sel("e-title",m.title);
-  document.getElementById("e-fname").value   = m.firstname||"";
-  document.getElementById("e-lname").value   = m.lastname||"";
-  document.getElementById("e-phone").value   = m.phone||"";
-  document.getElementById("e-birthday").value= isoToDisplayDate(m.birthday);
-  hideErr("editErr");
-  document.getElementById("editOk").style.display="none";
-  App.showPage("page-edit");
-};
-
-App.saveEdit = function(){
-  hideErr("editErr");
-  document.getElementById("editOk").style.display="none";
-  var title=document.getElementById("e-title").value;
-  var fname=document.getElementById("e-fname").value.trim();
-  var lname=document.getElementById("e-lname").value.trim();
-  var phone=document.getElementById("e-phone").value.trim();
-  var bd=parseBirthdayInput("e-birthday");
-  if(!bd.empty && !bd.valid){
-    showErr("editErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
-  }
-  var birthday = bd.valid ? bd.iso : "";
-  if(!title||!fname||!lname||!phone||!birthday){
-    showErr("editErr","กรุณากรอกข้อมูลให้ครบถ้วน"); return;
-  }
-  if(!isValidThaiPhone(phone)){
-    showErr("editErr","เบอร์โทรไม่ถูกต้อง กรุณากรอกเบอร์ 10 หลักที่ขึ้นต้นด้วย 0 (เช่น 0812345678)"); return;
-  }
-  setLoading("saveEditBtn","saveEditLabel",true,"");
-  // ★ Address fields are no longer editable here — the member's address
-  //   stays whatever was already saved (fixed default for new signups).
-  apiPost({action:"updateMember",data:{memberId:_member.id,title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday}})
-    .then(function(res){
-      setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล");
-      if(!res.success){showErr("editErr","เกิดข้อผิดพลาด: "+res.error);return;}
-      _member.title=title;_member.firstname=fname;_member.lastname=lname;
-      _member.phone=phone;_member.birthday=birthday;
-      App.updateMemberInfo(_member);
-      document.getElementById("editOk").style.display="block";
-      setTimeout(function(){document.getElementById("editOk").style.display="none";},3000);
-    })
-    .catch(function(err){setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล");showErr("editErr","Error: "+(err.message||err));});
-};
-
-// ── Start ────────────────────────────────────────────────────
-window.addEventListener("load", function() {
-  attachDateMask("r-birthday");
-  attachDateMask("e-birthday");
-  App.start();
-});
-</script>
-
-<script>
-// ── Auto-clear caches/service workers on every load, so code updates
-//    always take effect instead of serving a stale cached version ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(r){ r.unregister(); });
-  });
-}
-if ('caches' in window) {
-  caches.keys().then(function(keys){
-    keys.forEach(function(k){ caches.delete(k); });
-  });
-}
-</script>
-</body>
-</html>
