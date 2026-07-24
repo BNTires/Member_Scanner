@@ -1,1494 +1,1067 @@
-<!DOCTYPE html><!-- v1780109361 -->
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Tyre Warranty</title>
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tyre Warranty">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#b40000">
-<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=2"></script>
-<script src="config.js?v=1780109361"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js?v=1780109361"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B.N.Tires&amp;Max Member Page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh}
-.screen{display:none;flex-direction:column;min-height:100vh}
-.screen.active{display:flex}
-.hdr{background:#b40000;color:white;padding:16px;text-align:center;flex-shrink:0}
-.hdr-shop{font-size:10px;letter-spacing:2px;opacity:.7;margin-bottom:3px;text-transform:uppercase}
-.hdr-title{font-size:20px;font-weight:700}
-.hdr-sub{font-size:12px;opacity:.6;margin-top:3px}
-/* ★ NEW: black-tone header for the car management pages */
-.hdr-black{background:#1a1a1a;color:#fff;padding:16px;text-align:center;flex-shrink:0;position:relative}
-.icon-btn-tl{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.2);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.icon-btn-tr{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.2);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s}
-.content{padding:16px;flex:1}
-.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#888;margin-bottom:10px;text-transform:uppercase}
-.brand-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.brand-card{background:white;border-radius:14px;padding:16px 10px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1.5px solid #e0e0e0;-webkit-tap-highlight-color:transparent;min-height:140px;justify-content:center}
-.brand-card.active{background:#b40000;border-color:#cc0000;cursor:pointer}
-.brand-card.active:active{transform:scale(.97)}
-.brand-card.inactive{opacity:.45;cursor:not-allowed}
-.brand-logo{font-size:28px}
-.brand-name{font-size:16px;font-weight:700;color:white}
-.brand-name.muted{color:#aaa}
-.brand-tap{font-size:11px;color:rgba(255,255,255,.7)}
-.brand-soon{font-size:11px;background:#f5f5f5;color:#aaa;padding:3px 10px;border-radius:20px}
-.center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;text-align:center}
-.big-icon{width:80px;height:80px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:38px}
-.center-title{font-size:20px;font-weight:700;color:#1a0000}
-.center-desc{font-size:14px;color:#555;line-height:1.7}
-.note-text{font-size:12px;color:#aaa;line-height:1.6}
-.back-link{font-size:13px;color:#b40000;cursor:pointer;text-decoration:underline}
-.btn-primary{background:#b40000;color:white;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:280px}
-.btn-primary:active{opacity:.85}
-.btn-secondary{background:white;color:#b40000;border:2px solid #b40000;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:280px;margin-top:4px}
-.scan-hdr{background:#b40000;color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
-.back-btn{background:rgba(255,255,255,.2);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.scan-brand{font-size:17px;font-weight:700}
-.scan-sub{font-size:12px;opacity:.7;margin-top:1px}
-.cam-wrap{position:relative;flex:1;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:300px}
-#preview{width:100%;height:100%;object-fit:cover;display:block}
-#canvas{display:none}
-.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.box{width:220px;height:220px;position:relative}
-.box::before,.box::after,.bl,.br{content:'';position:absolute;width:36px;height:36px;border-color:white;border-style:solid}
-.box::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
-.box::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
-.bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
-.br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-.scan-line{position:absolute;left:4px;right:4px;height:2px;background:rgba(255,255,255,.75);animation:sweep 2s ease-in-out infinite}
-@keyframes sweep{0%{top:4px}50%{top:calc(100% - 6px)}100%{top:4px}}
-.cam-hint{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:white;text-align:center;font-size:13px;padding:12px 16px}
-.status-bar{background:#b40000;color:white;padding:12px 16px;font-size:13px;flex-shrink:0;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px}
-.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0}
-.dot.on{background:#4ade80;animation:pulse 1s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.retry-btn{display:none;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:white;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer;margin-left:8px}
-.loading-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#b40000;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:15px;color:#555;text-align:center;padding:0 24px}
-.confirm-wrap{flex:1;padding:16px;overflow-y:auto}
-.member-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
-.member-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:14px}
-.info-row:last-child{border-bottom:none}
-.info-label{color:#aaa;flex-shrink:0;margin-right:12px}
-.info-value{color:#1a0000;font-weight:500;text-align:right}
-.confirm-brand{background:#b40000;color:white;border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-.confirm-brand-name{font-size:18px;font-weight:700}
-.confirm-brand-sub{font-size:12px;opacity:.7;margin-top:2px}
-.action-btn{background:#b40000;color:white;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px}
-.action-btn:active{opacity:.85}
-.action-btn:disabled{background:#ccc;cursor:not-allowed}
-.cancel-btn{background:white;color:#555;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px;font-size:15px;cursor:pointer;width:100%}
-.receipt-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
-.receipt-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.receipt-area{border:2px dashed #ccc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
-.receipt-area.has-photo{border-color:#22c55e;background:#f0fdf4}
-.receipt-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.receipt-preview{width:100%;max-height:200px;object-fit:contain;border-radius:8px;display:none;margin-top:8px}
-.receipt-status{font-size:13px;margin-top:8px}
-.receipt-status.ok{color:#16a34a;font-weight:600}
-.receipt-status.uploading{color:#b40000}
-.receipt-status.error{color:#dc2626}
-/* ★ mileage card */
-.mileage-card{background:white;border-radius:14px;padding:20px;margin-bottom:12px;border:1.5px solid #e0e0e0}
-.mileage-card h3{font-size:13px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.mileage-card input{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:16px;font-family:inherit;color:#1a0000}
-.mileage-card input:focus{outline:none;border-color:#b40000;box-shadow:0 0 0 3px rgba(180,0,0,.1)}
-.mileage-card input.required-err{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.1)}
-.mileage-hint{font-size:12px;color:#aaa;margin-top:6px}
-.mileage-hint.required{color:#b40000;font-weight:600}
-.footer{text-align:center;padding:14px;font-size:11px;color:#aaa;flex-shrink:0}
-/* ★ NEW: Car management menu + car picker + forms */
-.manage-menu{display:flex;flex-direction:column;gap:12px;padding:20px}
-.manage-btn{background:white;border:1.5px solid #e0e0e0;border-radius:14px;padding:20px;font-size:16px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.manage-btn:active{background:#f5f5f5}
-.manage-btn .ic{font-size:26px}
-.manage-btn.danger{border-color:#fca5a5;color:#b91c1c}
-.car-pick-card{background:white;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;-webkit-tap-highlight-color:transparent}
-.car-pick-card:active{background:#f5f5f5}
-.car-pick-name{font-weight:700;font-size:15px;color:#1a1a1a}
-.car-pick-sub{font-size:12px;color:#888;margin-top:2px}
-.car-pick-plate{background:#1a1a1a;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;flex-shrink:0;margin-left:10px}
-.add-car-btn{border:2px dashed #b40000;border-radius:12px;padding:16px;text-align:center;color:#b40000;font-weight:700;cursor:pointer;margin-top:6px;-webkit-tap-highlight-color:transparent}
-.add-car-btn:active{background:#fff5f5}
-.icon-mini-btn{background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;width:36px;height:36px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
-.icon-mini-btn:active{background:#e8e8e8}
-.icon-mini-btn.danger{border-color:#fca5a5}
-.form-field{margin-bottom:12px}
-.form-field label{font-size:13px;color:#888;margin-bottom:6px;display:block}
-.form-field select,.form-field input{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;font-family:inherit}
-.form-err{color:#dc2626;font-size:13px;margin-bottom:8px;min-height:18px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Sarabun","Helvetica Neue",Arial,sans-serif;background:#f2f2f2;min-height:100vh;padding:20px}
+.wrap{max-width:520px;margin:0 auto}
+.logo-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.logo-circle{width:38px;height:38px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-circle svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.logo-text-main{font-size:15px;font-weight:700;color:#222}
+.logo-text-sub{font-size:11px;color:#888}
+.card{background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.1);overflow:hidden;margin-bottom:16px}
+.card-header{background:#cc0000;padding:22px 28px}
+.card-header h1{font-size:20px;font-weight:700;color:#fff;margin:0}
+.card-header p{font-size:13px;color:rgba(255,255,255,.85);margin-top:3px}
+.card-body{padding:28px}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:18px;font-weight:700;color:#222;margin-bottom:4px}
+.page-sub{font-size:13px;color:#888;margin-bottom:20px;line-height:1.6}
+.sec-title{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 14px;border-top:1px solid #f0f0f0;padding-top:16px}
+.sec-title:first-of-type{border-top:none;padding-top:0;margin-top:0}
+.field{margin-bottom:16px}
+.row{display:flex;gap:12px}.row .field{flex:1}.row .field.narrow{flex:0 0 140px}
+label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:5px}
+label .en{font-weight:400;color:#aaa;font-size:12px}
+.en-sm{font-weight:400;opacity:.65;font-size:.72em}
+label .req{color:#cc0000;margin-left:2px}
+input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #ddd;border-radius:6px;background:#fff;color:#333;transition:border-color .15s}
+textarea{resize:vertical;min-height:72px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#cc0000;box-shadow:0 0 0 3px rgba(204,0,0,.1)}
+select:disabled{background:#f8f8f8;color:#aaa}
+input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
+.err-msg{font-size:12px;color:#cc0000;margin-top:5px;display:none}
+.btn{width:100%;padding:12px;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;transition:opacity .15s}
+.btn-red{background:#cc0000;color:#fff}.btn-red:hover{background:#aa0000}
+.btn-outline{background:#fff;color:#cc0000;border:1.5px solid #cc0000}.btn-outline:hover{background:#fff5f5}
+.btn-ghost{background:none;color:#888;border:1px solid #e0e0e0}.btn-ghost:hover{background:#f5f5f5}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-back{background:#fff;border:1.5px solid #cc0000;color:#cc0000;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;padding:8px 14px;border-radius:8px}
+.btn-back:active{background:#fff5f5}
+.btn-link{background:none;border:none;cursor:pointer;font-size:13px;color:#cc0000;font-family:inherit;padding:0;text-decoration:underline}
+.dots{display:inline-flex;gap:4px;align-items:center}
+.dots span{width:6px;height:6px;background:currentColor;border-radius:50%;opacity:.3;animation:blink 1s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{40%{opacity:1}}
+.progress-track{width:100%;max-width:280px;height:8px;background:#f0f0f0;border-radius:4px;margin:0 auto;overflow:hidden}
+.progress-fill{height:100%;width:8%;background:#cc0000;border-radius:4px;transition:width .4s ease}
+/* Member page */
+.avatar{width:52px;height:52px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
+/* ── Member page redesign: full-bleed banner + name bar + tabbed body + bottom nav ── */
+.mem-header-banner{margin:-20px -20px 0 -20px;line-height:0}
+.mem-header-banner img{width:100%;display:block}
+.mem-name-bar{background:#f0f0f0;padding:16px 20px 12px;margin:0 -20px}
+.mem-name-bar .mem-name{font-size:19px;font-weight:700;color:#1a1a1a;display:inline-block;border-bottom:3px solid #cc0000;padding-bottom:4px}
+.mem-body-card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:16px 0 105px;padding:24px 20px;min-height:300px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.qr-box{text-align:center}
+.qr-box canvas{border-radius:6px;margin:0 auto 10px;display:block}
+.qr-hint{font-size:12px;color:#aaa}
+.btn-outline{background:#fff;color:#cc0000;border:1.5px solid #cc0000;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit}
+.btn-outline:active{background:#fff5f5}
+.mem-bottom-nav{background:#cc0000;display:flex;justify-content:space-around;align-items:flex-end;padding:8px 8px 8px;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:520px;box-sizing:border-box;z-index:50}
+.nav-item{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;color:#fff;font-size:10px;font-weight:700;flex:0 0 auto;width:84px;padding:6px 4px;min-height:48px;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.nav-item .nav-icon-wrap{width:50px;height:50px;display:flex;align-items:center;justify-content:center}
+.nav-item svg{width:40px;height:40px;stroke:#1a1a1a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-item.active{transform:translateY(-25px)}
+.nav-item.active .nav-icon-wrap{width:75px;height:75px;background:#fff;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.3);margin-bottom:2px}
+.nav-item.active svg{width:42px;height:42px;stroke:#cc0000;stroke-width:2.2}
+.car-card{background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.car-card-logo{width:40px;height:40px;object-fit:contain;background:white;border-radius:8px;padding:3px;border:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.car-card-info{flex:1;min-width:0;display:flex;align-items:baseline;gap:6px;overflow:hidden}
+.car-make{font-size:15px;font-weight:700;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.car-model-txt{font-size:13px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.car-plate{display:inline-block;background:#222;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;flex-shrink:0}
+.no-cars{text-align:center;padding:24px;color:#aaa;font-size:14px;background:#f8f8f8;border:1px solid #eee;border-radius:10px}
+.info-section{margin-bottom:18px}
+.info-section-ttl{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:14px}
+.info-grid dt{color:#888}.info-grid dd{color:#222;font-weight:600}
+/* ── Vehicle history ── */
+.hist-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
+.hist-row:last-child{border-bottom:none}
+.hist-row.hist-head{font-weight:700;color:#888;font-size:11px;text-transform:uppercase}
+.hist-label{color:#333;font-weight:600;flex:2}
+.hist-date{color:#888;flex:1;text-align:right}
+.hist-mileage{color:#aaa;flex:1;text-align:right}
+.hist-empty{text-align:center;padding:16px;color:#aaa;font-size:13px;background:#f8f8f8;border-radius:8px}
+.hist-tire-info{font-size:13px;color:#444;margin-bottom:10px;line-height:1.7}
+/* Modal */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:10px;padding:24px;width:100%;max-width:420px;position:relative;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:16px;font-weight:700;color:#222;margin-bottom:4px}
+.modal-sub{font-size:13px;color:#888;margin-bottom:16px}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:22px;color:#aaa;line-height:1;padding:4px}
+.modal-close:hover{color:#cc0000}
+.confirm-box{background:#fff;border-radius:10px;padding:24px;width:100%;max-width:340px;text-align:center}
+.confirm-box h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.confirm-box p{font-size:13px;color:#666;margin-bottom:20px;line-height:1.6}
+.confirm-actions{display:flex;gap:10px}
 </style>
 </head>
 <body>
-
-<!-- Screen 1: Brand Picker -->
-<div class="screen active" id="s-brands">
-  <div class="hdr" style="position:relative">
-    <button id="refresh-brands-btn" onclick="hardRefresh()" title="รีเฟรชทั้งหน้า" style="position:absolute;top:12px;left:12px;background:rgba(255,255,255,.25);border:none;color:white;width:56px;height:56px;border-radius:50%;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s">🔄</button>
-    <button id="carmanage-btn" onclick="enterCarManage()" title="จัดการรถ" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.25);border:none;color:white;width:56px;height:56px;border-radius:50%;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center">🚗</button>
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">Tyre Warranty</div>
-    <div class="hdr-sub">เลือกแบรนด์ยางก่อนสแกน QR</div>
-  </div>
-  <div class="content">
-    <div class="sec-label">เลือกแบรนด์ยาง</div>
-    <div class="brand-grid" id="brand-grid"></div>
-  </div>
-  <div class="footer">B.N. Tires &amp; Max · ระบบลงทะเบียนรับประกัน</div>
-</div>
-
-<!-- Screen: Car Info + Management (★ REWORKED — shown AFTER scanning,
-     combining member info, car list, and inline edit/delete actions,
-     instead of choosing an action before scanning) -->
-<div class="screen" id="s-carinfo">
-  <div class="hdr-black">
-    <button class="icon-btn-tl" onclick="exitCarManage()">←</button>
-    <div class="hdr-title">ข้อมูลลูกค้า</div>
-    <div class="hdr-sub" style="opacity:.6;font-size:12px;margin-top:3px" id="carinfo-member-label"></div>
-  </div>
-  <div class="content">
-    <div class="sec-label">รถของลูกค้า</div>
-    <div id="carinfo-list"></div>
-    <div class="add-car-btn" onclick="openCarAddForm()">➕ เพิ่มรถคันใหม่</div>
-  </div>
-</div>
-
-<!-- Screen 2: Permission -->
-<div class="screen" id="s-permission">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title" id="perm-brand-name"></div>
-    <div class="hdr-sub">สแกน QR ลูกค้า</div>
-  </div>
-  <div class="center-wrap">
-    <div class="big-icon">📷</div>
-    <div class="center-title">ต้องการใช้กล้อง</div>
-    <div class="center-desc">แอปต้องการเข้าถึงกล้องเพื่อสแกน<br>QR code ของลูกค้า กด <b>Allow</b><br>เมื่อระบบถามอนุญาต</div>
-    <button class="btn-primary" onclick="openCamera()">📷&nbsp; เปิดกล้องสแกน QR</button>
-    <div class="note-text">หากเคยปฏิเสธ ไปที่ Settings เปิดอนุญาตกล้อง</div>
-    <button class="btn-secondary" onclick="openSearch()" style="margin-top:12px;-webkit-tap-highlight-color:rgba(0,0,0,0.1);touch-action:manipulation">🔍&nbsp; ค้นหาด้วยเบอร์/ทะเบียน</button>
-    <span class="back-link" onclick="goBack()">← กลับ</span>
-  </div>
-</div>
-
-<!-- Screen 3: Scanner -->
-<div class="screen" id="s-scanner">
-  <div class="scan-hdr">
-    <button class="back-btn" onclick="goBack()">←</button>
+<div class="wrap">
+  <div class="logo-bar">
+    <div class="logo-circle">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
     <div>
-      <div class="scan-brand" id="scan-brand-label"></div>
-      <div class="scan-sub">สแกน QR code ของลูกค้า</div>
+      <div class="logo-text-main">B.N.Tires&amp;Max</div>
+      <div class="logo-text-sub">Member Page</div>
     </div>
   </div>
-  <div class="cam-wrap">
-    <video id="preview" autoplay playsinline muted></video>
-    <canvas id="canvas"></canvas>
-    <div class="overlay">
-      <div class="box"><div class="bl"></div><div class="br"></div><div class="scan-line"></div></div>
-    </div>
-    <div class="cam-hint">จัด QR code ให้อยู่ในกรอบสีขาว</div>
-  </div>
-  <div class="status-bar">
-    <div class="dot on" id="scan-dot"></div>
-    <span id="scan-status-text">กำลังเปิดกล้อง...</span>
-    <button class="retry-btn" id="retry-btn" onclick="openCamera()">ลองอีกครั้ง</button>
-  </div>
-</div>
 
-<!-- Screen 3b: Manual Search -->
-<div class="screen" id="s-search">
-  <div class="scan-hdr">
-    <button class="back-btn" onclick="show('s-permission')">←</button>
-    <div>
-      <div class="scan-brand" id="search-brand-label"></div>
-      <div class="scan-sub">ค้นหาด้วยข้อมูลลูกค้า</div>
-    </div>
-  </div>
-  <div class="content">
-    <div class="member-card">
-      <h3>ค้นหาสมาชิก</h3>
-      <div class="field" style="margin-bottom:12px">
-        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">เบอร์โทรศัพท์</label>
-        <input type="tel" id="search-phone" placeholder="0812345678" autocomplete="off"
-          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;-webkit-user-select:text;user-select:text">
+  <!-- LOGIN PAGE -->
+  <div class="page active" id="page-login">
+    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
+    <div class="mem-body-card" style="text-align:center;padding:48px 28px;margin-top:24px">
+      <div id="login-loading">
+        <div style="font-size:36px;margin-bottom:12px">🔍</div>
+        <div style="font-size:14px;color:#888;margin-bottom:16px" id="login-msg">กำลังเข้าสู่ระบบผ่าน LINE…</div>
+        <div class="progress-track"><div class="progress-fill" id="login-progress-fill"></div></div>
       </div>
-      <div class="field" style="margin-bottom:12px">
-        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">ทะเบียนรถ</label>
-        <input type="text" id="search-plate" placeholder="กข 1234" autocomplete="off"
-          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;-webkit-user-select:text;user-select:text">
-      </div>
-      <div id="search-status" style="font-size:13px;color:#b40000;margin-bottom:8px;min-height:20px"></div>
-      <button class="action-btn" onclick="doSearch()" style="margin-bottom:0">🔍 ค้นหา</button>
-    </div>
-    <div id="search-results" style="display:none">
-      <div class="sec-label" style="margin-top:16px">ผลการค้นหา</div>
-      <div id="search-result-list"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Screen: Car Pick (★ NEW — shown after scanning the member-level QR) -->
-<div class="screen" id="s-carpick">
-  <div class="scan-hdr">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div>
-      <div class="scan-brand">เลือกรถของลูกค้า</div>
-      <div class="scan-sub" id="carpick-member-label"></div>
-    </div>
-  </div>
-  <div class="content">
-    <div id="carpick-list"></div>
-    <div class="add-car-btn" onclick="openCarAddForm()">➕ เพิ่มรถคันใหม่</div>
-  </div>
-</div>
-
-<!-- Screen: Add Car (★ NEW) -->
-<div class="screen" id="s-caradd">
-  <div class="scan-hdr">
-    <button class="back-btn" onclick="backToCarListScreen()">←</button>
-    <div><div class="scan-brand">เพิ่มรถ</div><div class="scan-sub" id="caradd-member-label"></div></div>
-  </div>
-  <div class="content">
-    <div class="member-card">
-      <h3>ข้อมูลรถ</h3>
-      <div class="form-field">
-        <label>ยี่ห้อรถ</label>
-        <select id="ca-brand" onchange="onVehicleBrandChange('ca-brand','ca-model','ca-brand-other','ca-model-other')"><option value="">-- เลือกยี่ห้อ --</option></select>
-        <img id="ca-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
-      </div>
-      <div class="form-field">
-        <label>รุ่น</label>
-        <select id="ca-model" onchange="onVehicleModelChange('ca-model','ca-model-other')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
-      </div>
-      <div class="form-field" id="ca-brand-other" style="display:none"><label>ระบุยี่ห้อ</label><input type="text" id="ca-brand-other-input"></div>
-      <div class="form-field" id="ca-model-other" style="display:none"><label>ระบุรุ่น</label><input type="text" id="ca-model-other-input"></div>
-      <div class="form-field">
-        <label>ทะเบียนรถ</label>
-        <input type="text" id="ca-plate" placeholder="กข 1234">
-      </div>
-      <div class="form-err" id="ca-err"></div>
-      <button class="action-btn" onclick="submitAddCar()">💾 บันทึกรถ</button>
-    </div>
-  </div>
-</div>
-
-<!-- Screen: Edit Car (★ NEW) -->
-<div class="screen" id="s-caredit">
-  <div class="scan-hdr">
-    <button class="back-btn" onclick="backToCarListScreen()">←</button>
-    <div><div class="scan-brand">แก้ไขข้อมูลรถ</div><div class="scan-sub" id="caredit-member-label"></div></div>
-  </div>
-  <div class="content">
-    <div class="member-card">
-      <h3>ข้อมูลรถ</h3>
-      <div class="form-field">
-        <label>ยี่ห้อรถ</label>
-        <select id="ce-brand" onchange="onVehicleBrandChange('ce-brand','ce-model','ce-brand-other','ce-model-other')"><option value="">-- เลือกยี่ห้อ --</option></select>
-        <img id="ce-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
-      </div>
-      <div class="form-field">
-        <label>รุ่น</label>
-        <select id="ce-model" onchange="onVehicleModelChange('ce-model','ce-model-other')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
-      </div>
-      <div class="form-field" id="ce-brand-other" style="display:none"><label>ระบุยี่ห้อ</label><input type="text" id="ce-brand-other-input"></div>
-      <div class="form-field" id="ce-model-other" style="display:none"><label>ระบุรุ่น</label><input type="text" id="ce-model-other-input"></div>
-      <div class="form-field">
-        <label>ทะเบียนรถ</label>
-        <input type="text" id="ce-plate">
-      </div>
-      <div class="form-err" id="ce-err"></div>
-      <button class="action-btn" onclick="submitEditCar()">💾 บันทึกการแก้ไข</button>
-    </div>
-  </div>
-</div>
-
-<!-- Screen: Delete Car Confirm (★ NEW) -->
-<div class="screen" id="s-cardelete">
-  <div class="scan-hdr">
-    <button class="back-btn" onclick="backToCarListScreen()">←</button>
-    <div><div class="scan-brand">ลบรถ</div></div>
-  </div>
-  <div class="center-wrap">
-    <div class="big-icon" style="background:#fee2e2">🗑️</div>
-    <div class="center-title">ยืนยันการลบรถ</div>
-    <div class="center-desc" id="delete-car-info"></div>
-    <button class="btn-primary" style="background:#dc2626" onclick="submitDeleteCar()">🗑️ ยืนยันลบ</button>
-    <button class="btn-secondary" onclick="backToCarListScreen()">← ยกเลิก</button>
-  </div>
-</div>
-
-<!-- Screen 4: Loading -->
-<div class="screen" id="s-loading">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">กำลังค้นหาข้อมูล...</div>
-  </div>
-  <div class="loading-wrap">
-    <div class="spinner"></div>
-    <div class="loading-text" id="loading-text">กำลังค้นหาข้อมูลสมาชิก...</div>
-  </div>
-</div>
-
-<!-- Screen 5: Confirm + Receipt -->
-<div class="screen" id="s-confirm">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">พบข้อมูลแล้ว ✓</div>
-    <div class="hdr-sub">ถ่ายรูปใบเสร็จแล้วกดเปิดฟอร์ม</div>
-  </div>
-  <div class="confirm-wrap">
-    <div class="confirm-brand">
-      <div style="font-size:32px">🏷️</div>
-      <div>
-        <div class="confirm-brand-name" id="confirm-brand-name"></div>
-        <div class="confirm-brand-sub">แบรนด์ที่จะลงทะเบียน</div>
+      <div id="login-error" style="display:none">
+        <div style="font-size:32px;margin-bottom:10px">⚠️</div>
+        <div style="font-size:13px;color:#cc0000;margin-bottom:16px;line-height:1.6" id="login-error-msg"></div>
+        <button class="btn btn-red" onclick="App.retryLogin()" style="max-width:200px;margin:0 auto">ลองอีกครั้ง</button>
       </div>
     </div>
+  </div>
 
-    <!-- Tire Selector -->
-    <div class="member-card" id="tire-card">
-      <h3>🔵 เลือกยางที่เปลี่ยน</h3>
-      <div id="tire-loading" style="font-size:13px;color:#888">กำลังโหลดข้อมูลยาง...</div>
-      <div id="tire-list"></div>
-      <div id="tire-selected" style="display:none;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 12px;font-size:14px;color:#166534;font-weight:600;margin-top:8px"></div>
-      <div style="font-size:12px;color:#aaa;margin-top:6px">ไม่บังคับ — เลือกได้ถ้าฟอร์มของแบรนด์นี้ต้องการข้อมูลรุ่น/ขนาดยาง</div>
-    </div>
-
-    <!-- ★ Mileage Card -->
-    <div class="mileage-card" id="mileage-card">
-      <h3>🔢 เลขไมล์ปัจจุบัน</h3>
-      <input type="number" id="mileage-input" placeholder="กรอกเลขไมล์ (กม.)" inputmode="numeric">
-      <div class="mileage-hint" id="mileage-hint">ไม่บังคับ — กรอกหรือปล่อยว่างได้</div>
-    </div>
-
-    <div class="receipt-card">
-      <h3>📎 ภาพใบเสร็จ</h3>
-      <div class="receipt-area" id="receipt-area">
-        <input type="file" accept="image/*" capture="environment" id="receipt-input" onchange="handleReceiptPhoto(this)">
-        <div id="receipt-placeholder">
-          <div style="font-size:32px;margin-bottom:8px">📸</div>
-          <div style="font-size:14px;color:#555;font-weight:600">แตะเพื่อถ่ายรูปใบเสร็จ</div>
-          <div style="font-size:12px;color:#aaa;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
+  <!-- REGISTER PAGE -->
+  <div class="page" id="page-register">
+    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
+    <div class="mem-body-card" style="margin-top:16px">
+      <p class="sec-title" style="margin-top:0">สมัครสมาชิก</p>
+      <div id="line-profile-bar" style="display:none;align-items:center;gap:12px;background:#f0f9f0;border:1px solid #c3e6cb;border-radius:8px;padding:12px 14px;margin-bottom:20px">
+        <img id="line-avatar" src="" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#1e7e34" id="line-display-name"></div>
+          <div style="font-size:11px;color:#888">เข้าสู่ระบบผ่าน LINE</div>
         </div>
-        <img id="receipt-preview" class="receipt-preview">
       </div>
-      <div class="receipt-status" id="receipt-status"></div>
-    </div>
-
-    <!-- ★ Car photo card — shown only for brands with requiresCarPhoto -->
-    <div class="receipt-card" id="car-photo-card" style="display:none">
-      <h3>📸 รูปรถยนต์</h3>
-      <div class="receipt-area" id="car-photo-area">
-        <input type="file" accept="image/*" capture="environment" id="car-photo-input" onchange="handleCarPhoto(this)">
-        <div id="car-photo-placeholder">
-          <div style="font-size:32px;margin-bottom:8px">🚗</div>
-          <div style="font-size:14px;color:#555;font-weight:600">แตะเพื่อถ่ายรูปรถ</div>
-          <div style="font-size:12px;color:#aaa;margin-top:4px">จำเป็นต้องอัพโหลดก่อนเปิดฟอร์ม</div>
+      <div class="row">
+        <div class="field narrow">
+          <label>คำนำหน้า<span class="req">*</span></label>
+          <select id="r-title">
+            <option value="">-- เลือก --</option>
+            <option value="Mr.">นาย (Mr.)</option>
+            <option value="Ms.">นางสาว (Ms.)</option>
+            <option value="Mrs.">นาง (Mrs.)</option>
+          </select>
         </div>
-        <img id="car-photo-preview" class="receipt-preview">
+        <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
       </div>
-      <div class="receipt-status" id="car-photo-status"></div>
+      <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="r-lname" placeholder="นามสกุล"></div>
+      <div class="row">
+        <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
+        <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
+      </div>
+      <div id="debug-cardata" style="font-size:11px;color:#aaa;background:#f8f8f8;border-radius:6px;padding:8px 10px;margin-bottom:12px"></div>
+      <p class="sec-title">รถคันแรก</p>
+      <div class="row">
+        <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
+          <select id="r-carbrand" onchange="App.onCarBrandChange('r-carbrand','r-carmodel','r-brand-other-wrap','r-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
+          <img id="r-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
+        </div>
+        <div class="field"><label>รุ่น<span class="req">*</span></label>
+          <select id="r-carmodel" onchange="App.onCarModelChange('r-carmodel','r-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
+        </div>
+      </div>
+      <div class="field" id="r-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="r-carbrand-other"></div>
+      <div class="field" id="r-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="r-carmodel-other"></div>
+      <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="r-license" placeholder="เช่น กข 1234"></div>
+      <div class="field"><label>จังหวัดป้ายทะเบียน<span class="req">*</span></label>
+        <select id="r-plate-province"><option value="">-- เลือกจังหวัด --</option></select>
+      </div>
+      <div class="err-msg" id="regErr"></div>
+      <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก</span></button>
     </div>
-
-    <div class="member-card">
-      <h3>ข้อมูลสมาชิก</h3>
-      <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="c-name"></span></div>
-      <div class="info-row"><span class="info-label">เบอร์โทร</span><span class="info-value" id="c-phone"></span></div>
-      <div class="info-row"><span class="info-label">Member ID</span><span class="info-value" id="c-memberid"></span></div>
-    </div>
-    <div class="member-card">
-      <h3>ข้อมูลรถยนต์</h3>
-      <div class="info-row"><span class="info-label">Car ID</span><span class="info-value" id="c-carid"></span></div>
-      <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="c-car"></span></div>
-      <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="c-plate"></span></div>
-    </div>
-
-    <button class="action-btn" id="open-form-btn" onclick="openWarrantyForm()" disabled>
-      📎 กรุณาถ่ายรูปใบเสร็จก่อน
-    </button>
-    <button class="cancel-btn" onclick="show('s-brands')">← เลือกแบรนด์ใหม่</button>
-
-    <!-- Debug panel -->
-    <div id="debug-panel" style="background:#1a1a1a;color:#4ade80;padding:12px;border-radius:8px;font-size:11px;font-family:monospace;margin-top:10px;display:none">
-      <div style="color:#fff;font-weight:bold;margin-bottom:6px">🔍 Debug Info</div>
-      <div id="debug-text"></div>
-    </div>
-    <button onclick="showDebug()" style="background:#333;color:white;border:none;border-radius:8px;padding:8px;width:100%;font-size:12px;margin-top:6px;cursor:pointer">🔍 Show Debug</button>
   </div>
-</div>
 
-<!-- Screen 5b: Log Service (สลับยาง / ปะยาง) -->
-<div class="screen" id="s-service">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title" id="service-title">บันทึกบริการ</div>
-    <div class="hdr-sub">พบข้อมูลแล้ว ✓</div>
-  </div>
-  <div class="confirm-wrap">
-    <div class="confirm-brand" id="service-brand-banner">
-      <div style="font-size:32px" id="service-icon">🔄</div>
-      <div>
-        <div class="confirm-brand-name" id="service-brand-name"></div>
-        <div class="confirm-brand-sub">บริการที่จะบันทึก</div>
+  <!-- MEMBER PAGE — redesigned: header banner + name + 3 tabs (QR / Car / Personal) + bottom nav -->
+  <div class="page" id="page-member">
+    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
+    <div class="mem-name-bar"><div class="mem-name" id="m-fullname"></div></div>
+
+    <div class="mem-body-card">
+      <!-- Tab: QR -->
+      <div class="tab-panel active" id="tab-qr">
+        <div class="qr-box">
+          <canvas id="qrCanvas" width="200" height="200"></canvas>
+          <div class="qr-hint">แสดง QR code นี้ให้เจ้าหน้าที่สแกน</div>
+        </div>
+      </div>
+
+      <!-- Tab: Car — two sub-views: a picker list (multi-car) and a
+           detail view (single car, or after picking from the list) -->
+      <div class="tab-panel" id="tab-car">
+        <div id="car-list-view">
+          <div id="car-list-items"></div>
+        </div>
+        <div id="car-detail-view" style="display:none">
+          <div id="car-selected-summary"></div>
+          <button class="btn-outline" id="change-car-btn" onclick="_showCarList()" style="margin-top:10px">เปลี่ยนรถ</button>
+          <div class="info-section" id="history-section" style="margin-top:20px">
+            <div class="info-section-ttl">ประวัติ</div>
+            <div class="hist-tire-info" id="history-tire-info"></div>
+            <div id="history-table-wrap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Personal Info -->
+      <div class="tab-panel" id="tab-personal">
+        <dl class="info-grid">
+          <dt>คำนำหน้า</dt><dd id="mi-title"></dd>
+          <dt>ชื่อ</dt><dd id="mi-firstname"></dd>
+          <dt>นามสกุล</dt><dd id="mi-lastname"></dd>
+          <dt>เบอร์โทร</dt><dd id="mi-phone"></dd>
+          <dt>วันเกิด</dt><dd id="mi-birthday"></dd>
+        </dl>
+        <button class="btn-outline" style="margin-top:16px" onclick="App.openEdit()">✏️ แก้ไขข้อมูล</button>
       </div>
     </div>
 
-    <div class="member-card">
-      <h3>ข้อมูลสมาชิก</h3>
-      <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-value" id="sv-name"></span></div>
-      <div class="info-row"><span class="info-label">เบอร์โทร</span><span class="info-value" id="sv-phone"></span></div>
+    <div class="mem-bottom-nav">
+      <button class="nav-item active" id="nav-tab-qr" onclick="App.switchTab('tab-qr')">
+        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14.5" y="14.5" width="2.5" height="2.5"/><rect x="18" y="14.5" width="2.5" height="2.5"/><rect x="14.5" y="18" width="2.5" height="2.5"/><rect x="18" y="18" width="2.5" height="2.5"/></svg></div>
+        <span>สมาชิก</span>
+      </button>
+      <button class="nav-item" id="nav-tab-car" onclick="App.switchTab('tab-car')">
+        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M3 13l1.4-4.3A2 2 0 0 1 6.3 7.3h11.4a2 2 0 0 1 1.9 1.4L21 13"/><path d="M3 13h18v3.5a1.2 1.2 0 0 1-1.2 1.2H19a1.2 1.2 0 0 1-1.2-1.2V16H6.2v.5A1.2 1.2 0 0 1 5 17.7H4.2A1.2 1.2 0 0 1 3 16.5V13z"/><circle cx="7" cy="15" r="1"/><circle cx="17" cy="15" r="1"/></svg></div>
+        <span>รถยนต์</span>
+      </button>
+      <button class="nav-item" id="nav-tab-personal" onclick="App.switchTab('tab-personal')">
+        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5 15.5c0-1.6 1.6-2.8 3.5-2.8s3.5 1.2 3.5 2.8"/><line x1="14" y1="9.5" x2="18" y2="9.5"/><line x1="14" y1="13" x2="18" y2="13"/></svg></div>
+        <span>ข้อมูลส่วนตัว</span>
+      </button>
     </div>
-    <div class="member-card">
-      <h3>ข้อมูลรถยนต์</h3>
-      <div class="info-row"><span class="info-label">Car ID</span><span class="info-value" id="sv-carid"></span></div>
-      <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="sv-car"></span></div>
-      <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="sv-plate"></span></div>
+  </div>
+
+  <!-- EDIT PAGE -->
+  <div class="page" id="page-edit">
+    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
+    <div class="mem-body-card" style="margin-top:16px;margin-bottom:24px">
+      <button class="btn-back" onclick="App.showPage('page-member')">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        กลับ
+      </button>
+      <p class="sec-title" style="margin-top:0">แก้ไขข้อมูลส่วนตัว</p>
+      <div class="row">
+        <div class="field narrow"><label>Title<span class="req">*</span></label>
+          <select id="e-title"><option value="">-- เลือก --</option><option value="Mr.">นาย (Mr.)</option><option value="Ms.">นางสาว (Ms.)</option><option value="Mrs.">นาง (Mrs.)</option></select>
+        </div>
+        <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="e-fname"></div>
+      </div>
+      <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="e-lname"></div>
+      <div class="row">
+        <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="e-phone" maxlength="10"></div>
+        <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="e-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
+      </div>
+      <div class="err-msg" id="editErr"></div>
+      <div id="editOk" style="display:none;font-size:13px;color:#1e7e34;margin-top:8px;text-align:center">✓ บันทึกเรียบร้อยแล้ว</div>
+      <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล</span></button>
     </div>
-
-    <div class="mileage-card" id="service-mileage-card">
-      <h3>🔢 เลขไมล์ปัจจุบัน</h3>
-      <input type="number" id="service-mileage-input" placeholder="กรอกเลขไมล์ (กม.) — ไม่บังคับ" inputmode="numeric">
-      <div class="mileage-hint">ไม่บังคับ — กรอกหรือปล่อยว่างได้</div>
-    </div>
-
-    <div class="err-msg" id="service-err" style="color:#dc2626;font-size:13px;margin-bottom:10px;display:none"></div>
-
-    <button class="action-btn" id="service-save-btn" onclick="submitServiceLog()">💾 บันทึก</button>
-    <button class="cancel-btn" onclick="show('s-brands')">← เลือกบริการใหม่</button>
   </div>
 </div>
 
-<!-- Screen 6: Error -->
-<div class="screen" id="s-error">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">เกิดข้อผิดพลาด</div>
-  </div>
-  <div class="center-wrap">
-    <div class="big-icon">⚠️</div>
-    <div class="center-title">เกิดข้อผิดพลาด</div>
-    <div class="center-desc" id="error-msg"></div>
-    <button class="btn-primary" id="retry-error-btn" onclick="if(typeof retryOpenForm==='function')retryOpenForm()">🔄 ลองส่งใหม่อีกครั้ง</button>
-    <button class="btn-secondary" onclick="show('s-confirm')">← กลับหน้ายืนยัน</button>
-    <button class="btn-secondary" onclick="show('s-brands')" style="margin-top:4px">← กลับหน้าแรก</button>
-  </div>
-</div>
-
-<!-- Screen 7: Waiting for desktop -->
-<div class="screen" id="s-waiting">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">กำลังเปิดบนคอมพิวเตอร์</div>
-    <div class="hdr-sub">รอสักครู่...</div>
-  </div>
-  <div class="loading-wrap">
-    <div class="spinner"></div>
-    <div class="loading-text" id="waiting-text">รอให้คอมพิวเตอร์เปิดฟอร์ม...</div>
-    <div style="font-size:12px;color:#aaa;margin-top:8px;text-align:center;padding:0 32px">
-      ตรวจสอบให้แน่ใจว่าเปิดหน้า Desktop Opener บนคอมพิวเตอร์แล้ว
+<!-- Add car modal -->
+<div class="modal-backdrop" id="addCarModal">
+  <div class="modal">
+    <button class="modal-close" onclick="App.closeAddCar()">×</button>
+    <h3>เพิ่มรถ <span class="en-sm">(Add vehicle)</span></h3>
+    <p class="modal-sub">เพิ่มรถคันใหม่เข้าในโปรไฟล์</p>
+    <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
+      <select id="m-carbrand" onchange="App.onCarBrandChange('m-carbrand','m-carmodel','m-brand-other-wrap','m-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
+      <img id="m-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
     </div>
-    <div id="waiting-debug" style="font-size:10px;color:#ffcc00;margin-top:8px;text-align:center;padding:0 16px;word-break:break-all"></div>
-    <div id="screen-log" style="font-size:10px;color:#88ff88;margin-top:8px;padding:0 16px;word-break:break-all;text-align:left;background:rgba(0,0,0,0.3);border-radius:8px;padding:8px"></div>
-  </div>
-  <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
-    <button class="action-btn" id="retry-form-btn" onclick="if(typeof retryOpenForm==='function')retryOpenForm()" style="margin-bottom:0">🔄 ลองส่งใหม่อีกครั้ง</button>
-    <button class="cancel-btn" onclick="cancelWaiting()">ยกเลิก / กลับหน้ายืนยัน</button>
-  </div>
-</div>
-
-<!-- Screen 8: Success -->
-<div class="screen" id="s-sent">
-  <div class="hdr">
-    <div class="hdr-shop">B.N. Tires &amp; Max</div>
-    <div class="hdr-title">ส่งไปยังคอมพิวเตอร์แล้ว ✓</div>
-  </div>
-  <div class="center-wrap">
-    <div class="big-icon" style="background:#dcfce7">✅</div>
-    <div class="center-title" style="color:#166534">เปิดฟอร์มบนคอมพิวเตอร์แล้ว!</div>
-    <div class="center-desc">Extension กำลังกรอกข้อมูลอัตโนมัติ<br>กรุณากรอกรุ่นยางบนคอมพิวเตอร์</div>
-    <button class="btn-primary" onclick="show('s-brands')">← ลงทะเบียนรายถัดไป</button>
+    <div class="field"><label>รุ่น<span class="req">*</span></label>
+      <select id="m-carmodel" onchange="App.onCarModelChange('m-carmodel','m-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
+    </div>
+    <div class="field" id="m-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="m-carbrand-other"></div>
+    <div class="field" id="m-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="m-carmodel-other"></div>
+    <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="m-license" placeholder="เช่น กข 1234"></div>
+    <div class="err-msg" id="addCarErr"></div>
+    <button class="btn btn-red" id="addCarBtn" onclick="App.submitAddCar()" style="margin-top:4px"><span id="addCarLabel">บันทึก <span class="en-sm">(Save)</span></span></button>
+    <button class="btn btn-ghost" onclick="App.closeAddCar()" style="margin-top:8px">ยกเลิก / Cancel</button>
   </div>
 </div>
 
+
+
+<!-- Confirm delete modal -->
+<div class="modal-backdrop" id="confirmModal">
+  <div class="confirm-box">
+    <h3>ลบรถออก?</h3>
+    <p id="confirmMsg"></p>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="App.closeConfirm()">ยกเลิก</button>
+      <button class="btn btn-red" style="flex:1" onclick="App.confirmDelete()">ลบ</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=2"></script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-// ── Loaded from config.js ──
-var GAS_API_URL          = GAS_URLS.warrantyApi;
-var MEMBER_PORTAL_API_URL = GAS_URLS.memberPortalApi; // ★ NEW — for addCar/deleteCar/updateCarInfo/getCarData
-var BRANDS      = CONFIG.BRANDS;
+// ── CONFIG ──────────────────────────────────────────────────
+var LIFF_ID    = "2010142778-E4fdEFh0";
+var API_URL    = GAS_URLS.memberPortalApi;
 
-var selectedBrand  = null;
-var lookupResult   = null;
-var stream         = null;
-var scanTimer      = null;
-var receiptReady   = false;
-var currentCarId   = null;
-var receiptUrl     = null;
-var waitingTimer   = null;
-var selectedTire   = null;
-var waitingElapsed = 0;
+// ★ Fixed default address — every member gets this, no longer typed by the customer
+var FIXED_ADDRESS      = "3/47";
+var FIXED_REGION       = "ภาคกลาง";
+var FIXED_PROVINCE     = "สมุทรปราการ";
+var FIXED_DISTRICT     = "บางพลี";
+var FIXED_SUBDISTRICT  = "บางพลีใหญ่";
+var FIXED_ZIP          = "10540";
 
-// ── ★ mileage state ──
-var currentMileage = "";  // value entered by staff
-var carPhotoUrl    = null; // ★ second photo for brands that require it (e.g. Lenso)
-var carPhotoReady  = false;
-
-// ── ★ NEW: Car management / member-level QR state ──
-var appMode          = 'warranty'; // 'warranty' | 'manage'
-// (carManageAction removed — manage mode now shows edit/delete inline
-//  per-car on s-carinfo instead of pre-selecting an action before scanning)
-var memberProfile    = null;       // result of getMemberCars: {ok,memberId,fullName,phone,cars,baseParams}
-var _vehicleBrandData = [];        // LLIT_BRANDS-style cascade data, loaded from Member Portal API
-var _pickedCarForEdit = null;      // car object currently being edited/deleted
-
-// ── ★ Service cards (สลับยาง / ปะยาง) — appended alongside real tire brands ──
-var SERVICE_TYPES = [
-  { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
-    background:"#be185d", borderColor:"#9d174d", textColor:"#ffffff", icon:"🔄" },
-  { id:"pa_yang",     name:"ปะยาง",   service:true, requiresMileage:false, active:true,
-    background:"#15803d", borderColor:"#166534", textColor:"#ffffff", icon:"🔧" }
+// ── ★ NEW: All 77 Thai provinces, for the license plate's registering
+//    province dropdown (distinct from FIXED_PROVINCE above, which is
+//    the member's own home address province, not the car's plate). ──
+var THAI_PROVINCES = [
+  "กรุงเทพมหานคร","กระบี่","กาญจนบุรี","กาฬสินธุ์","กำแพงเพชร","ขอนแก่น","จันทบุรี","ฉะเชิงเทรา",
+  "ชลบุรี","ชัยนาท","ชัยภูมิ","ชุมพร","เชียงราย","เชียงใหม่","ตรัง","ตราด","ตาก","นครนายก",
+  "นครปฐม","นครพนม","นครราชสีมา","นครศรีธรรมราช","นครสวรรค์","นนทบุรี","นราธิวาส","น่าน",
+  "บึงกาฬ","บุรีรัมย์","ปทุมธานี","ประจวบคีรีขันธ์","ปราจีนบุรี","ปัตตานี","พระนครศรีอยุธยา",
+  "พังงา","พัทลุง","พิจิตร","พิษณุโลก","เพชรบุรี","เพชรบูรณ์","แพร่","ภูเก็ต","มหาสารคาม",
+  "มุกดาหาร","แม่ฮ่องสอน","ยโสธร","ยะลา","ร้อยเอ็ด","ระนอง","ระยอง","ราชบุรี","ลพบุรี","ลำปาง",
+  "ลำพูน","เลย","ศรีสะเกษ","สกลนคร","สงขลา","สตูล","สมุทรปราการ","สมุทรสงคราม","สมุทรสาคร",
+  "สระแก้ว","สระบุรี","สิงห์บุรี","สุโขทัย","สุพรรณบุรี","สุราษฎร์ธานี","สุรินทร์","หนองคาย",
+  "หนองบัวลำภู","อ่างทอง","อำนาจเจริญ","อุดรธานี","อุตรดิตถ์","อุทัยธานี","อุบลราชธานี"
 ];
-
-// ── ★ Update mileage hint based on brand requiresMileage ──
-function updateMileageHint() {
-  // Show/hide car photo card
-  var cardEl = document.getElementById("car-photo-card");
-  if (cardEl) cardEl.style.display = (selectedBrand && selectedBrand.requiresCarPhoto) ? "block" : "none";
-  var required = selectedBrand && selectedBrand.requiresMileage;
-  var hint  = document.getElementById("mileage-hint");
-  var input = document.getElementById("mileage-input");
-  if (required) {
-    hint.textContent  = "⚠️ จำเป็นต้องกรอกสำหรับแบรนด์นี้";
-    hint.className    = "mileage-hint required";
-  } else {
-    hint.textContent  = "ไม่บังคับ — กรอกหรือปล่อยว่างได้";
-    hint.className    = "mileage-hint";
-  }
-  input.classList.remove("required-err");
+function _populateProvinceSelect(selectId){
+  var sel = document.getElementById(selectId);
+  if (!sel) return;
+  while (sel.options.length) sel.remove(0);
+  var ph = document.createElement("option"); ph.value=""; ph.textContent="-- เลือกจังหวัด --"; sel.appendChild(ph);
+  THAI_PROVINCES.forEach(function(p){ var o=document.createElement("option"); o.value=p; o.textContent=p; sel.appendChild(o); });
 }
 
-// ── ★ Check if form is ready to open ──
-function checkFormReady() {
-  if (!receiptReady) return;
-  var requiresMileage   = selectedBrand && selectedBrand.requiresMileage;
-  var requiresCarPhoto  = selectedBrand && selectedBrand.requiresCarPhoto;
-  var mileage = document.getElementById("mileage-input").value.trim();
+// ── STATE ────────────────────────────────────────────────────
+var _member      = null;
+var _cars        = [];
+var _carIdx      = 0;
+var _delCarId    = null;
+var _lineProfile = null;
+var _clientData  = null;
+var _carData     = [];
+var _carDataError = ""; // ★ NEW — last error from getCarData, shown to staff/customer instead of a generic message
 
-  if (requiresMileage && !mileage) {
-    document.getElementById("open-form-btn").disabled    = true;
-    document.getElementById("open-form-btn").textContent = "⚠️ กรุณากรอกเลขไมล์ก่อน";
-    return;
-  }
-  if (requiresCarPhoto && !carPhotoReady) {
-    document.getElementById("open-form-btn").disabled    = true;
-    document.getElementById("open-form-btn").textContent = "⚠️ กรุณาถ่ายรูปรถก่อน";
-    return;
-  }
-  document.getElementById("open-form-btn").disabled    = false;
-  document.getElementById("open-form-btn").textContent = "🔗 เปิดฟอร์มลงทะเบียน " + (selectedBrand ? selectedBrand.name : "");
+// ── API helpers ──────────────────────────────────────────────
+function apiGet(params, retries) {
+  retries = retries || 0;
+  var qs = Object.keys(params).map(function(k){ return k+"="+encodeURIComponent(params[k]); }).join("&");
+  return fetch(API_URL+"?"+qs, { redirect:"follow" })
+    .then(function(r){
+      if (!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    })
+    .catch(function(err) {
+      if (retries < 2) {
+        // GAS sometimes fails on first call due to cold start — retry
+        return new Promise(function(resolve) { setTimeout(resolve, 1000); })
+          .then(function() { return apiGet(params, retries+1); });
+      }
+      throw err;
+    });
 }
 
-// ── Brand grid ──
-function renderBrands(brands){
-  var grid=document.getElementById("brand-grid");
-  grid.innerHTML="";
-  brands.forEach(function(b){
-    var el=document.createElement("div");
-    el.className="brand-card "+(b.active?"active":"inactive");
-    el.style.background  = b.active ? (b.background||"#b40000") : "white";
-    el.style.borderColor = b.active ? (b.borderColor||b.background||"#b40000") : "#e0e0e0";
-    var imgSrc = b.imageUrl || "";
-    var imgWrap = document.createElement("div");
-    imgWrap.style.cssText = "width:72px;height:72px;display:flex;align-items:center;justify-content:center;background:white;border-radius:10px;padding:4px;margin-bottom:4px";
-    var img = document.createElement("img");
-    img.src = imgSrc || "";
-    img.style.cssText = "width:64px;height:64px;object-fit:contain";
-    img.onerror = function(){ imgWrap.style.display="none"; };
-    imgWrap.appendChild(img);
-    var nameDiv = document.createElement("div");
-    nameDiv.style.cssText = "font-size:17px;font-weight:800;letter-spacing:0.5px;color:"+(b.active?(b.textColor||"white"):"#aaa");
-    nameDiv.textContent = b.name;
-    var subDiv = document.createElement("div");
-    if(b.active){
-      subDiv.style.cssText = "font-size:12px;color:"+(b.textColor||"white")+";opacity:.75";
-      subDiv.textContent = b.service ? "แตะเพื่อบันทึก →" : "แตะเพื่อสแกน →";
-    } else {
-      subDiv.className = "brand-soon";
-      subDiv.textContent = "เร็วๆ นี้";
-    }
-    if(imgSrc) el.appendChild(imgWrap);
-    else { var icon=document.createElement("div"); icon.style.cssText="width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:36px"; icon.textContent=b.icon||"🔘"; el.appendChild(icon); }
-    el.appendChild(nameDiv);
-    el.appendChild(subDiv);
-    if(b.active) el.addEventListener("click",function(){ pickBrand(b); });
-    grid.appendChild(el);
-  });
+function apiPost(data) {
+  return fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(data),
+    redirect: "follow"
+  }).then(function(r){ return r.json(); });
 }
 
-// ── ★ Hard refresh: clears caches/service workers and force-reloads the
-//    ENTIRE page with a cache-busting param, so code changes actually
-//    show up (the old refresh button only re-fetched brand data, not
-//    the page's own HTML/JS). ──
-function hardRefresh(){
-  var btn = document.getElementById("refresh-brands-btn");
-  if (btn) btn.style.transform = "rotate(360deg)";
-  Promise.all([
-    ('caches' in window)
-      ? caches.keys().then(function(names){ return Promise.all(names.map(function(n){ return caches.delete(n); })); })
-      : Promise.resolve(),
-    ('serviceWorker' in navigator)
-      ? navigator.serviceWorker.getRegistrations().then(function(regs){ return Promise.all(regs.map(function(r){ return r.unregister(); })); })
-      : Promise.resolve()
-  ]).then(function(){
-    window.location.href = window.location.pathname + "?_hr=" + Date.now();
-  }).catch(function(){
-    window.location.href = window.location.pathname + "?_hr=" + Date.now();
-  });
-}
+// ── UI helpers ───────────────────────────────────────────────
+var App = {};
 
-// ── Load brands from GAS (called on page load) ──
-function loadBrands(){
-  document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:#aaa;font-size:13px;grid-column:1/-1">กำลังโหลด...</div>';
-  jsonp(
-    GAS_API_URL+"?action=getBrands",
-    function(result){
-      if(result.ok && result.brands) renderBrands(SERVICE_TYPES.concat(result.brands));
-      else document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">โหลดแบรนด์ไม่ได้</div>';
-    },
-    function(err){ document.getElementById("brand-grid").innerHTML='<div style="padding:20px;color:red;font-size:13px">Error: '+err+'</div>'; }
-  );
-}
-loadBrands();
-
-// ── Navigation ──
-function show(id){
-  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+App.showPage = function(id) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
   document.getElementById(id).classList.add("active");
+  var logoBar = document.querySelector(".logo-bar");
+  var pagesWithOwnBanner = ["page-login","page-register","page-member","page-edit"];
+  if (logoBar) logoBar.style.display = pagesWithOwnBanner.indexOf(id) !== -1 ? "none" : "flex";
+  window.scrollTo(0,0);
+};
+
+function showErr(id,msg){ var e=document.getElementById(id); e.textContent=msg; e.style.display="block"; }
+function hideErr(id){ document.getElementById(id).style.display="none"; }
+function fmtPhone(p){ p=String(p||"").replace(/\D/g,""); return p.length===10?p.slice(0,3)+"-"+p.slice(3,6)+"-"+p.slice(6):p; }
+
+// ── Convert stored English title (Mr./Ms./Mrs.) to Thai for display ──
+function thaiTitle(title) {
+  title = String(title || "").trim();
+  if (title === "Mr.")  return "นาย";
+  if (title === "Ms.")  return "นางสาว";
+  if (title === "Mrs.") return "นาง";
+  return title; // fallback: show whatever was stored (e.g. old Thai-titled members)
+}
+function fmtBirthday(v){
+  if(!v) return "—";
+  try{ var d=new Date(v); return d.toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}); }
+  catch(e){ return v; }
+}
+function setLoading(btnId,lblId,on,txt){
+  var b=document.getElementById(btnId),l=document.getElementById(lblId);
+  b.disabled=on; l.innerHTML=on?'<span class="dots"><span></span><span></span><span></span></span>':txt;
+}
+function resetSel(id,ph){
+  var s=document.getElementById(id); while(s.options.length)s.remove(0);
+  var o=document.createElement("option"); o.value=""; o.textContent=ph; s.appendChild(o);
 }
 
-function pickBrand(brand){
-  selectedBrand=brand;
-  appMode='warranty';        // ★ ensure leftover car-management mode doesn't leak in
-  document.getElementById("perm-brand-name").textContent=brand.name;
-  document.getElementById("scan-brand-label").textContent=brand.name;
-  document.getElementById("confirm-brand-name").textContent=brand.name;
-  show("s-permission");
-}
+// ── ★ Birthday mask: fixed __/__/____ template — slashes never move,
+//    underscores get replaced by typed digits, cursor auto-skips slashes ──
+var DATE_MASK = "__/__/____";
+var DATE_DIGIT_POS = [0,1,3,4,6,7,8,9]; // indices in the mask that hold digits
 
-// ── ★ REWORKED: Car management now scans FIRST, then shows the
-//    member's info + car list with inline edit/delete actions on the
-//    same screen (see showCarInfoScreen) — no more "pick an action
-//    before scanning" menu step. ──
-function enterCarManage(){
-  appMode = 'manage';
-  selectedBrand = null;
-  document.getElementById("perm-brand-name").textContent  = "สแกน QR สมาชิก (จัดการรถ)";
-  document.getElementById("scan-brand-label").textContent = "สแกน QR สมาชิก";
-  show("s-permission");
-}
-function exitCarManage(){
-  appMode = 'warranty';
-  show('s-brands');
-}
+function attachDateMask(inputId) {
+  var el = document.getElementById(inputId);
+  if (!el) return;
+  if (!el.value) el.value = DATE_MASK;
 
-function goBack(){
-  stopCamera();
-  show('s-brands');
-}
+  el.addEventListener("focus", function() {
+    if (!el.value) el.value = DATE_MASK;
+    var pos = DATE_DIGIT_POS[0];
+    setTimeout(function(){ el.setSelectionRange(pos, pos); }, 0);
+  });
 
-// ── Camera ──
-async function openCamera(){
-  document.getElementById("retry-btn").style.display="none";
-  setStatus("กำลังเปิดกล้อง...",true);
-  show("s-scanner"); stopCamera();
-  try {
-    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}); }
-    catch(e){ stream=await navigator.mediaDevices.getUserMedia({video:true}); }
-    var vid=document.getElementById("preview");
-    vid.srcObject=stream; await vid.play();
-    setStatus("พร้อมสแกน — จัด QR ให้อยู่ในกรอบ",true);
-    scanTimer=setInterval(tick,250);
-  } catch(err){
-    var denied=err.name==="NotAllowedError"||err.name==="PermissionDeniedError";
-    setStatus(denied?"ถูกปฏิเสธ — ไปที่ Settings เปิดอนุญาตกล้อง":"เปิดกล้องไม่ได้: "+err.message,false);
-    document.getElementById("retry-btn").style.display="inline-block";
-  }
-}
+  el.addEventListener("click", function() {
+    var pos = el.selectionStart;
+    var nearest = DATE_DIGIT_POS.reduce(function(a,b){
+      return Math.abs(b-pos) < Math.abs(a-pos) ? b : a;
+    });
+    el.setSelectionRange(nearest, nearest);
+  });
 
-function stopCamera(){
-  clearInterval(scanTimer); scanTimer=null;
-  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-}
-
-function tick(){
-  var vid=document.getElementById("preview");
-  if(vid.readyState!==vid.HAVE_ENOUGH_DATA) return;
-  var cvs=document.getElementById("canvas");
-  cvs.width=vid.videoWidth; cvs.height=vid.videoHeight;
-  var ctx=cvs.getContext("2d"); ctx.drawImage(vid,0,0);
-  var img=ctx.getImageData(0,0,cvs.width,cvs.height);
-  var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"dontInvert"});
-  if(code){ clearInterval(scanTimer); stopCamera(); handleQR(code.data); }
-}
-
-function setStatus(msg,active){
-  document.getElementById("scan-status-text").textContent=msg;
-  var dot=document.getElementById("scan-dot");
-  if(active) dot.classList.add("on"); else dot.classList.remove("on");
-}
-
-function showDebug(){
-  var panel=document.getElementById("debug-panel");
-  var text=document.getElementById("debug-text");
-  panel.style.display=panel.style.display==="none"?"block":"none";
-  text.innerHTML=
-    "currentCarId: "+currentCarId+"<br>"+
-    "receiptReady: "+receiptReady+"<br>"+
-    "receiptUrl: "+(receiptUrl?receiptUrl.substring(0,30)+"...":"null")+"<br>"+
-    "lookupResult: "+(lookupResult?"✅":"null")+"<br>"+
-    "selectedBrand: "+(selectedBrand?selectedBrand.name:"null")+"<br>"+
-    "requiresMileage: "+(selectedBrand?selectedBrand.requiresMileage:"null")+"<br>"+
-    "mileage: "+document.getElementById("mileage-input").value+"<br>"+
-    "selectedTire: "+(selectedTire?selectedTire.label:"null");
-}
-
-// ── JSONP helper ──
-function jsonp(url,onSuccess,onError){
-  var cb="cb_"+Date.now();
-  var s=document.createElement("script");
-  var t=setTimeout(function(){ delete window[cb]; if(s.parentNode) document.body.removeChild(s); if(onError) onError("timeout"); },30000);
-  window[cb]=function(r){ clearTimeout(t); delete window[cb]; if(s.parentNode) document.body.removeChild(s); onSuccess(r); };
-  s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
-  s.onerror=function(){ clearTimeout(t); delete window[cb]; if(onError) onError("script error"); };
-  document.body.appendChild(s);
-}
-
-// ── ★ UPDATED: Reset confirm screen helper ──
-function _resetConfirmScreen() {
-  receiptReady = false; receiptUrl = null;
-  document.getElementById("receipt-area").classList.remove("has-photo");
-  document.getElementById("receipt-preview").style.display   = "none";
-  document.getElementById("receipt-placeholder").style.display = "block";
-  document.getElementById("receipt-status").textContent      = "";
-  document.getElementById("receipt-status").className        = "receipt-status";
-  document.getElementById("open-form-btn").disabled          = true;
-  document.getElementById("open-form-btn").textContent       = "📎 กรุณาถ่ายรูปใบเสร็จก่อน";
-  document.getElementById("receipt-input").value             = "";
-  document.getElementById("mileage-input").value             = "";  // ★ reset mileage
-  carPhotoUrl   = null; carPhotoReady = false;
-  document.getElementById("car-photo-area").classList.remove("has-photo");
-  document.getElementById("car-photo-preview").style.display    = "none";
-  document.getElementById("car-photo-placeholder").style.display = "block";
-  document.getElementById("car-photo-status").textContent       = "";
-  document.getElementById("car-photo-input").value              = "";
-  // Show car photo card only if brand requires it
-  document.getElementById("car-photo-card").style.display = (selectedBrand && selectedBrand.requiresCarPhoto) ? "block" : "none";
-  document.getElementById("mileage-input").classList.remove("required-err");
-  selectedTire = null;
-  document.getElementById("tire-selected").style.display = "none";
-  updateMileageHint(); // ★ update hint for current brand
-}
-
-// ── ★ Service log flow (สลับยาง / ปะยาง) ──
-function showServiceScreen(result, carId){
-  document.getElementById("service-title").textContent    = selectedBrand.name;
-  document.getElementById("service-icon").textContent     = selectedBrand.icon || "🔧";
-  document.getElementById("service-brand-name").textContent = selectedBrand.name;
-  document.getElementById("service-brand-banner").style.background = selectedBrand.background || "#2563eb";
-  document.getElementById("sv-name").textContent  = result.fullName||"";
-  document.getElementById("sv-phone").textContent = result.phone||"";
-  document.getElementById("sv-carid").textContent = carId;
-  document.getElementById("sv-car").textContent   = ((result.carBrand||"")+" "+(result.carModel||"")).trim();
-  document.getElementById("sv-plate").textContent = result.plate||"";
-  document.getElementById("service-mileage-card").style.display = selectedBrand.requiresMileage ? "block" : "none";
-  document.getElementById("service-mileage-input").value = "";
-  document.getElementById("service-err").style.display = "none";
-  document.getElementById("service-save-btn").disabled = false;
-  document.getElementById("service-save-btn").textContent = "💾 บันทึก";
-  show("s-service");
-}
-
-function submitServiceLog(){
-  if(!currentCarId || !selectedBrand) return;
-  var mileage = selectedBrand.requiresMileage
-    ? document.getElementById("service-mileage-input").value.trim()
-    : "";
-  document.getElementById("service-save-btn").disabled = true;
-  document.getElementById("service-save-btn").textContent = "⏳ กำลังบันทึก...";
-  document.getElementById("service-err").style.display = "none";
-
-  jsonp(
-    GAS_API_URL+"?action=logService&carId="+encodeURIComponent(currentCarId)
-      +"&serviceType="+encodeURIComponent(selectedBrand.name)
-      +"&mileage="+encodeURIComponent(mileage),
-    function(result){
-      if(!result || !result.ok){
-        document.getElementById("service-save-btn").disabled = false;
-        document.getElementById("service-save-btn").textContent = "💾 บันทึก";
-        var errEl = document.getElementById("service-err");
-        errEl.textContent = "บันทึกไม่สำเร็จ: " + ((result && result.error) || "unknown error");
-        errEl.style.display = "block";
-        return;
+  el.addEventListener("keydown", function(e) {
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      var pos = el.selectionStart;
+      var chars = el.value.split("");
+      for (var i = pos - 1; i >= 0; i--) {
+        if (DATE_DIGIT_POS.indexOf(i) !== -1) {
+          chars[i] = "_";
+          el.value = chars.join("");
+          el.setSelectionRange(i, i);
+          break;
+        }
       }
-      show("s-sent");
-      var descEl = document.querySelector("#s-sent .center-desc");
-      if (descEl) {
-        descEl.innerHTML = result.overwritten
-          ? "บันทึกสำเร็จ ✓<br><span style=\"color:#d97706;font-weight:600\">⚠️ รถคันนี้บันทึกบริการครบ 4 ครั้งแล้ว<br>ระบบได้เขียนทับข้อมูลครั้งที่ 1 (เก่าสุด) แทน</span>"
-          : "บันทึกสำเร็จ ✓";
-      }
-    },
-    function(err){
-      document.getElementById("service-save-btn").disabled = false;
-      document.getElementById("service-save-btn").textContent = "💾 บันทึก";
-      var errEl = document.getElementById("service-err");
-      errEl.textContent = "เชื่อมต่อไม่ได้: " + err;
-      errEl.style.display = "block";
-    }
-  );
-}
-
-// ── ★ REWRITTEN: QR now encodes MemberID only (not a specific car).
-//    Scan → look up this member's car list → let staff pick one (or add
-//    a new one) → THEN continue into whichever flow was pending
-//    (warranty registration / service log / car edit / car delete). ──
-function handleQR(raw){
-  var scanned  = raw.trim().toUpperCase();
-  var memberId = scanned.replace(/C\d+$/,''); // strip legacy per-car QR suffix if an old sticker is scanned
-  currentCarId = null;
-  document.getElementById("loading-text").textContent="กำลังค้นหาสมาชิก "+memberId+"...";
-  show("s-loading");
-  jsonp(GAS_API_URL+"?action=getMemberCars&memberId="+encodeURIComponent(memberId),function(result){
-    if(!result || !result.ok){
-      document.getElementById("error-msg").textContent=(result && result.error) || "ไม่พบข้อมูลสมาชิก";
-      show("s-error");
       return;
     }
-    memberProfile = result;
-    // ★ Preload brand/logo data before rendering any car list, so logos
-    //   show up immediately instead of popping in a moment later.
-    ensureVehicleBrandData(function(){
-      if (appMode === 'manage') showCarInfoScreen();
-      else showCarPickScreen();
-    });
-  },function(err){
-    document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err;
-    show("s-error");
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Tab") return;
+    if (!/^[0-9]$/.test(e.key)) { e.preventDefault(); return; }
+    e.preventDefault();
+    var pos = el.selectionStart;
+    var validPositions = DATE_DIGIT_POS.filter(function(p){ return p >= pos; });
+    if (!validPositions.length) return;
+    var idx = validPositions[0];
+    var chars = el.value.split("");
+    chars[idx] = e.key;
+    el.value = chars.join("");
+    var nextPositions = DATE_DIGIT_POS.filter(function(p){ return p > idx; });
+    var nextPos = nextPositions.length ? nextPositions[0] : idx + 1;
+    el.setSelectionRange(nextPos, nextPos);
   });
 }
 
-// ── Car picker screen — used by the WARRANTY/SERVICE flow only, to pick
-//    which of the member's cars a registration/service applies to. ──
-function showCarPickScreen(){
-  var p = memberProfile;
-  document.getElementById("carpick-member-label").textContent = (p.fullName||"") + " · " + (p.phone||"");
-  var list = document.getElementById("carpick-list");
-  list.innerHTML = "";
-  if (!p.cars || !p.cars.length) {
-    list.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;font-size:14px">ลูกค้ายังไม่มีรถในระบบ — กด "เพิ่มรถคันใหม่" ด้านล่าง</div>';
-  } else {
-    p.cars.forEach(function(car){
-      var logo = _vehicleBrandLogo(car.carBrand); // ★ NEW
-      var logoHtml = logo ? '<img src="'+logo+'" alt="" style="width:34px;height:34px;object-fit:contain;background:white;border-radius:6px;border:1px solid #eee;padding:2px;margin-right:10px;flex-shrink:0" onerror="this.style.display=\'none\'">' : '';
-      var el = document.createElement("div");
-      el.className = "car-pick-card";
-      el.innerHTML =
-        '<div style="display:flex;align-items:center">'+logoHtml+
-        '<div><div class="car-pick-name">'+car.carBrand+' '+car.carModel+'</div>'+
-        '<div class="car-pick-sub">CarID: '+car.carId+'</div></div></div>'+
-        '<div class="car-pick-plate">'+car.plate+'</div>';
-      el.addEventListener("click", function(){ selectCarForFlow(car); });
-      list.appendChild(el);
-    });
+// ── ★ Validates + parses the masked input. Returns:
+//    { empty:true }                      — nothing typed
+//    { empty:false, valid:false }        — typed but not a real date
+//    { empty:false, valid:true, iso:"YYYY-MM-DD" } — good, converted from
+//      Buddhist Era to Gregorian automatically if year > 2400 ──
+function parseBirthdayInput(inputId) {
+  var val = document.getElementById(inputId).value || "";
+  if (!val || val === DATE_MASK) return { empty: true };
+  if (val.indexOf("_") !== -1) return { empty: false, valid: false };
+
+  var digits = val.replace(/\D/g, "");
+  if (digits.length !== 8) return { empty: false, valid: false };
+
+  var day   = parseInt(digits.slice(0, 2), 10);
+  var month = parseInt(digits.slice(2, 4), 10);
+  var year  = parseInt(digits.slice(4, 8), 10);
+  if (year > 2400) year -= 543; // Buddhist Era → Gregorian
+
+  if (month < 1 || month > 12) return { empty: false, valid: false };
+  var daysInMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > daysInMonth) return { empty: false, valid: false };
+  if (year < 1900 || year > new Date().getFullYear()) return { empty: false, valid: false };
+
+  var mm = String(month).padStart(2, "0");
+  var dd = String(day).padStart(2, "0");
+  return { empty: false, valid: true, iso: year + "-" + mm + "-" + dd };
+}
+
+// ── ★ NEW: Validates a Thai mobile number — must be exactly 10 digits
+//    and start with 0 (e.g. 0812345678). Rejects anything else instead
+//    of silently accepting numbers missing the leading 0. ──
+function isValidThaiPhone(phone) {
+  var digits = String(phone || "").replace(/\D/g, "");
+  return /^0\d{9}$/.test(digits);
+}
+
+// ── Converts a stored birthday value back into the DD/MM/YYYY mask for
+//    display. Handles both a clean "YYYY-MM-DD" string AND cases where
+//    Google Sheets silently auto-converted the stored value into a Date
+//    (which comes back as a verbose string like "Fri Jun 15 1990...")
+//    — without this fallback, opening Edit on an existing member showed
+//    a blank date instead of their actual birthday. ──
+function isoToDisplayDate(iso) {
+  if (!iso) return DATE_MASK;
+  var parts = String(iso).split("-");
+  if (parts.length === 3 && /^\d{4}$/.test(parts[0])) {
+    return parts[2].slice(0, 2) + "/" + parts[1].slice(0,2) + "/" + parts[0];
   }
-  show("s-carpick");
+  // Fallback: not a clean "YYYY-MM-DD" string — try parsing it directly.
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return DATE_MASK;
+  var dd = String(d.getDate()).padStart(2, "0");
+  var mm = String(d.getMonth() + 1).padStart(2, "0");
+  return dd + "/" + mm + "/" + d.getFullYear();
 }
 
-// ── ★ NEW: Car info + management screen — shown after scanning while
-//    appMode==='manage'. One screen shows the member's info AND every
-//    car with inline ✏️ edit / 🗑️ delete buttons, plus an "add car"
-//    button at the bottom — no separate "pick an action first" step. ──
-function showCarInfoScreen(){
-  var p = memberProfile;
-  document.getElementById("carinfo-member-label").textContent = (p.fullName||"") + " · " + (p.phone||"");
-  var list = document.getElementById("carinfo-list");
-  list.innerHTML = "";
-  if (!p.cars || !p.cars.length) {
-    list.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;font-size:14px">ลูกค้ายังไม่มีรถในระบบ — กด "เพิ่มรถคันใหม่" ด้านล่าง</div>';
-  } else {
-    p.cars.forEach(function(car){
-      var logo = _vehicleBrandLogo(car.carBrand);
-      var logoHtml = logo ? '<img src="'+logo+'" alt="" style="width:36px;height:36px;object-fit:contain;background:white;border-radius:6px;border:1px solid #eee;padding:2px;margin-right:10px;flex-shrink:0" onerror="this.style.display=\'none\'">' : '';
-      var el = document.createElement("div");
-      el.className = "car-pick-card";
-      el.style.cursor = "default";
-      el.innerHTML =
-        '<div style="display:flex;align-items:center">'+logoHtml+
-        '<div><div class="car-pick-name">'+car.carBrand+' '+car.carModel+'</div>'+
-        '<div class="car-pick-sub">'+car.plate+' · CarID: '+car.carId+'</div></div></div>'+
-        '<div style="display:flex;gap:6px;flex-shrink:0">'+
-          '<button class="icon-mini-btn" data-act="edit">✏️</button>'+
-          '<button class="icon-mini-btn danger" data-act="delete">🗑️</button>'+
-        '</div>';
-      el.querySelector('[data-act="edit"]').addEventListener("click", function(ev){ ev.stopPropagation(); openCarEditForm(car); });
-      el.querySelector('[data-act="delete"]').addEventListener("click", function(ev){ ev.stopPropagation(); openCarDeleteConfirm(car); });
-      list.appendChild(el);
-    });
-  }
-  show("s-carinfo");
-}
+// ── ★ NEW: Render vehicle history for a given car — tire info +
+//    a merged table of "เปลี่ยนยาง" plus every logged service, numbered
+//    per service type. Called whenever the current car changes. ──
+function _renderHistory(car) {
+  var infoEl = document.getElementById("history-tire-info");
+  var wrapEl = document.getElementById("history-table-wrap");
+  if (!infoEl || !wrapEl) return;
 
-// ── Staff tapped a specific car in the WARRANTY/SERVICE car-picker
-//    (s-carpick) — fetch the full param set and continue registration. ──
-function selectCarForFlow(car){
-  currentCarId = car.carId;
-  // Fetch the full param set (birthday, gender, shop info, etc.) for this
-  // specific car via the existing lookupCarId fallback (omit "action" so
-  // the backend's bare-carId branch handles it).
-  document.getElementById("loading-text").textContent = "กำลังโหลดข้อมูลรถ...";
-  show("s-loading");
-  jsonp(GAS_API_URL+"?carId="+encodeURIComponent(car.carId),function(result){
-    if(!result || !result.ok){
-      document.getElementById("error-msg").textContent=(result && result.error) || "ไม่พบข้อมูล";
-      show("s-error");
-      return;
-    }
-    proceedWithLookupResult(result);
-  },function(err){
-    document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err;
-    show("s-error");
-  });
-}
-
-// ── ★ NEW: shared continuation for both QR-scan and manual-search paths ──
-function proceedWithLookupResult(result){
-  lookupResult = result;
-  document.getElementById("c-name").textContent    =result.fullName||"";
-  document.getElementById("c-phone").textContent   =result.phone||"";
-  document.getElementById("c-memberid").textContent=result.memberId||"";
-  document.getElementById("c-carid").textContent   =currentCarId;
-  document.getElementById("c-car").textContent     =((result.carBrand||"")+" "+(result.carModel||"")).trim();
-  document.getElementById("c-plate").textContent   =result.plate||"";
-  lookupResult.params = result.params || {};
-
-  if (selectedBrand && selectedBrand.service) {
-    showServiceScreen(result, currentCarId);
+  if (!car) {
+    infoEl.innerHTML = "";
+    wrapEl.innerHTML = '<div class="hist-empty">ยังไม่มีรถ</div>';
     return;
   }
-  document.getElementById("confirm-brand-name").textContent = selectedBrand ? selectedBrand.name : "";
-  _resetConfirmScreen();
-  loadTires();
-  show("s-confirm");
-}
 
-// ── ★ NEW: Add / Edit / Delete car screens ──
-function openCarAddForm(){
-  document.getElementById("caradd-member-label").textContent = memberProfile ? (memberProfile.fullName+" · "+memberProfile.phone) : "";
-  document.getElementById("ca-plate").value = "";
-  document.getElementById("ca-err").textContent = "";
-  resetVehicleBrandSelect("ca-brand","ca-model","ca-brand-other","ca-model-other");
-  ensureVehicleBrandData(function(){
-    populateVehicleBrandSelect("ca-brand");
-    // ★ NEW: surface a clear error instead of silently showing an empty dropdown
-    if (!_vehicleBrandData.length) {
-      document.getElementById("ca-err").textContent = "⚠️ " + (_vehicleBrandDataError || "โหลดรายชื่อยี่ห้อรถไม่ได้");
-    }
+  var tireLine = [car.tireSize, car.tireBrand, car.tireModel].filter(Boolean).join(" ");
+  var bits = [];
+  if (tireLine) bits.push("🛞 " + tireLine);
+  if (car.warrantyNumber) bits.push("เลขรับประกัน: " + car.warrantyNumber);
+  if (car.warrantyExpiry) bits.push('<span style="color:#cc0000">หมดประกัน(อุบัติเหตุ): ' + car.warrantyExpiry + '</span>');
+  infoEl.innerHTML = bits.join("<br>");
+
+  var rows = [];
+  if (car.changedTireDate) {
+    rows.push({ label: "เปลี่ยนยาง", date: car.changedTireDate, mileage: car.changedTireMileage });
+  }
+  var typeCounters = {};
+  (car.services || []).forEach(function(s) {
+    typeCounters[s.type] = (typeCounters[s.type] || 0) + 1;
+    rows.push({ label: s.type + " " + typeCounters[s.type], date: s.date, mileage: s.mileage });
   });
-  show("s-caradd");
+
+  if (!rows.length) {
+    wrapEl.innerHTML = '<div class="hist-empty">ยังไม่มีประวัติ</div>';
+    return;
+  }
+
+  wrapEl.innerHTML =
+    '<div class="hist-row hist-head"><div class="hist-label">รายการ</div><div class="hist-date">วันที่</div><div class="hist-mileage">เลขไมล์</div></div>' +
+    rows.map(function(r) {
+      return '<div class="hist-row"><div class="hist-label">' + r.label + '</div>' +
+        '<div class="hist-date">' + (r.date || "-") + '</div>' +
+        '<div class="hist-mileage">' + (r.mileage ? String(r.mileage) : "-") + '</div></div>';
+    }).join("");
 }
 
-function submitAddCar(){
-  var memberId = memberProfile ? memberProfile.memberId : null;
-  if(!memberId){ document.getElementById("ca-err").textContent="ไม่พบข้อมูลสมาชิก"; return; }
-  var brand = document.getElementById("ca-brand").value;
-  var model = document.getElementById("ca-model").value;
-  if(brand==="__other__") brand=document.getElementById("ca-brand-other-input").value.trim();
-  if(model==="__other__") model=document.getElementById("ca-model-other-input").value.trim();
-  var plate = document.getElementById("ca-plate").value.trim();
-  if(!brand||!model||!plate){ document.getElementById("ca-err").textContent="กรุณากรอกข้อมูลให้ครบ"; return; }
-  document.getElementById("ca-err").textContent="⏳ กำลังบันทึก...";
-  jsonp(
-    MEMBER_PORTAL_API_URL+"?action=addCar&memberId="+encodeURIComponent(memberId)
-      +"&carbrand="+encodeURIComponent(brand)+"&carmodel="+encodeURIComponent(model)
-      +"&license="+encodeURIComponent(plate),
-    function(res){
-      if(!res.success){
-        document.getElementById("ca-err").textContent = res.error==="duplicate_plate" ? "ทะเบียนนี้มีในระบบแล้ว" : "บันทึกไม่สำเร็จ: "+(res.error||"");
-        return;
+// ── App init ─────────────────────────────────────────────────
+App.retryLogin = function() {
+  document.getElementById("login-error").style.display  = "none";
+  document.getElementById("login-loading").style.display = "block";
+  App.start();
+};
+
+App.start = function() {
+  App.showPage("page-login"); // ensure logo-bar hides immediately (page-login has its own banner)
+  clearInterval(_progressTrickleTimer); // safety: clear any lingering trickle from a previous run
+  _setLoginProgress(8);
+  document.getElementById("login-msg").textContent = "Step 1: กำลัง init LIFF…";
+  liff.init({ liffId: LIFF_ID })
+    .then(function() {
+      _setLoginProgress(35);
+      document.getElementById("login-msg").textContent = "Step 2: กำลังดึงโปรไฟล์…";
+      return liff.getProfile();
+    })
+    .then(function(profile) {
+      document.getElementById("login-msg").textContent = "กำลังโหลดข้อมูล…";
+      _lineProfile = profile;
+      _startProgressTrickle(65, 92); // creep slowly while waiting for the longest step
+
+      // Load all data — each call handles its own retry via apiGet
+      return Promise.all([
+        apiGet({ action:"checkLineUser", lineUserId:profile.userId })
+          .catch(function(){ return { exists:false, error:"checkLineUser failed" }; }),
+        apiGet({ action:"getCarData" })
+          .catch(function(err){ return { success:false, brands:[], error:"เชื่อมต่อไม่ได้: "+(err.message||err) }; }) // ★ FIXED — used to swallow the real error
+      ]);
+    })
+    .then(function(results) {
+      _stopProgressTrickle(100); // snap to done now that the data has actually arrived
+      var memberRes = results[0];
+      var carRes    = results[1];
+
+      if (carRes.success && carRes.brands)  _carData    = carRes.brands;
+      else                                   _carDataError = carRes.error || ""; // ★ NEW
+      _populateRegions(); // ★ FIX: always populate brand dropdowns (both r-carbrand
+                           //   and m-carbrand) here, not just when going to Register —
+                           //   previously this only ran in showRegisterPage(), so
+                           //   returning members who go straight to showMemberPage()
+                           //   never had the Add Car modal's dropdown populated.
+
+      if (memberRes.exists) {
+        _member = memberRes.member;
+        _cars   = memberRes.cars || [];
+        App.showMemberPage();
+      } else {
+        App.showRegisterPage();
       }
-      refreshMemberCarsThen(backToCarListScreen); // ★ back to the (refreshed) car list, not straight out
-    },
-    function(err){ document.getElementById("ca-err").textContent="เชื่อมต่อไม่ได้: "+err; }
-  );
+    })
+    .catch(function(err) {
+      _stopProgressTrickle(); // stop the trickle timer without forcing a jump on failure
+      document.getElementById("login-loading").style.display = "none";
+      document.getElementById("login-error-msg").innerHTML   = "Error: "+(err.message||String(err));
+      document.getElementById("login-error").style.display   = "block";
+    });
+};
+
+function _setLoginProgress(pct){
+  var el = document.getElementById("login-progress-fill");
+  if (el) el.style.width = pct + "%";
 }
 
-function openCarEditForm(car){
-  _pickedCarForEdit = car;
-  document.getElementById("caredit-member-label").textContent = memberProfile ? (memberProfile.fullName+" · "+memberProfile.phone) : "";
-  document.getElementById("ce-plate").value = car.plate || "";
-  document.getElementById("ce-err").textContent = "";
-  resetVehicleBrandSelect("ce-brand","ce-model","ce-brand-other","ce-model-other");
-  ensureVehicleBrandData(function(){
-    populateVehicleBrandSelect("ce-brand");
-    selectVehicleBrandModel("ce-brand","ce-model", car.carBrand, car.carModel);
-    // ★ NEW: surface a clear error instead of silently showing an empty dropdown
-    if (!_vehicleBrandData.length) {
-      document.getElementById("ce-err").textContent = "⚠️ " + (_vehicleBrandDataError || "โหลดรายชื่อยี่ห้อรถไม่ได้");
-    }
+// ── ★ NEW: Progress "trickle" — instead of holding still then snapping
+//    straight to 100%, slowly ease the bar toward a ceiling (never quite
+//    reaching it) while the actual longest-running step is still in
+//    flight, then jump to the real value once it resolves. Makes the
+//    longest wait (loading member + car data) feel less stalled. ──
+var _progressTrickleTimer = null;
+function _startProgressTrickle(from, ceiling){
+  clearInterval(_progressTrickleTimer);
+  var current = from;
+  _setLoginProgress(current);
+  _progressTrickleTimer = setInterval(function(){
+    var remaining = ceiling - current;
+    if (remaining <= 0.5) return;
+    current += remaining * 0.15; // eases off as it nears the ceiling
+    _setLoginProgress(current);
+  }, 350);
+}
+function _stopProgressTrickle(finalPct){
+  clearInterval(_progressTrickleTimer);
+  _progressTrickleTimer = null;
+  if (finalPct !== undefined) _setLoginProgress(finalPct);
+}
+
+
+// ── Populate car brand dropdowns ──────────────────────────────
+function _populateRegions() {
+  var brandSelIds = ["r-carbrand","m-carbrand"];
+  brandSelIds.forEach(function(id){
+    var sel=document.getElementById(id); if(!sel) return;
+    while(sel.options.length) sel.remove(0);
+    var ph=document.createElement("option"); ph.value=""; ph.textContent="-- เลือกยี่ห้อ --"; sel.appendChild(ph);
+    _carData.forEach(function(b){ var o=document.createElement("option"); o.value=b.name; o.textContent=b.name; sel.appendChild(o); });
+    var oo=document.createElement("option"); oo.value="__other__"; oo.textContent="อื่นๆ (Other)"; sel.appendChild(oo);
   });
-  show("s-caredit");
 }
 
-function submitEditCar(){
-  if(!_pickedCarForEdit) return;
-  var memberId = memberProfile ? memberProfile.memberId : null;
-  var brand = document.getElementById("ce-brand").value;
-  var model = document.getElementById("ce-model").value;
-  if(brand==="__other__") brand=document.getElementById("ce-brand-other-input").value.trim();
-  if(model==="__other__") model=document.getElementById("ce-model-other-input").value.trim();
-  var plate = document.getElementById("ce-plate").value.trim();
-  if(!brand||!model||!plate){ document.getElementById("ce-err").textContent="กรุณากรอกข้อมูลให้ครบ"; return; }
-  document.getElementById("ce-err").textContent="⏳ กำลังบันทึก...";
-  jsonp(
-    MEMBER_PORTAL_API_URL+"?action=updateCarInfo&carId="+encodeURIComponent(_pickedCarForEdit.carId)
-      +"&memberId="+encodeURIComponent(memberId)
-      +"&carbrand="+encodeURIComponent(brand)+"&carmodel="+encodeURIComponent(model)
-      +"&license="+encodeURIComponent(plate),
-    function(res){
-      if(!res.success){
-        document.getElementById("ce-err").textContent = res.error==="duplicate_plate" ? "ทะเบียนนี้มีในระบบแล้ว" : "บันทึกไม่สำเร็จ: "+(res.error||"");
-        return;
-      }
-      refreshMemberCarsThen(backToCarListScreen);
-    },
-    function(err){ document.getElementById("ce-err").textContent="เชื่อมต่อไม่ได้: "+err; }
-  );
-}
-
-function openCarDeleteConfirm(car){
-  _pickedCarForEdit = car;
-  document.getElementById("delete-car-info").innerHTML =
-    car.carBrand+" "+car.carModel+"<br><b>"+car.plate+"</b><br>CarID: "+car.carId;
-  show("s-cardelete");
-}
-
-function submitDeleteCar(){
-  if(!_pickedCarForEdit) return;
-  var memberId = memberProfile ? memberProfile.memberId : null;
-  jsonp(
-    MEMBER_PORTAL_API_URL+"?action=deleteCar&carId="+encodeURIComponent(_pickedCarForEdit.carId)+"&memberId="+encodeURIComponent(memberId),
-    function(res){
-      if(!res.success){ document.getElementById("error-msg").textContent="ลบไม่สำเร็จ: "+(res.error||""); show("s-error"); return; }
-      refreshMemberCarsThen(backToCarListScreen);
-    },
-    function(err){ document.getElementById("error-msg").textContent="เชื่อมต่อไม่ได้: "+err; show("s-error"); }
-  );
-}
-
-// ── ★ NEW: single mode-aware helper for every "go back to the car list"
-//    button — manage mode returns to s-carinfo, warranty flow returns to
-//    s-carpick. Used by back arrows and after add/edit/delete complete. ──
-function backToCarListScreen(){
-  if (appMode === 'manage') showCarInfoScreen();
-  else showCarPickScreen();
-}
-
-function refreshMemberCarsThen(cb){
-  if(!memberProfile){ cb(); return; }
-  jsonp(GAS_API_URL+"?action=getMemberCars&memberId="+encodeURIComponent(memberProfile.memberId),function(result){
-    if(result && result.ok) memberProfile = result;
-    cb();
-  }, function(){ cb(); });
-}
-
-// ── ★ NEW: Vehicle brand/model cascade — reuses the LLIT_BRANDS data
-//    already served by the Member Portal API's getCarData action (same
-//    data source used on the customer LIFF page's register/add-car forms). ──
-var _vehicleBrandDataError = ""; // ★ NEW — last error from getCarData, shown instead of a generic message
-function ensureVehicleBrandData(cb){
-  if (_vehicleBrandData.length){ cb(); return; }
-  jsonp(MEMBER_PORTAL_API_URL+"?action=getCarData",function(res){
-    if(res.success && res.brands) _vehicleBrandData = res.brands;
-    else _vehicleBrandDataError = res.error || "";
-    cb();
-  }, function(err){ _vehicleBrandDataError = "เชื่อมต่อไม่ได้: "+err; cb(); });
-}
-// ★ NEW — logo lookup used both by the car cards and the add/edit forms
-function _vehicleBrandLogo(name){
-  var found = _vehicleBrandData.filter(function(b){ return b.name.toLowerCase()===String(name||"").toLowerCase(); })[0];
+// ── Car cascade ──────────────────────────────────────────────
+// ★ NEW: Look up a brand's logo URL from _carData (loaded via
+//    getCarData → now backed by the "Car_Brands&Models" sheet).
+function _carBrandLogo(name){
+  var found = _carData.filter(function(b){ return b.name.toLowerCase()===String(name||"").toLowerCase(); })[0];
   return found ? found.imageUrl : "";
 }
-function resetVehicleBrandSelect(brandId,modelId,brandOtherWrapId,modelOtherWrapId){
-  var bs=document.getElementById(brandId); bs.selectedIndex=0;
-  var ms=document.getElementById(modelId); while(ms.options.length) ms.remove(0);
-  var ph=document.createElement("option"); ph.value=""; ph.textContent="-- เลือกยี่ห้อก่อน --"; ms.appendChild(ph);
-  ms.disabled=true;
-  document.getElementById(brandOtherWrapId).style.display="none";
-  document.getElementById(modelOtherWrapId).style.display="none";
-  var logoImg = document.getElementById(brandId+"-logo"); // ★ NEW
-  if (logoImg) logoImg.style.display = "none";
-}
-function populateVehicleBrandSelect(brandId){
-  var sel=document.getElementById(brandId);
-  while(sel.options.length) sel.remove(0);
-  var ph=document.createElement("option"); ph.value=""; ph.textContent="-- เลือกยี่ห้อ --"; sel.appendChild(ph);
-  _vehicleBrandData.forEach(function(b){ var o=document.createElement("option"); o.value=b.name; o.textContent=b.name; sel.appendChild(o); });
-  var oo=document.createElement("option"); oo.value="__other__"; oo.textContent="อื่นๆ (Other)"; sel.appendChild(oo);
-}
-function onVehicleBrandChange(brandId,modelId,brandOtherWrapId,modelOtherWrapId){
+App.onCarBrandChange = function(brandId, modelId, brandWrapId, modelWrapId) {
   var b=document.getElementById(brandId).value;
-  var ms=document.getElementById(modelId);
-  document.getElementById(brandOtherWrapId).style.display="none";
-  document.getElementById(modelOtherWrapId).style.display="none";
-  while(ms.options.length) ms.remove(0);
-  var ph=document.createElement("option"); ph.value=""; ph.textContent=b?"-- เลือกรุ่น --":"-- เลือกยี่ห้อก่อน --"; ms.appendChild(ph);
-  ms.disabled=!b;
-  // ★ NEW — show/hide the brand logo preview next to the select
-  var logoImg = document.getElementById(brandId+"-logo");
+  var mS=document.getElementById(modelId);
+  document.getElementById(brandWrapId).style.display="none";
+  document.getElementById(modelWrapId).style.display="none";
+  while(mS.options.length)mS.remove(0);
+  var ph=document.createElement("option");ph.value="";ph.textContent=b?"-- เลือกรุ่น --":"-- เลือกยี่ห้อก่อน --";mS.appendChild(ph);
+  mS.disabled=!b;
+  // ★ NEW: show/hide the brand logo preview next to the select
+  var logoImg = document.getElementById(brandId.split("-")[0]+"-brand-logo");
   if (logoImg) {
-    var logoUrl = (b && b!=="__other__") ? _vehicleBrandLogo(b) : "";
+    var logoUrl = (b && b!=="__other__") ? _carBrandLogo(b) : "";
     if (logoUrl) { logoImg.src = logoUrl; logoImg.style.display = "inline-block"; }
     else { logoImg.style.display = "none"; }
   }
-  if(b==="__other__"){ document.getElementById(brandOtherWrapId).style.display="block"; document.getElementById(modelOtherWrapId).style.display="block"; ms.disabled=true; return; }
+  if(b==="__other__"){document.getElementById(brandWrapId).style.display="block";document.getElementById(modelWrapId).style.display="block";mS.disabled=true;return;}
   if(!b) return;
-  var brand=_vehicleBrandData.filter(function(x){return x.name===b;})[0];
+  var brand=_carData.filter(function(x){return x.name===b;})[0];
   if(!brand) return;
-  brand.models.forEach(function(m){ var o=document.createElement("option"); o.value=m; o.textContent=m; ms.appendChild(o); });
-  var oo=document.createElement("option"); oo.value="__other__"; oo.textContent="อื่นๆ (Other)"; ms.appendChild(oo);
-}
-function onVehicleModelChange(modelId,modelOtherWrapId){
-  document.getElementById(modelOtherWrapId).style.display = document.getElementById(modelId).value==="__other__" ? "block" : "none";
-}
-function selectVehicleBrandModel(brandId,modelId,brandName,modelName){
-  var bs=document.getElementById(brandId);
-  for(var i=0;i<bs.options.length;i++){ if(bs.options[i].value===brandName){ bs.selectedIndex=i; break; } }
-  onVehicleBrandChange(brandId,modelId, brandId+"-other", modelId+"-other");
-  var ms=document.getElementById(modelId);
-  for(var j=0;j<ms.options.length;j++){ if(ms.options[j].value===modelName){ ms.selectedIndex=j; break; } }
-}
+  brand.models.forEach(function(m){var o=document.createElement("option");o.value=m;o.textContent=m;mS.appendChild(o);});
+  var oo=document.createElement("option");oo.value="__other__";oo.textContent="อื่นๆ (Other)";mS.appendChild(oo);
+};
+App.onCarModelChange = function(modelId, wrapId) {
+  document.getElementById(wrapId).style.display=document.getElementById(modelId).value==="__other__"?"block":"none";
+};
 
-// ── Receipt upload via Cloudinary ──
-async function handleReceiptPhoto(input){
-  if(!input.files||!input.files[0]) return;
-  var file=input.files[0];
-  var statusEl=document.getElementById("receipt-status");
-  var previewEl=document.getElementById("receipt-preview");
-  var areaEl=document.getElementById("receipt-area");
-
-  var reader=new FileReader();
-  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("receipt-placeholder").style.display="none"; };
-  reader.readAsDataURL(file);
-
-  statusEl.className="receipt-status uploading";
-  statusEl.textContent="⏳ กำลังบีบอัดรูปภาพ...";
-  document.getElementById("open-form-btn").disabled=true;
-
-  try {
-    var base64=await new Promise(function(resolve){
-      var img=new window.Image();
-      img.onload=function(){
-        var c=document.createElement("canvas");
-        var MAX=CONFIG.IMAGE_MAX_PX,w=img.width,h=img.height;
-        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
-        c.width=w; c.height=h;
-        c.getContext("2d").drawImage(img,0,0,w,h);
-        resolve(c.toDataURL("image/jpeg",CONFIG.IMAGE_QUALITY).split(",")[1]);
-      };
-      img.src=URL.createObjectURL(file);
-    });
-
-    statusEl.textContent="⏳ กำลังอัพโหลด...";
-
-    var cloudFormData = new FormData();
-    cloudFormData.append("file", "data:image/jpeg;base64," + base64);
-    cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
-    cloudFormData.append("folder", "bntires_receipts");
-    cloudFormData.append("public_id", (currentCarId||"receipt")+"_bill");
-
-    var res = await fetch(
-      "https://api.cloudinary.com/v1_1/" + CONFIG.CLOUDINARY_CLOUD + "/image/upload",
-      { method: "POST", body: cloudFormData }
-    );
-    var data = await res.json();
-    if (data.error) throw new Error(data.error.message || "Cloudinary upload failed");
-
-    receiptUrl = data.secure_url;
-    receiptReady = true;
-    areaEl.classList.add("has-photo");
-    statusEl.className="receipt-status ok";
-    statusEl.textContent="✅ อัพโหลดสำเร็จ — พร้อมเปิดฟอร์ม";
-
-    // Save receipt URL to GAS (non-blocking)
-    jsonp(
-      GAS_API_URL+"?action=saveReceiptUrl&carId="+encodeURIComponent(currentCarId)+"&url="+encodeURIComponent(receiptUrl),
-      function(r){ console.log("saveReceiptUrl:", r.ok ? "ok" : r.error); },
-      function(e){ console.log("saveReceiptUrl error:", e); }
-    );
-
-    // ★ Use checkFormReady instead of directly enabling button
-    checkFormReady();
-
-    // ★ Listen for mileage input changes to recheck readiness
-    document.getElementById("mileage-input").oninput = checkFormReady;
-
-  } catch(err){
-    statusEl.className="receipt-status error";
-    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
+// ── Register ─────────────────────────────────────────────────
+App.showRegisterPage = function() {
+  if(_lineProfile && _lineProfile.pictureUrl){
+    document.getElementById("line-avatar").src               = _lineProfile.pictureUrl;
+    document.getElementById("line-display-name").textContent = _lineProfile.displayName||"";
+    document.getElementById("line-profile-bar").style.display="flex";
   }
-}
-
-// ── ★ handleCarPhoto — second photo upload (e.g. Lenso car photo) ──
-async function handleCarPhoto(input){
-  if(!input.files||!input.files[0]) return;
-  var file=input.files[0];
-  var statusEl  = document.getElementById("car-photo-status");
-  var previewEl = document.getElementById("car-photo-preview");
-  var areaEl    = document.getElementById("car-photo-area");
-
-  var reader=new FileReader();
-  reader.onload=function(e){ previewEl.src=e.target.result; previewEl.style.display="block"; document.getElementById("car-photo-placeholder").style.display="none"; };
-  reader.readAsDataURL(file);
-
-  statusEl.className="receipt-status uploading";
-  statusEl.textContent="⏳ กำลังบีบอัดรูปรถ...";
-  document.getElementById("open-form-btn").disabled=true;
-
-  try {
-    var base64=await new Promise(function(resolve){
-      var img=new window.Image();
-      img.onload=function(){
-        var c=document.createElement("canvas");
-        var MAX=CONFIG.IMAGE_MAX_PX,w=img.width,h=img.height;
-        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
-        c.width=w; c.height=h;
-        c.getContext("2d").drawImage(img,0,0,w,h);
-        resolve(c.toDataURL("image/jpeg",CONFIG.IMAGE_QUALITY).split(",")[1]);
-      };
-      img.src=URL.createObjectURL(file);
-    });
-
-    statusEl.textContent="⏳ กำลังอัพโหลด...";
-
-    var cloudFormData=new FormData();
-    cloudFormData.append("file", "data:image/jpeg;base64," + base64);
-    cloudFormData.append("upload_preset", CONFIG.CLOUDINARY_PRESET);
-    cloudFormData.append("folder", "bntires_car_photos");
-    cloudFormData.append("public_id", (currentCarId||"car")+"_car");
-
-    var res=await fetch(
-      "https://api.cloudinary.com/v1_1/"+CONFIG.CLOUDINARY_CLOUD+"/image/upload",
-      { method:"POST", body:cloudFormData }
-    );
-    var data=await res.json();
-    if(data.error) throw new Error(data.error.message||"Cloudinary upload failed");
-
-    carPhotoUrl   = data.secure_url;
-    carPhotoReady = true;
-    areaEl.classList.add("has-photo");
-    statusEl.className="receipt-status ok";
-    statusEl.textContent="✅ อัพโหลดสำเร็จ";
-    checkFormReady();
-
-  } catch(err){
-    statusEl.className="receipt-status error";
-    statusEl.textContent="❌ อัพโหลดไม่สำเร็จ: "+err.message;
+  _populateRegions();
+  _populateProvinceSelect("r-plate-province");
+  document.getElementById("r-plate-province").selectedIndex = 0;
+  document.getElementById("r-brand-logo").style.display="none"; // ★ NEW
+  // ★ TEMP DEBUG: visible on-page status line (no dev tools needed) —
+  //   shows exactly how many brands loaded, the select's actual option
+  //   count, and any backend error, so this can be screenshotted directly
+  //   from a phone/LINE in-app browser. Safe to remove once diagnosed.
+  document.getElementById("debug-cardata").textContent =
+    "Debug: _carData=" + _carData.length +
+    " | r-carbrand options=" + document.getElementById("r-carbrand").options.length +
+    (_carDataError ? " | error: " + _carDataError : "");
+  // Warn if dropdown data didn't load — show the real backend error (which
+  // now includes diagnostic info like actual sheet names found) instead of
+  // a generic message, so this is actually debuggable.
+  if (!_carData.length) {
+    showErr("regErr", _carDataError || "ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
+    setTimeout(function() {
+      // Retry loading missing data
+      apiGet({action:"getCarData"}).then(function(r){
+        if(r.success && r.brands && r.brands.length){
+          _carData=r.brands; _populateRegions(); hideErr("regErr");
+          document.getElementById("debug-cardata").textContent = "Debug: _carData=" + _carData.length + " (loaded on retry)";
+        }
+        else {
+          _carDataError = r.error || _carDataError;
+          showErr("regErr", _carDataError || "โหลดไม่สำเร็จ");
+          document.getElementById("debug-cardata").textContent = "Debug: retry failed | error: " + (_carDataError || "unknown");
+        }
+      });
+    }, 1500);
   }
-}
+  App.showPage("page-register");
+};
 
-// ── ★ openWarrantyForm — includes mileage ──
-function openWarrantyForm(){
-  if(!lookupResult||!selectedBrand||!receiptReady) return;
+App.submitRegister = function() {
+  hideErr("regErr");
+  var title=document.getElementById("r-title").value;
+  var fname=document.getElementById("r-fname").value.trim();
+  var lname=document.getElementById("r-lname").value.trim();
+  var phone=document.getElementById("r-phone").value.trim();
+  var bd=parseBirthdayInput("r-birthday");
+  var license=document.getElementById("r-license").value.trim();
+  var plateProvince=document.getElementById("r-plate-province").value;
+  var carbrand=document.getElementById("r-carbrand").value;
+  var carmodel=document.getElementById("r-carmodel").value;
+  if(carbrand==="__other__") carbrand=document.getElementById("r-carbrand-other").value.trim();
+  if(carmodel==="__other__") carmodel=document.getElementById("r-carmodel-other").value.trim();
 
-  // ★ Validate mileage if required
-  var mileage = document.getElementById("mileage-input").value.trim();
-  if (selectedBrand.requiresMileage && !mileage) {
-    document.getElementById("mileage-input").classList.add("required-err");
-    document.getElementById("mileage-input").focus();
+  if(!bd.empty && !bd.valid){
+    showErr("regErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
+  }
+  var birthday = bd.valid ? bd.iso : "";
+
+  if(!title||!fname||!lname||!phone||!birthday||!license||!plateProvince||!carbrand||!carmodel){
+    var missing=[];
+    if(!title)missing.push("คำนำหน้า");if(!fname)missing.push("ชื่อ");if(!lname)missing.push("นามสกุล");
+    if(!phone)missing.push("เบอร์โทร");if(!birthday)missing.push("วันเกิด");
+    if(!license)missing.push("ทะเบียน");if(!plateProvince)missing.push("จังหวัดป้ายทะเบียน");
+    if(!carbrand)missing.push("ยี่ห้อรถ");if(!carmodel)missing.push("รุ่นรถ");
+    showErr("regErr","กรุณากรอก: "+missing.join(", ")); return;
+  }
+  if(!isValidThaiPhone(phone)){
+    showErr("regErr","เบอร์โทรไม่ถูกต้อง กรุณากรอกเบอร์ 10 หลักที่ขึ้นต้นด้วย 0 (เช่น 0812345678)"); return;
+  }
+
+  setLoading("regBtn","regLabel",true,"");
+  apiPost({ action:"saveMember", data:{
+    lineUserId:_lineProfile?_lineProfile.userId:"",
+    title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday,
+    // ★ Fixed default address — no longer typed by the customer
+    address:FIXED_ADDRESS,region:FIXED_REGION,province:FIXED_PROVINCE,district:FIXED_DISTRICT,
+    subdistrict:FIXED_SUBDISTRICT,zipcode:FIXED_ZIP,
+    carbrand:carbrand,carmodel:carmodel,license:license,plateProvince:plateProvince
+  }})
+  .then(function(res){
+    setLoading("regBtn","regLabel",false,"สมัครสมาชิก");
+    if(!res.success){
+      var msg = "เกิดข้อผิดพลาด: "+res.error;
+      if(res.error==="duplicate_line")   msg = "บัญชี LINE นี้มีสมาชิกอยู่แล้ว";
+      if(res.error==="duplicate_phone")  msg = "เบอร์โทรนี้มีสมาชิกอยู่แล้วในระบบ";
+      if(res.error==="duplicate_plate")  msg = "ทะเบียนรถนี้มีอยู่ในระบบแล้ว กรุณาตรวจสอบ";
+      showErr("regErr",msg); return;
+    }
+    _member=res.member; _cars=res.cars;
+    App.showMemberPage();
+  })
+  .catch(function(err){ setLoading("regBtn","regLabel",false,"สมัครสมาชิก"); showErr("regErr","Error: "+(err.message||err)); });
+};
+
+// ── Member page ──────────────────────────────────────────────
+App.showMemberPage = function() {
+  var full=thaiTitle(_member.title)+" "+_member.firstname+" "+_member.lastname;
+  document.getElementById("m-fullname").textContent   = full;
+  document.getElementById("mi-title").textContent     = thaiTitle(_member.title);
+  document.getElementById("mi-firstname").textContent = _member.firstname;
+  document.getElementById("mi-lastname").textContent  = _member.lastname;
+  document.getElementById("mi-phone").textContent     = fmtPhone(_member.phone);
+  document.getElementById("mi-birthday").textContent  = fmtBirthday(_member.birthday);
+  _generateMemberQR(); // one QR per member, not per car
+  _carIdx=0;
+  App.switchTab("tab-qr"); // always land on the QR tab first
+  App.showPage("page-member");
+
+  // Deep link: if opened via ?action=addcar (e.g. from the LINE bot's
+  // "+ เพิ่มรถ" button), jump straight into the Add Car modal.
+  var params = new URLSearchParams(window.location.search);
+  if (params.get("action") === "addcar") {
+    App.openAddCar();
+  }
+};
+
+App.updateMemberInfo = function(m) {
+  _member=m;
+  var full=thaiTitle(m.title)+" "+m.firstname+" "+m.lastname;
+  document.getElementById("m-fullname").textContent   = full;
+  document.getElementById("mi-title").textContent     = thaiTitle(m.title);
+  document.getElementById("mi-firstname").textContent = m.firstname;
+  document.getElementById("mi-lastname").textContent  = m.lastname;
+  document.getElementById("mi-phone").textContent     = fmtPhone(m.phone);
+  document.getElementById("mi-birthday").textContent  = fmtBirthday(m.birthday);
+};
+
+// ── Tab switching (QR / Car / Personal Info) ───────────────────
+App.switchTab = function(tabId){
+  document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.toggle("active", p.id===tabId); });
+  document.querySelectorAll(".nav-item").forEach(function(n){ n.classList.toggle("active", n.id==="nav-"+tabId); });
+  // Every time the car tab is opened, start from the picker list when
+  // there's more than one car — don't stay on whatever was picked last.
+  if (tabId === "tab-car") _renderCarTab();
+};
+
+// ── Car tab: with 0 cars, shows an empty state. With exactly 1 car,
+//    skips the picker entirely and shows that car directly. With 2+
+//    cars, always opens on the picker list first (see switchTab above);
+//    tapping a car switches to the detail view, and "เปลี่ยนรถ" goes
+//    back to the list. ──
+function _renderCarTab(){
+  var listView   = document.getElementById("car-list-view");
+  var detailView = document.getElementById("car-detail-view");
+
+  if (!_cars.length) {
+    listView.style.display = "none";
+    detailView.style.display = "block";
+    document.getElementById("car-selected-summary").innerHTML =
+      '<div class="no-cars">ยังไม่มีรถในระบบ — กรุณาติดต่อร้านเพื่อเพิ่มรถของคุณ</div>';
+    document.getElementById("change-car-btn").style.display = "none";
+    _renderHistory(null);
     return;
   }
-  document.getElementById("mileage-input").classList.remove("required-err");
-  currentMileage = mileage;
 
-  var p = Object.assign({}, lookupResult.params);
-  p.car_id = currentCarId;
-  if (receiptUrl)   p.receipt_url = receiptUrl;
-  if (mileage)      p.mileage     = mileage;  // ★ pass mileage to extension
-  if (carPhotoUrl)  p.car_photo_url = carPhotoUrl; // ★ pass car photo URL
-  if (selectedTire) {
-    p.tire_model  = selectedTire.model;
-    p.tire_width  = selectedTire.width;
-    p.tire_aspect = selectedTire.aspect;
-    p.tire_rim    = selectedTire.rim;
+  if (_cars.length === 1) {
+    _showCarDetail(0);
+    return;
   }
 
-  var qs = Object.keys(p).filter(function(k){ return p[k]!==""&&p[k]!==null; })
-    .map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(p[k]); }).join("&");
-  var warrantyUrl = selectedBrand.url + (selectedBrand.url.includes("?") ? "&" : "?") + qs;
-
-  document.getElementById("waiting-text").textContent = "กำลังส่งไปยังคอมพิวเตอร์...";
-  document.getElementById("waiting-debug").textContent = "mileage: "+(mileage||"(ว่าง)")+" | receipt: "+(receiptUrl?"ok":"null");
-  show("s-waiting");
-  waitingElapsed = 0;
-
-  jsonp(
-    GAS_API_URL+"?action=pushUrl&carId="+encodeURIComponent(currentCarId)+"&url="+encodeURIComponent(warrantyUrl),
-    function(result){
-      if(result.ok){
-        // ★ Update car mileage in GAS (non-blocking)
-        if (mileage) {
-          jsonp(
-            GAS_API_URL+"?action=updateCarMileage&carId="+encodeURIComponent(currentCarId)+"&mileage="+encodeURIComponent(mileage),
-            function(r){ console.log("updateCarMileage:", r.ok ? "ok" : r.error); },
-            function(e){ console.log("updateCarMileage error:", e); }
-          );
-        }
-        document.getElementById("waiting-text").textContent = "รอให้คอมพิวเตอร์เปิดฟอร์ม...";
-        pollDesktop();
-      } else {
-        showWaitingError("ส่ง URL ไม่สำเร็จ: "+(result.error||""));
-      }
-    },
-    function(err){ showWaitingError("เชื่อมต่อ GAS ไม่ได้: "+err); }
-  );
+  _showCarList();
 }
 
-function pollDesktop(){
-  waitingTimer=setInterval(function(){
-    waitingElapsed+=3;
-    document.getElementById("waiting-text").textContent="รอให้คอมพิวเตอร์เปิดฟอร์ม... ("+waitingElapsed+"s)";
-    if(waitingElapsed>=CONFIG.WAITING_TIMEOUT_S){
-      clearInterval(waitingTimer);
-      showWaitingError("หมดเวลา — ตรวจสอบว่าเปิด Desktop Opener บนคอมพิวเตอร์แล้ว");
-      return;
-    }
-    jsonp(
-      GAS_API_URL+"?action=checkOpened&carId="+encodeURIComponent(currentCarId),
-      function(result){
-        if(result.opened){
-          clearInterval(waitingTimer);
-          var descEl = document.querySelector("#s-sent .center-desc");
-          if (descEl) descEl.innerHTML = "Extension กำลังกรอกข้อมูลอัตโนมัติ<br>กรุณากรอกรุ่นยางบนคอมพิวเตอร์";
-          show("s-sent");
-        }
-      },
-      function(){}
-    );
-  },3000);
-}
-
-function cancelWaiting(){ clearInterval(waitingTimer); show("s-confirm"); }
-function showWaitingError(msg){ clearInterval(waitingTimer); document.getElementById("error-msg").textContent=msg; show("s-error"); }
-
-function retryOpenForm(){
-  clearInterval(waitingTimer);
-  if(!lookupResult||!selectedBrand||!receiptReady){ show("s-confirm"); return; }
-  openWarrantyForm();
-}
-
-// ── Load tires ──
-function loadTires(){
-  if(!selectedBrand) return;
-  document.getElementById("tire-loading").style.display="block";
-  document.getElementById("tire-list").innerHTML="";
-  jsonp(
-    GAS_API_URL+"?action=getTires&brand="+encodeURIComponent(selectedBrand.name.toUpperCase()),
-    function(result){
-      document.getElementById("tire-loading").style.display="none";
-      if(result.error||!result.tires||result.tires.length===0){
-        document.getElementById("tire-loading").textContent="ไม่พบข้อมูลยางในวันนี้";
-        document.getElementById("tire-loading").style.display="block";
-        return;
-      }
-      var list=document.getElementById("tire-list");
-      result.tires.forEach(function(t){
-        var btn=document.createElement("button");
-        btn.type="button";
-        btn.style.cssText="width:100%;text-align:left;background:white;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0.1)";
-        btn.innerHTML='<span style="font-weight:700;color:#1a0000">'+t.model+'</span> <span style="color:#888">'+t.width+'/'+t.aspect+'R'+t.rim+'</span>';
-        btn.addEventListener("click",function(){
-          selectedTire=t;
-          list.querySelectorAll("button").forEach(function(b){ b.style.borderColor="#e0e0e0"; b.style.background="white"; });
-          btn.style.borderColor="#b40000"; btn.style.background="#fff5f5";
-          document.getElementById("tire-selected").style.display="block";
-          document.getElementById("tire-selected").textContent="✅ เลือก: "+t.label;
-        });
-        list.appendChild(btn);
-      });
-    },
-    function(err){
-      document.getElementById("tire-loading").textContent="โหลดยางไม่ได้: "+err;
-    }
-  );
-}
-
-// ── Manual Search ──
-function openSearch(){
-  document.getElementById("search-brand-label").textContent = selectedBrand ? selectedBrand.name : "";
-  document.getElementById("search-phone").value = "";
-  document.getElementById("search-plate").value = "";
-  document.getElementById("search-status").textContent = "";
-  document.getElementById("search-results").style.display = "none";
-  document.getElementById("search-result-list").innerHTML = "";
-  show("s-search");
-}
-
-function doSearch(){
-  var phone = document.getElementById("search-phone").value.trim();
-  var plate = document.getElementById("search-plate").value.trim().toUpperCase();
-  var statusEl = document.getElementById("search-status");
-  if(!phone && !plate){ statusEl.textContent = "กรุณากรอกเบอร์โทรหรือทะเบียนรถ"; return; }
-  statusEl.textContent = "กำลังค้นหา...";
-  document.getElementById("search-results").style.display = "none";
-  jsonp(
-    GAS_API_URL + "?action=search" +
-    (phone ? "&phone=" + encodeURIComponent(phone) : "") +
-    (plate ? "&plate=" + encodeURIComponent(plate) : ""),
-    function(result){
-      if(result.error){ statusEl.textContent = "❌ " + result.error; return; }
-      if(!result.results || result.results.length === 0){ statusEl.textContent = "ไม่พบข้อมูล"; return; }
-      statusEl.textContent = "พบ " + result.results.length + " รายการ";
-      renderSearchResults(result.results);
-    },
-    function(err){ statusEl.textContent = "❌ เชื่อมต่อไม่ได้: " + err; }
-  );
-}
-
-function renderSearchResults(results){
-  var list = document.getElementById("search-result-list");
-  list.innerHTML = "";
-  results.forEach(function(r){
+function _showCarList(){
+  document.getElementById("car-detail-view").style.display = "none";
+  document.getElementById("car-list-view").style.display = "block";
+  var container = document.getElementById("car-list-items");
+  container.innerHTML = "";
+  _cars.forEach(function(car, idx){
     var el = document.createElement("div");
-    el.className = "member-card";
-    el.style.cssText = "cursor:pointer;margin-bottom:8px";
-    el.innerHTML =
-      '<div style="font-size:15px;font-weight:700;color:#1a0000;margin-bottom:4px">' + r.fullName + '</div>' +
-      '<div style="font-size:13px;color:#888">' + r.phone + ' · ' + r.carBrand + ' ' + r.carModel + '</div>' +
-      '<div style="font-size:12px;color:#aaa;margin-top:2px">ทะเบียน: ' + r.plate + ' · CarID: ' + r.carId + '</div>';
-    el.addEventListener("click", function(){
-      // ★ Manual search already resolves to one specific car (no pick step needed)
-      currentCarId = r.carId;
-      proceedWithLookupResult(r);
-    });
-    list.appendChild(el);
+    el.style.cursor = "pointer";
+    el.style.marginBottom = "10px";
+    el.innerHTML = _carCardHtml(car);
+    el.addEventListener("click", function(){ _showCarDetail(idx); });
+    container.appendChild(el);
   });
-  document.getElementById("search-results").style.display = "block";
 }
+
+function _showCarDetail(idx){
+  _carIdx = idx;
+  var car = _cars[idx];
+  document.getElementById("car-list-view").style.display = "none";
+  document.getElementById("car-detail-view").style.display = "block";
+  document.getElementById("change-car-btn").style.display = _cars.length > 1 ? "block" : "none";
+  document.getElementById("car-selected-summary").innerHTML = _carCardHtml(car);
+  _renderHistory(car);
+}
+
+// ── Shared markup for a single car row (logo | brand | model | plate) —
+//    used by both the car detail summary and the picker list ──
+function _carCardHtml(car){
+  var logo = _carBrandLogo(car.carbrand);
+  var logoHtml = logo
+    ? '<img src="'+logo+'" alt="" class="car-card-logo" onerror="this.style.display=\'none\'">'
+    : '';
+  var provinceHtml = car.plateProvince
+    ? '<span style="font-size:10px;color:#aaa;margin-top:3px">'+car.plateProvince+'</span>'
+    : '';
+  return '<div class="car-card">'+logoHtml+
+    '<div class="car-card-info">'+
+      '<span class="car-make">'+car.carbrand+'</span>'+
+      '<span class="car-model-txt">'+car.carmodel+'</span>'+
+    '</div>'+
+    '<div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0">'+
+      '<span class="car-plate">'+car.license+'</span>'+
+      provinceHtml+
+    '</div>'+
+  '</div>';
+}
+
+// ── QR now encodes the MemberID only, not a specific car. Staff scan
+//    this once, then pick which of the member's cars applies on the
+//    scanner side — so this only needs to run once per member. ──
+function _generateMemberQR(){
+  if (!_member || !_member.id) return;
+  var canvas=document.getElementById("qrCanvas"),ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,200,200);
+  if(typeof QRCode!=="undefined"){
+    var tmp=document.createElement("div");
+    new QRCode(tmp,{text:_member.id,width:200,height:200,colorDark:"#000",colorLight:"#fff"});
+    setTimeout(function(){var img=tmp.querySelector("img")||tmp.querySelector("canvas");if(img){var i=new Image();i.onload=function(){ctx.drawImage(i,0,0,200,200);};i.src=img.src||img.toDataURL();}},150);
+  }
+}
+function _clearQR(){var ctx=document.getElementById("qrCanvas").getContext("2d");ctx.fillStyle="#f0f0f0";ctx.fillRect(0,0,200,200);}
+
+// ── Add car ──────────────────────────────────────────────────
+App.openAddCar = function(){
+  document.getElementById("m-carbrand").selectedIndex=0;
+  resetSel("m-carmodel","-- เลือกยี่ห้อก่อน --");
+  document.getElementById("m-carmodel").disabled=true;
+  document.getElementById("m-license").value="";
+  document.getElementById("m-brand-other-wrap").style.display="none";
+  document.getElementById("m-model-other-wrap").style.display="none";
+  document.getElementById("m-brand-logo").style.display="none"; // ★ NEW
+  hideErr("addCarErr");
+  // ★ NEW: warn (and retry) if brand/model dropdown data never loaded,
+  //   instead of silently showing an empty dropdown with no explanation
+  if (!_carData.length) {
+    showErr("addCarErr", _carDataError || "ข้อมูลยี่ห้อรถโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
+    apiGet({action:"getCarData"}).then(function(r){
+      if(r.success && r.brands && r.brands.length){ _carData=r.brands; _populateRegions(); hideErr("addCarErr"); }
+      else { _carDataError = r.error || _carDataError; showErr("addCarErr", _carDataError || "โหลดไม่สำเร็จ"); }
+    });
+  }
+  document.getElementById("addCarModal").classList.add("open");
+};
+App.closeAddCar = function(){ document.getElementById("addCarModal").classList.remove("open"); };
+
+App.submitAddCar = function(){
+  hideErr("addCarErr");
+  var carbrand=document.getElementById("m-carbrand").value;
+  var carmodel=document.getElementById("m-carmodel").value;
+  var license=document.getElementById("m-license").value.trim();
+  if(carbrand==="__other__") carbrand=document.getElementById("m-carbrand-other").value.trim();
+  if(carmodel==="__other__") carmodel=document.getElementById("m-carmodel-other").value.trim();
+  if(!carbrand||!carmodel||!license){showErr("addCarErr","กรุณากรอกข้อมูลให้ครบ");return;}
+  setLoading("addCarBtn","addCarLabel",true,"");
+  apiGet({action:"addCar",memberId:_member.id,carbrand:carbrand,carmodel:carmodel,license:license})
+    .then(function(res){
+      setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");
+      if(!res.success){showErr("addCarErr",res.error==="duplicate_plate"?"ทะเบียนนี้มีในระบบแล้ว":"Error: "+res.error);return;}
+      _cars.push(res.car); _carIdx=_cars.length-1;
+      App.closeAddCar(); _renderCarTab();
+    })
+    .catch(function(err){setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");showErr("addCarErr","Error: "+(err.message||err));});
+};
+
+// ── Delete car ───────────────────────────────────────────────
+App.askDelete = function(carId,label){
+  _delCarId=carId;
+  document.getElementById("confirmMsg").innerHTML="ต้องการลบ <strong>"+label+"</strong> ออกจากโปรไฟล์?";
+  document.getElementById("confirmModal").classList.add("open");
+};
+App.closeConfirm = function(){ document.getElementById("confirmModal").classList.remove("open"); _delCarId=null; };
+App.confirmDelete = function(){
+  if(!_delCarId)return; var id=_delCarId; App.closeConfirm();
+  apiGet({action:"deleteCar",carId:id,memberId:_member.id})
+    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderCarTab();}});
+};
+
+// ── Edit ─────────────────────────────────────────────────────
+App.openEdit = function() {
+  var m=_member;
+  function _sel(id,val){var el=document.getElementById(id);if(!el)return;for(var i=0;i<el.options.length;i++){if(el.options[i].value===val){el.selectedIndex=i;return;}}}
+  _sel("e-title",m.title);
+  document.getElementById("e-fname").value   = m.firstname||"";
+  document.getElementById("e-lname").value   = m.lastname||"";
+  document.getElementById("e-phone").value   = m.phone||"";
+  document.getElementById("e-birthday").value= isoToDisplayDate(m.birthday);
+  hideErr("editErr");
+  document.getElementById("editOk").style.display="none";
+  App.showPage("page-edit");
+};
+
+App.saveEdit = function(){
+  hideErr("editErr");
+  document.getElementById("editOk").style.display="none";
+  var title=document.getElementById("e-title").value;
+  var fname=document.getElementById("e-fname").value.trim();
+  var lname=document.getElementById("e-lname").value.trim();
+  var phone=document.getElementById("e-phone").value.trim();
+  var bd=parseBirthdayInput("e-birthday");
+  if(!bd.empty && !bd.valid){
+    showErr("editErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
+  }
+  var birthday = bd.valid ? bd.iso : "";
+  if(!title||!fname||!lname||!phone||!birthday){
+    showErr("editErr","กรุณากรอกข้อมูลให้ครบถ้วน"); return;
+  }
+  if(!isValidThaiPhone(phone)){
+    showErr("editErr","เบอร์โทรไม่ถูกต้อง กรุณากรอกเบอร์ 10 หลักที่ขึ้นต้นด้วย 0 (เช่น 0812345678)"); return;
+  }
+  setLoading("saveEditBtn","saveEditLabel",true,"");
+  // ★ Address fields are no longer editable here — the member's address
+  //   stays whatever was already saved (fixed default for new signups).
+  apiPost({action:"updateMember",data:{memberId:_member.id,title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday}})
+    .then(function(res){
+      setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล");
+      if(!res.success){showErr("editErr","เกิดข้อผิดพลาด: "+res.error);return;}
+      _member.title=title;_member.firstname=fname;_member.lastname=lname;
+      _member.phone=phone;_member.birthday=birthday;
+      App.updateMemberInfo(_member);
+      document.getElementById("editOk").style.display="block";
+      setTimeout(function(){document.getElementById("editOk").style.display="none";},3000);
+    })
+    .catch(function(err){setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล");showErr("editErr","Error: "+(err.message||err));});
+};
+
+// ── Start ────────────────────────────────────────────────────
+window.addEventListener("load", function() {
+  attachDateMask("r-birthday");
+  attachDateMask("e-birthday");
+  App.start();
+});
 </script>
 
 <script>
-if('serviceWorker' in navigator){
+// ── Auto-clear caches/service workers on every load, so code updates
+//    always take effect instead of serving a stale cached version ──
+if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(function(regs){
     regs.forEach(function(r){ r.unregister(); });
   });
+}
+if ('caches' in window) {
   caches.keys().then(function(keys){
     keys.forEach(function(k){ caches.delete(k); });
   });
