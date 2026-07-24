@@ -30,6 +30,10 @@ h1{font-size:20px;font-weight:700;color:#1a0000;margin-bottom:6px}
 .history-item{background:#f5f5f5;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:13px;color:#333}
 .history-item span{color:#888;font-size:11px;display:block;margin-top:2px}
 </style>
+<!-- ★ FIXED: was missing gas-urls.js entirely — this page never had
+     access to the shared GAS_URLS object that Member_Scanner/index.html
+     and MEMBER/index.html both use. Must load BEFORE config.js. -->
+<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=2"></script>
 <script src="config.js"></script>
 </head>
 <body>
@@ -56,8 +60,14 @@ h1{font-size:20px;font-weight:700;color:#1a0000;margin-bottom:6px}
 
 <script>
 // ══ CONFIG ══
-// ── Loaded from config.js ──
-var GAS_API_URL   = CONFIG.GAS_API_URL;
+// ★ FIXED: was `CONFIG.GAS_API_URL`, which does not exist anywhere in
+// config.js (that property was removed when the shared gas-urls.js file
+// was introduced for the other two apps — this page just never got the
+// same update). GAS_API_URL was silently `undefined`, so every popUrl/
+// confirmOpened call here was hitting "undefined?action=popUrl", which
+// always fails — meaning the desktop opener could never actually receive
+// a pushed warranty URL from the phone, no matter what the phone side did.
+var GAS_API_URL   = GAS_URLS.warrantyApi;
 var POLL_INTERVAL = CONFIG.POLL_INTERVAL_MS;
 
 var pollTimer   = null;
