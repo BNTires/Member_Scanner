@@ -6,73 +6,116 @@
 <title>Tyre Warranty — Desktop Opener</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-.card{background:white;border-radius:16px;padding:32px;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.1);text-align:center}
-.logo{width:80px;height:80px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 16px}
-h1{font-size:20px;font-weight:700;color:#1a0000;margin-bottom:6px}
-.sub{font-size:13px;color:#888;margin-bottom:24px}
-.status-box{background:#f5f5f5;border-radius:12px;padding:16px;margin-bottom:20px}
-.status-dot{width:12px;height:12px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:8px;animation:pulse 1s ease-in-out infinite;vertical-align:middle}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.layout{display:flex;gap:20px;max-width:820px;width:100%;align-items:stretch}
+.card{background:white;border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.1)}
+.control-card{flex:1;min-width:340px;text-align:center}
+.pending-card{flex:1;min-width:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.logo{width:64px;height:64px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px}
+h1{font-size:19px;font-weight:700;color:#1a0000;margin-bottom:5px}
+.sub{font-size:12px;color:#888;margin-bottom:20px}
+.status-box{background:#f5f5f5;border-radius:12px;padding:14px;margin-bottom:18px}
+.status-dot{width:11px;height:11px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:8px;animation:pulse 1s ease-in-out infinite;vertical-align:middle}
 .status-dot.idle{background:#94a3b8;animation:none}
 .status-dot.error{background:#ef4444;animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.status-text{font-size:14px;color:#333;font-weight:500;vertical-align:middle}
-.log{background:#1a1a1a;border-radius:8px;padding:12px;text-align:left;max-height:160px;overflow-y:auto;margin-bottom:20px}
+.status-text{font-size:13px;color:#333;font-weight:500;vertical-align:middle}
+.log{background:#1a1a1a;border-radius:8px;padding:10px;text-align:left;max-height:130px;overflow-y:auto;margin-bottom:18px}
 .log-line{font-size:11px;color:#4ade80;font-family:monospace;line-height:1.6}
 .log-line.err{color:#f87171}
 .log-line.info{color:#93c5fd}
-.btn{background:#b40000;color:white;border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:8px}
+.btn{background:#b40000;color:white;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-bottom:8px}
 .btn:hover{background:#cc0000}
 .btn:disabled{background:#ccc;cursor:not-allowed}
-.btn-outline{background:white;color:#b40000;border:2px solid #b40000;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;width:100%}
-.history{margin-top:20px;text-align:left}
-.history h3{font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.history-item{background:#f5f5f5;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:13px;color:#333}
-.history-item span{color:#888;font-size:11px;display:block;margin-top:2px}
+.btn-outline{background:white;color:#b40000;border:2px solid #b40000;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer;width:100%}
+.history{margin-top:18px;text-align:left}
+.history h3{font-size:11px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.history-item{background:#f5f5f5;border-radius:8px;padding:9px 12px;margin-bottom:6px;font-size:12px;color:#333;display:flex;justify-content:space-between;align-items:center}
+.history-item .h-brand{font-weight:700;color:#1a0000}
+.history-item .h-time{color:#888;font-size:10px}
+/* ── Pending form panel (the "area left") ── */
+.pending-empty{color:#aaa;font-size:13px;line-height:1.7}
+.pending-empty .spinner-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ccc;margin:0 2px;animation:blink 1.4s infinite}
+.pending-empty .spinner-dot:nth-child(2){animation-delay:.2s}
+.pending-empty .spinner-dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.pending-icon{width:72px;height:72px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:34px}
+.pending-brand{font-size:22px;font-weight:700;color:#1a0000}
+.pending-carid{font-size:13px;color:#888}
+.btn-open{background:#16a34a;color:white;border:none;border-radius:10px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:8px}
+.btn-open:hover{background:#15803d}
+.btn-open:active{opacity:.85}
 </style>
-<!-- ★ FIXED: was missing gas-urls.js entirely — this page never had
-     access to the shared GAS_URLS object that Member_Scanner/index.html
-     and MEMBER/index.html both use. Must load BEFORE config.js. -->
-<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=2"></script>
-<script src="config.js"></script>
 </head>
 <body>
-<div class="card">
-  <div class="logo">🖥️</div>
-  <h1>Desktop Opener</h1>
-  <div class="sub">Tyre Warranty — B.N. Tires &amp; Max<br>เปิดหน้านี้ทิ้งไว้บนคอมพิวเตอร์</div>
+<div class="layout">
 
-  <div class="status-box">
-    <span class="status-dot idle" id="status-dot"></span>
-    <span class="status-text" id="status-text">กดเริ่มเพื่อเริ่มรับฟอร์ม</span>
+  <!-- LEFT: controls, status, connection log, history -->
+  <div class="card control-card">
+    <div class="logo">🖥️</div>
+    <h1>Desktop Opener</h1>
+    <div class="sub">Tyre Warranty — B.N. Tires &amp; Max<br>เปิดหน้านี้ทิ้งไว้บนคอมพิวเตอร์</div>
+
+    <div class="status-box">
+      <span class="status-dot idle" id="status-dot"></span>
+      <span class="status-text" id="status-text">กดเริ่มเพื่อเริ่มรับฟอร์ม</span>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <button class="btn" id="start-btn" onclick="startListening()">▶ เริ่มรับฟอร์มจากโทรศัพท์</button>
+    <button class="btn-outline" id="stop-btn" onclick="stopListening()" disabled>⏹ หยุด</button>
+
+    <div class="history" id="history-wrap" style="display:none">
+      <h3>ประวัติล่าสุด</h3>
+      <div id="history-list"></div>
+    </div>
   </div>
 
-  <div class="log" id="log"></div>
-
-  <button class="btn" id="start-btn" onclick="startListening()">▶ เริ่มรับฟอร์มจากโทรศัพท์</button>
-  <button class="btn-outline" id="stop-btn" onclick="stopListening()" disabled>⏹ หยุด</button>
-
-  <div class="history" id="history-wrap" style="display:none">
-    <h3>ประวัติล่าสุด</h3>
-    <div id="history-list"></div>
+  <!-- RIGHT: the form waiting to be opened — brand name only, no raw
+       URL shown anywhere. Staff must click to actually open it, instead
+       of it popping open automatically the moment it arrives. -->
+  <div class="card pending-card" id="pending-panel">
+    <div class="pending-empty">
+      รอฟอร์มจากโทรศัพท์<span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
+    </div>
   </div>
+
 </div>
 
+<script src="https://bntires.github.io/Member_Scanner/gas-urls.js?v=2"></script>
+<script src="config.js"></script>
 <script>
 // ══ CONFIG ══
-// ★ FIXED: was `CONFIG.GAS_API_URL`, which does not exist anywhere in
-// config.js (that property was removed when the shared gas-urls.js file
-// was introduced for the other two apps — this page just never got the
-// same update). GAS_API_URL was silently `undefined`, so every popUrl/
-// confirmOpened call here was hitting "undefined?action=popUrl", which
-// always fails — meaning the desktop opener could never actually receive
-// a pushed warranty URL from the phone, no matter what the phone side did.
 var GAS_API_URL   = GAS_URLS.warrantyApi;
 var POLL_INTERVAL = CONFIG.POLL_INTERVAL_MS;
 
-var pollTimer   = null;
-var isListening = false;
-var openHistory = [];
+var pollTimer     = null;
+var isListening   = false;
+var openHistory   = [];
+var _pendingForm  = null; // { url, carId, brand } — waiting for staff to click "open"
+
+// ── Friendly brand name from the form's domain — shown instead of the
+//    raw URL anywhere in the UI. Falls back to a generic label if the
+//    domain isn't recognized (new brand added to config.js, etc). ──
+var BRAND_DOMAIN_MAP = [
+  { match: "llit-eservice.com/register/year/atlas",    name: "Atlas" },
+  { match: "llit-eservice.com/register/quality/linglong", name: "Linglong" },
+  { match: "contitcp.com",      name: "Continental" },
+  { match: "toyotires.in.th",   name: "Toyo" },
+  { match: "nittotire.in.th",   name: "Nitto" },
+  { match: "advancetyre.in.th", name: "Advance" },
+  { match: "nankangtire.in.th", name: "Nankang" },
+  { match: "lensotires.com",    name: "Lenso" },
+  { match: "giti.co.th",        name: "Giti" }
+];
+function _brandNameFromUrl(url){
+  var lower = String(url||"").toLowerCase();
+  for (var i=0; i<BRAND_DOMAIN_MAP.length; i++){
+    if (lower.indexOf(BRAND_DOMAIN_MAP[i].match) !== -1) return BRAND_DOMAIN_MAP[i].name;
+  }
+  return "ฟอร์มลงทะเบียน";
+}
 
 function log(msg, type) {
   var div = document.getElementById("log");
@@ -164,28 +207,52 @@ function poll() {
   );
 }
 
+// ── ★ CHANGED: no longer opens the form automatically, and no longer
+//    logs the raw URL/domain anywhere. Instead shows a brand-named card
+//    in the right-hand panel that the staff taps to actually open it. ──
 function handleNewUrl(url, carId) {
-  log("📋 ได้รับฟอร์มสำหรับ: "+(carId||"unknown"), "info");
-  var brandHint = url.match(/https?:\/\/([^\/]+)/)?.[1] || "form";
-  log("🔗 กำลังเปิด: " + brandHint);
-  setStatus("กำลังเปิดฟอร์ม — "+carId, "");
+  var brand = _brandNameFromUrl(url);
+  _pendingForm = { url: url, carId: carId, brand: brand };
+  log("📋 ได้รับฟอร์มสำหรับ: "+(carId||"unknown")+" ("+brand+")", "info");
+  setStatus("มีฟอร์มรอเปิด — "+carId, "");
+  renderPendingForm();
+}
 
-  // Open Atlas in new tab
-  window.open(url, "_blank");
+function renderPendingForm(){
+  var panel = document.getElementById("pending-panel");
+  if (!_pendingForm) {
+    panel.innerHTML =
+      '<div class="pending-empty">รอฟอร์มจากโทรศัพท์'+
+      '<span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span></div>';
+    return;
+  }
+  panel.innerHTML =
+    '<div class="pending-icon">🏷️</div>'+
+    '<div class="pending-brand">'+_pendingForm.brand+'</div>'+
+    '<div class="pending-carid">CarID: '+_pendingForm.carId+'</div>'+
+    '<button class="btn-open" onclick="openPendingForm()">🔗 เปิดฟอร์ม</button>';
+}
 
-  // Tell GAS it's been opened
+// ── Staff clicks the card's button — opens the actual form in a new
+//    browser tab (plenty of screen space for it) and confirms with GAS. ──
+function openPendingForm(){
+  if (!_pendingForm) return;
+  var form = _pendingForm;
+  window.open(form.url, "_blank");
+
   jsonp(
-    GAS_API_URL + "?action=confirmOpened&carId="+encodeURIComponent(carId||""),
+    GAS_API_URL + "?action=confirmOpened&carId="+encodeURIComponent(form.carId||""),
     function(r) {
-      log("✅ แจ้งโทรศัพท์สำเร็จ", "");
+      log("✅ เปิดฟอร์ม "+form.brand+" แล้ว", "");
       setStatus("กำลังรอฟอร์มถัดไป...", "");
-
-      // Add to history
-      openHistory.unshift({ carId: carId, time: new Date().toLocaleTimeString("th-TH") });
+      openHistory.unshift({ carId: form.carId, brand: form.brand, time: new Date().toLocaleTimeString("th-TH") });
       renderHistory();
     },
     function(err){ log("แจ้งโทรศัพท์ไม่ได้: "+err, "err"); }
   );
+
+  _pendingForm = null;
+  renderPendingForm();
 }
 
 function renderHistory() {
@@ -196,7 +263,9 @@ function renderHistory() {
   openHistory.slice(0,5).forEach(function(h) {
     var div = document.createElement("div");
     div.className = "history-item";
-    div.innerHTML = "🚗 "+h.carId+'<span>'+h.time+'</span>';
+    div.innerHTML =
+      '<span class="h-brand">'+(h.brand||"")+' · '+h.carId+'</span>'+
+      '<span class="h-time">'+h.time+'</span>';
     list.appendChild(div);
   });
 }
