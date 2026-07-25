@@ -7,20 +7,20 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.layout{display:flex;gap:20px;max-width:820px;width:100%;align-items:stretch}
+.layout{display:flex;gap:20px;max-width:860px;width:100%;align-items:stretch}
 .card{background:white;border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.1)}
-.control-card{flex:1;min-width:340px;text-align:center}
-.pending-card{flex:1;min-width:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.control-card{flex:1;min-width:320px;text-align:center}
+.checklist-card{flex:1.2;min-width:340px;text-align:left;display:flex;flex-direction:column}
 .logo{width:64px;height:64px;border-radius:50%;background:#ffe5e5;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px}
-h1{font-size:19px;font-weight:700;color:#1a0000;margin-bottom:5px}
-.sub{font-size:12px;color:#888;margin-bottom:20px}
+h1{font-size:19px;font-weight:700;color:#1a0000;margin-bottom:5px;text-align:center}
+.sub{font-size:12px;color:#888;margin-bottom:20px;text-align:center}
 .status-box{background:#f5f5f5;border-radius:12px;padding:14px;margin-bottom:18px}
 .status-dot{width:11px;height:11px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:8px;animation:pulse 1s ease-in-out infinite;vertical-align:middle}
 .status-dot.idle{background:#94a3b8;animation:none}
 .status-dot.error{background:#ef4444;animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .status-text{font-size:13px;color:#333;font-weight:500;vertical-align:middle}
-.log{background:#1a1a1a;border-radius:8px;padding:10px;text-align:left;max-height:130px;overflow-y:auto;margin-bottom:18px}
+.log{background:#1a1a1a;border-radius:8px;padding:10px;text-align:left;max-height:110px;overflow-y:auto;margin-bottom:18px}
 .log-line{font-size:11px;color:#4ade80;font-family:monospace;line-height:1.6}
 .log-line.err{color:#f87171}
 .log-line.info{color:#93c5fd}
@@ -28,29 +28,26 @@ h1{font-size:19px;font-weight:700;color:#1a0000;margin-bottom:5px}
 .btn:hover{background:#cc0000}
 .btn:disabled{background:#ccc;cursor:not-allowed}
 .btn-outline{background:white;color:#b40000;border:2px solid #b40000;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer;width:100%}
-.history{margin-top:18px;text-align:left}
-.history h3{font-size:11px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.history-item{background:#f5f5f5;border-radius:8px;padding:9px 12px;margin-bottom:6px;font-size:12px;color:#333;display:flex;justify-content:space-between;align-items:center}
-.history-item .h-brand{font-weight:700;color:#1a0000}
-.history-item .h-time{color:#888;font-size:10px}
-/* ── Pending form panel (the "area left") ── */
-.pending-empty{color:#aaa;font-size:13px;line-height:1.7}
-.pending-empty .spinner-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ccc;margin:0 2px;animation:blink 1.4s infinite}
-.pending-empty .spinner-dot:nth-child(2){animation-delay:.2s}
-.pending-empty .spinner-dot:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
-.pending-icon{width:72px;height:72px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:34px}
-.pending-brand{font-size:22px;font-weight:700;color:#1a0000}
-.pending-carid{font-size:13px;color:#888}
-.btn-open{background:#16a34a;color:white;border:none;border-radius:10px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:8px}
-.btn-open:hover{background:#15803d}
-.btn-open:active{opacity:.85}
+/* ── Checklist (the "area left") — every auto-opened form gets logged
+     here permanently so it survives an accidentally-closed tab. Staff
+     manually ticks each one done after finishing the actual submission
+     on the external site; nothing here is auto-detected. ── */
+.checklist-title{font-size:13px;font-weight:700;color:#1a0000;margin-bottom:4px}
+.checklist-sub{font-size:11px;color:#aaa;margin-bottom:14px}
+.checklist-empty{color:#aaa;font-size:13px;text-align:center;padding:32px 8px;flex:1;display:flex;align-items:center;justify-content:center}
+.checklist-items{flex:1;overflow-y:auto;max-height:420px}
+.check-item{border:1.5px solid #eee;border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.check-item-brand{font-size:14px;font-weight:700;color:#1a0000}
+.check-item-sub{font-size:11px;color:#888;margin-top:2px}
+.check-item-actions{display:flex;gap:8px;margin-top:8px}
+.check-item-actions button{background:none;border:1px solid #ddd;border-radius:6px;padding:5px 10px;font-size:11px;color:#666;cursor:pointer;font-family:inherit}
+.check-item-actions button:hover{background:#f5f5f5}
 </style>
 </head>
 <body>
 <div class="layout">
 
-  <!-- LEFT: controls, status, connection log, history -->
+  <!-- LEFT: controls, status, connection log -->
   <div class="card control-card">
     <div class="logo">🖥️</div>
     <h1>Desktop Opener</h1>
@@ -65,19 +62,16 @@ h1{font-size:19px;font-weight:700;color:#1a0000;margin-bottom:5px}
 
     <button class="btn" id="start-btn" onclick="startListening()">▶ เริ่มรับฟอร์มจากโทรศัพท์</button>
     <button class="btn-outline" id="stop-btn" onclick="stopListening()" disabled>⏹ หยุด</button>
-
-    <div class="history" id="history-wrap" style="display:none">
-      <h3>ประวัติล่าสุด</h3>
-      <div id="history-list"></div>
-    </div>
   </div>
 
-  <!-- RIGHT: the form waiting to be opened — brand name only, no raw
-       URL shown anywhere. Staff must click to actually open it, instead
-       of it popping open automatically the moment it arrives. -->
-  <div class="card pending-card" id="pending-panel">
-    <div class="pending-empty">
-      รอฟอร์มจากโทรศัพท์<span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
+  <!-- RIGHT: persistent checklist of every form opened this session —
+       survives an accidentally-closed tab, lets staff verify which
+       car/brand it was and tick it off once actually submitted. -->
+  <div class="card checklist-card">
+    <div class="checklist-title">รายการที่เปิดวันนี้</div>
+    <div class="checklist-sub">ถ้าเผลอปิดแท็บ กด "เปิดอีกครั้ง" เพื่อเปิดฟอร์มเดิมได้</div>
+    <div id="checklist-body">
+      <div class="checklist-empty">ยังไม่มีฟอร์มที่เปิด</div>
     </div>
   </div>
 
@@ -90,16 +84,14 @@ h1{font-size:19px;font-weight:700;color:#1a0000;margin-bottom:5px}
 var GAS_API_URL   = GAS_URLS.warrantyApi;
 var POLL_INTERVAL = CONFIG.POLL_INTERVAL_MS;
 
-var pollTimer     = null;
-var isListening   = false;
-var openHistory   = [];
-var _pendingForm  = null; // { url, carId, brand } — waiting for staff to click "open"
+var pollTimer   = null;
+var isListening = false;
+var openHistory = []; // { carId, brand, url, time, done }
 
-// ── Friendly brand name from the form's domain — shown instead of the
-//    raw URL anywhere in the UI. Falls back to a generic label if the
-//    domain isn't recognized (new brand added to config.js, etc). ──
+// ── Friendly brand name from the form's domain — shown in the
+//    checklist instead of (or alongside) the raw URL. ──
 var BRAND_DOMAIN_MAP = [
-  { match: "llit-eservice.com/register/year/atlas",    name: "Atlas" },
+  { match: "llit-eservice.com/register/year/atlas",       name: "Atlas" },
   { match: "llit-eservice.com/register/quality/linglong", name: "Linglong" },
   { match: "contitcp.com",      name: "Continental" },
   { match: "toyotires.in.th",   name: "Toyo" },
@@ -207,67 +199,55 @@ function poll() {
   );
 }
 
-// ── ★ CHANGED: no longer opens the form automatically, and no longer
-//    logs the raw URL/domain anywhere. Instead shows a brand-named card
-//    in the right-hand panel that the staff taps to actually open it. ──
+// ── Auto-opens the form (back to original behavior) AND logs it
+//    permanently into the checklist on the right, so if the tab gets
+//    closed by accident there's still a record of exactly which
+//    car/brand it was — with a button to reopen it directly. ──
 function handleNewUrl(url, carId) {
   var brand = _brandNameFromUrl(url);
-  _pendingForm = { url: url, carId: carId, brand: brand };
   log("📋 ได้รับฟอร์มสำหรับ: "+(carId||"unknown")+" ("+brand+")", "info");
-  setStatus("มีฟอร์มรอเปิด — "+carId, "");
-  renderPendingForm();
-}
+  setStatus("กำลังเปิดฟอร์ม — "+carId, "");
 
-function renderPendingForm(){
-  var panel = document.getElementById("pending-panel");
-  if (!_pendingForm) {
-    panel.innerHTML =
-      '<div class="pending-empty">รอฟอร์มจากโทรศัพท์'+
-      '<span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span></div>';
-    return;
-  }
-  panel.innerHTML =
-    '<div class="pending-icon">🏷️</div>'+
-    '<div class="pending-brand">'+_pendingForm.brand+'</div>'+
-    '<div class="pending-carid">CarID: '+_pendingForm.carId+'</div>'+
-    '<button class="btn-open" onclick="openPendingForm()">🔗 เปิดฟอร์ม</button>';
-}
-
-// ── Staff clicks the card's button — opens the actual form in a new
-//    browser tab (plenty of screen space for it) and confirms with GAS. ──
-function openPendingForm(){
-  if (!_pendingForm) return;
-  var form = _pendingForm;
-  window.open(form.url, "_blank");
+  window.open(url, "_blank");
 
   jsonp(
-    GAS_API_URL + "?action=confirmOpened&carId="+encodeURIComponent(form.carId||""),
+    GAS_API_URL + "?action=confirmOpened&carId="+encodeURIComponent(carId||""),
     function(r) {
-      log("✅ เปิดฟอร์ม "+form.brand+" แล้ว", "");
+      log("✅ แจ้งโทรศัพท์สำเร็จ", "");
       setStatus("กำลังรอฟอร์มถัดไป...", "");
-      openHistory.unshift({ carId: form.carId, brand: form.brand, time: new Date().toLocaleTimeString("th-TH") });
-      renderHistory();
     },
     function(err){ log("แจ้งโทรศัพท์ไม่ได้: "+err, "err"); }
   );
 
-  _pendingForm = null;
-  renderPendingForm();
+  openHistory.unshift({ carId: carId, brand: brand, url: url, time: new Date().toLocaleTimeString("th-TH") });
+  renderChecklist();
 }
 
-function renderHistory() {
-  if(openHistory.length===0) return;
-  document.getElementById("history-wrap").style.display="block";
-  var list = document.getElementById("history-list");
-  list.innerHTML = "";
-  openHistory.slice(0,5).forEach(function(h) {
-    var div = document.createElement("div");
-    div.className = "history-item";
-    div.innerHTML =
-      '<span class="h-brand">'+(h.brand||"")+' · '+h.carId+'</span>'+
-      '<span class="h-time">'+h.time+'</span>';
-    list.appendChild(div);
+function renderChecklist() {
+  var body = document.getElementById("checklist-body");
+  if (!openHistory.length) {
+    body.innerHTML = '<div class="checklist-empty">ยังไม่มีฟอร์มที่เปิด</div>';
+    return;
+  }
+  var html = '<div class="checklist-items">';
+  openHistory.forEach(function(h, idx) {
+    html +=
+      '<div class="check-item">'+
+        '<div class="check-item-brand">'+h.brand+'</div>'+
+        '<div class="check-item-sub">CarID: '+h.carId+' · '+h.time+'</div>'+
+        '<div class="check-item-actions">'+
+          '<button onclick="reopenForm('+idx+')">🔗 เปิดอีกครั้ง</button>'+
+        '</div>'+
+      '</div>';
   });
+  html += '</div>';
+  body.innerHTML = html;
+}
+
+function reopenForm(idx) {
+  if (!openHistory[idx]) return;
+  window.open(openHistory[idx].url, "_blank");
+  log("🔗 เปิดซ้ำ: "+openHistory[idx].brand+" ("+openHistory[idx].carId+")", "info");
 }
 </script>
 </body>
