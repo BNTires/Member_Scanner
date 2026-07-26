@@ -54,14 +54,11 @@ h1{font-size:19px;font-weight:700;color:#1a0000;margin-bottom:5px;text-align:cen
     <div class="sub">Tyre Warranty — B.N. Tires &amp; Max<br>เปิดหน้านี้ทิ้งไว้บนคอมพิวเตอร์</div>
 
     <div class="status-box">
-      <span class="status-dot idle" id="status-dot"></span>
-      <span class="status-text" id="status-text">กดเริ่มเพื่อเริ่มรับฟอร์ม</span>
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-text" id="status-text">กำลังรอฟอร์มจากโทรศัพท์...</span>
     </div>
 
     <div class="log" id="log"></div>
-
-    <button class="btn" id="start-btn" onclick="startListening()">▶ เริ่มรับฟอร์มจากโทรศัพท์</button>
-    <button class="btn-outline" id="stop-btn" onclick="stopListening()" disabled>⏹ หยุด</button>
   </div>
 
   <!-- RIGHT: persistent checklist of every form opened this session —
@@ -85,8 +82,7 @@ var GAS_API_URL   = GAS_URLS.warrantyApi;
 var POLL_INTERVAL = CONFIG.POLL_INTERVAL_MS;
 
 var pollTimer   = null;
-var isListening = false;
-var openHistory = []; // { carId, brand, url, time, done }
+var openHistory = []; // { carId, brand, url, time }
 
 // ── Friendly brand name from the form's domain — shown in the
 //    checklist instead of (or alongside) the raw URL. ──
@@ -159,24 +155,11 @@ function jsonp(url, onSuccess, onError) {
   document.body.appendChild(s);
 }
 
-function startListening() {
-  if(isListening) return;
-  isListening = true;
-  document.getElementById("start-btn").disabled = true;
-  document.getElementById("stop-btn").disabled  = false;
+function beginPolling() {
   setStatus("กำลังรอฟอร์มจากโทรศัพท์...", "");
   log("เริ่มรับฟอร์ม — รอโทรศัพท์ส่งข้อมูล", "info");
   poll();
   pollTimer = setInterval(poll, POLL_INTERVAL);
-}
-
-function stopListening() {
-  isListening = false;
-  clearInterval(pollTimer);
-  document.getElementById("start-btn").disabled = false;
-  document.getElementById("stop-btn").disabled  = true;
-  setStatus("หยุดรับฟอร์มแล้ว", "idle");
-  log("หยุดรับฟอร์ม");
 }
 
 var errorCount = 0;
@@ -249,6 +232,10 @@ function reopenForm(idx) {
   window.open(openHistory[idx].url, "_blank");
   log("🔗 เปิดซ้ำ: "+openHistory[idx].brand+" ("+openHistory[idx].carId+")", "info");
 }
+
+// ── Auto-start on page load — no buttons, no manual control, it just
+//    always polls for pending forms the whole time this page is open. ──
+beginPolling();
 </script>
 </body>
 </html>
