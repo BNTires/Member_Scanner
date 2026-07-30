@@ -32,5 +32,5 @@ var GAS_URLS = {
   // Apps Script project titled "Member_Scanner" — contains the Member
   // Portal API backend: checkLineUser, saveMember, updateMember, addCar,
   // deleteCar, updateCarInfo, getMemberByQR, getCarData (→ getCarBrandsData)
-  memberPortalApi: "https://script.google.com/macros/s/AKfycbxAOUBWwAOOSONKXO_8tvFrLwfh-EtKAfUomlPpF3qPWxLERX09s20SCvpKw-RD0u_HkA/exec"
+  memberPortalApi: "https://script.google.com/macros/s/AKfycbzShSt91fQ0665MF_ZrYTyy4P6KlFJ9ZGL1UR0PGZDJt5MH6huit1jm3pzJoDFcomoV1w/exec"
 };
