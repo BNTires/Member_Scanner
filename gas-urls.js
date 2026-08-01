@@ -27,7 +27,7 @@ var GAS_URLS = {
   // Apps Script project titled "Member" — contains the Warranty API /
   // QR-scanner backend: pushUrl, popUrl, lookupCarId, getMemberCars,
   // getBrands, getTires, saveWarrantyNumber, updateCarMileage
-  warrantyApi: "https://script.google.com/macros/s/AKfycbyX3HQu5JbjKEHhpBzN29Qo32omkOjIowQreeUr3DFWvpcFGicfdqQtPNCQXZy6IyHy/exec",
+  warrantyApi: "https://script.google.com/macros/s/AKfycbymkcFQXdlH0H-B4B0vmEBHNd3zW6awzZCvxZ52PaBWeOMTffyG8_tyn7Lvm0fSERZakg/exec",
 
   // Apps Script project titled "Member_Scanner" — contains the Member
   // Portal API backend: checkLineUser, saveMember, updateMember, addCar,
