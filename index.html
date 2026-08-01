@@ -458,18 +458,25 @@ var carPhotoReady  = false;
 //    Used only to look up a logo image for the car picker cards; the
 //    scanner doesn't need the model lists themselves. ──
 var _carBrandData = [];
+var _carBrandDataLoading = false;
 function _loadCarBrandData(){
+  if (_carBrandData.length || _carBrandDataLoading) return; // already loaded or in flight
+  _carBrandDataLoading = true;
   jsonp(
     GAS_URLS.memberPortalApi + "?action=getCarData",
-    function(result){ if (result && result.success && result.brands) _carBrandData = result.brands; },
-    function(err){ console.log("getCarData failed (logos won't show):", err); }
+    function(result){ _carBrandDataLoading = false; if (result && result.success && result.brands) _carBrandData = result.brands; },
+    function(err){ _carBrandDataLoading = false; console.log("getCarData failed (logos won't show):", err); }
   );
 }
 function _carBrandLogo(name){
   var found = _carBrandData.filter(function(b){ return b.name.toLowerCase() === String(name||"").toLowerCase(); })[0];
   return found ? found.imageUrl : "";
 }
-_loadCarBrandData();
+// NOTE: intentionally NOT called here on page load — see pickBrand()
+// below, where it fires once a brand is picked instead. That overlaps
+// this (possibly cold) API call with the several seconds staff spend
+// opening the camera and aiming at a QR code, instead of adding a
+// second blocking network call to the critical page-load path.
 
 var SERVICE_TYPES = [
   { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
@@ -591,6 +598,7 @@ function pickBrand(brand){
   document.getElementById("perm-brand-name").textContent=brand.name;
   document.getElementById("scan-brand-label").textContent=brand.name;
   document.getElementById("confirm-brand-name").textContent=brand.name;
+  _loadCarBrandData(); // fire now so it's likely ready by the time a car picker is needed
   show("s-permission");
 }
 
