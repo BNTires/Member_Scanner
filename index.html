@@ -453,6 +453,24 @@ var currentMileage = "";
 var carPhotoUrl    = null;
 var carPhotoReady  = false;
 
+// ── Car brand data (name, models, logo imageUrl) — loaded once from the
+//    Member Portal API's getCarData (reads the Car_Brands&Models sheet).
+//    Used only to look up a logo image for the car picker cards; the
+//    scanner doesn't need the model lists themselves. ──
+var _carBrandData = [];
+function _loadCarBrandData(){
+  jsonp(
+    GAS_URLS.memberPortalApi + "?action=getCarData",
+    function(result){ if (result && result.success && result.brands) _carBrandData = result.brands; },
+    function(err){ console.log("getCarData failed (logos won't show):", err); }
+  );
+}
+function _carBrandLogo(name){
+  var found = _carBrandData.filter(function(b){ return b.name.toLowerCase() === String(name||"").toLowerCase(); })[0];
+  return found ? found.imageUrl : "";
+}
+_loadCarBrandData();
+
 var SERVICE_TYPES = [
   { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
     background:"#be185d", borderColor:"#9d174d", textColor:"#ffffff", icon:"🔄" },
@@ -792,8 +810,12 @@ function _showCarPicker(result){
     result.cars.forEach(function(car){
       var el = document.createElement("div");
       el.className = "car-pick-card";
+      var logoUrl = _carBrandLogo(car.carBrand);
+      var iconHtml = logoUrl
+        ? '<img src="' + logoUrl + '" alt="" onerror="this.parentElement.textContent=\'🚗\'">'
+        : '🚗';
       el.innerHTML =
-        '<div class="cpc-icon">🚗</div>' +
+        '<div class="cpc-icon">' + iconHtml + '</div>' +
         '<div class="cpc-info">' +
           '<div class="cpc-brand-model">' + car.carBrand + ' ' + car.carModel + '</div>' +
           '<div class="cpc-carid">' + car.carId + '</div>' +
