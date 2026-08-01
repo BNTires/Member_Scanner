@@ -459,12 +459,35 @@ var carPhotoReady  = false;
 //    scanner doesn't need the model lists themselves. ──
 var _carBrandData = [];
 var _carBrandDataLoading = false;
+var CAR_BRAND_CACHE_KEY = "bntires_car_brand_data_v1";
+var CAR_BRAND_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h — brand/logo data rarely changes
+
 function _loadCarBrandData(){
   if (_carBrandData.length || _carBrandDataLoading) return; // already loaded or in flight
+
+  // Try localStorage first — skip the network entirely on a fresh hit
+  try {
+    var cached = localStorage.getItem(CAR_BRAND_CACHE_KEY);
+    if (cached) {
+      var parsed = JSON.parse(cached);
+      if (parsed && parsed.brands && parsed.ts && (Date.now() - parsed.ts < CAR_BRAND_CACHE_TTL_MS)) {
+        _carBrandData = parsed.brands;
+        return;
+      }
+    }
+  } catch(e) { /* corrupt or inaccessible cache — fall through and refetch */ }
+
   _carBrandDataLoading = true;
   jsonp(
     GAS_URLS.memberPortalApi + "?action=getCarData",
-    function(result){ _carBrandDataLoading = false; if (result && result.success && result.brands) _carBrandData = result.brands; },
+    function(result){
+      _carBrandDataLoading = false;
+      if (result && result.success && result.brands) {
+        _carBrandData = result.brands;
+        try { localStorage.setItem(CAR_BRAND_CACHE_KEY, JSON.stringify({ brands: result.brands, ts: Date.now() })); }
+        catch(e) { /* storage full/disabled — non-fatal, just won't cache */ }
+      }
+    },
     function(err){ _carBrandDataLoading = false; console.log("getCarData failed (logos won't show):", err); }
   );
 }
@@ -473,10 +496,7 @@ function _carBrandLogo(name){
   return found ? found.imageUrl : "";
 }
 // NOTE: intentionally NOT called here on page load — see pickBrand()
-// below, where it fires once a brand is picked instead. That overlaps
-// this (possibly cold) API call with the several seconds staff spend
-// opening the camera and aiming at a QR code, instead of adding a
-// second blocking network call to the critical page-load path.
+// below, where it fires once a brand is picked instead.
 
 var SERVICE_TYPES = [
   { id:"salab_yang", name:"สลับยาง", service:true, requiresMileage:true,  active:true,
@@ -561,6 +581,7 @@ function renderBrands(brands){
 function hardRefresh(){
   var btn = document.getElementById("refresh-brands-btn");
   if (btn) btn.style.transform = "rotate(360deg)";
+  try { localStorage.removeItem(CAR_BRAND_CACHE_KEY); } catch(e) {} // force fresh brand/logo data too
   Promise.all([
     ('caches' in window)
       ? caches.keys().then(function(names){ return Promise.all(names.map(function(n){ return caches.delete(n); })); })
