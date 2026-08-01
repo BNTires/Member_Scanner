@@ -101,6 +101,14 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 .mileage-hint{font-size:12px;color:#aaa;margin-top:6px}
 .mileage-hint.required{color:#b40000;font-weight:600}
 .footer{text-align:center;padding:14px;font-size:11px;color:#aaa;flex-shrink:0}
+.car-pick-card{background:white;border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1.5px solid #e0e0e0;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s,background .15s}
+.car-pick-card:active{background:#fff5f5;border-color:#b40000}
+.cpc-icon{width:44px;height:44px;border-radius:50%;background:#fdeaea;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.cpc-icon img{width:100%;height:100%;object-fit:contain;border-radius:50%;background:white}
+.cpc-info{flex:1;min-width:0}
+.cpc-brand-model{font-size:17px;font-weight:800;color:#1a0000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cpc-carid{font-size:11px;color:#bbb;margin-top:2px}
+.cpc-plate{background:#222;color:white;font-size:14px;font-weight:700;padding:5px 12px;border-radius:6px;letter-spacing:1px;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -783,11 +791,14 @@ function _showCarPicker(result){
     emptyMsg.style.display = "none";
     result.cars.forEach(function(car){
       var el = document.createElement("div");
-      el.className = "member-card";
-      el.style.cssText = "cursor:pointer;margin-bottom:8px";
+      el.className = "car-pick-card";
       el.innerHTML =
-        '<div style="font-size:16px;font-weight:700;color:#1a0000;margin-bottom:4px">' + car.carBrand + " " + car.carModel + '</div>' +
-        '<div style="font-size:13px;color:#888">ทะเบียน: ' + car.plate + ' · ' + car.carId + '</div>';
+        '<div class="cpc-icon">🚗</div>' +
+        '<div class="cpc-info">' +
+          '<div class="cpc-brand-model">' + car.carBrand + ' ' + car.carModel + '</div>' +
+          '<div class="cpc-carid">' + car.carId + '</div>' +
+        '</div>' +
+        '<span class="cpc-plate">' + car.plate + '</span>';
       el.addEventListener("click", function(){ _proceedWithCar(car); });
       list.appendChild(el);
     });
