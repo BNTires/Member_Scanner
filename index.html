@@ -207,14 +207,40 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
 </div>
 
 <!-- Screen 4b: Car picker — shown after scanning a member-level QR
-     when that member has 2+ cars. Skipped automatically for exactly 1 car. -->
+     when that member has 0, or 2+, cars. Exactly 1 car skips straight
+     through automatically. Staff can also add a new car here. -->
 <div class="screen" id="s-carpick">
   <div class="hdr">
     <div class="hdr-shop">B.N. Tires &amp; Max</div>
     <div class="hdr-title" id="carpick-name">เลือกรถ</div>
-    <div class="hdr-sub">เลือกรถที่จะดำเนินการ</div>
+    <div class="hdr-sub">เลือกรถที่จะดำเนินการ หรือเพิ่มรถใหม่</div>
   </div>
-  <div class="content" id="carpick-list"></div>
+  <div class="content">
+    <div id="carpick-list"></div>
+    <div id="carpick-empty" style="display:none;text-align:center;color:#aaa;font-size:13px;padding:16px 0">สมาชิกนี้ยังไม่มีรถในระบบ</div>
+    <button class="action-btn" id="carpick-addcar-btn" onclick="_toggleAddCarForm()" style="background:white;color:#b40000;border:1.5px solid #b40000">+ เพิ่มรถใหม่</button>
+    <div class="member-card" id="carpick-addcar-form" style="display:none">
+      <h3>เพิ่มรถใหม่</h3>
+      <div class="field" style="margin-bottom:12px">
+        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">ยี่ห้อรถ</label>
+        <input type="text" id="addcar-brand" placeholder="เช่น Toyota" autocomplete="off"
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px">
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">รุ่น</label>
+        <input type="text" id="addcar-model" placeholder="เช่น Vios" autocomplete="off"
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px">
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">ทะเบียนรถ</label>
+        <input type="text" id="addcar-plate" placeholder="เช่น กข 1234" autocomplete="off"
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px">
+      </div>
+      <div id="addcar-status" style="font-size:13px;color:#b40000;margin-bottom:8px;min-height:20px"></div>
+      <button class="action-btn" id="addcar-save-btn" onclick="_submitAddCar()" style="margin-bottom:8px">💾 บันทึกรถ</button>
+      <button class="cancel-btn" onclick="_toggleAddCarForm()">ยกเลิก</button>
+    </div>
+  </div>
   <button class="cancel-btn" onclick="show('s-brands')" style="margin:0 16px 16px">← กลับหน้าแรก</button>
 </div>
 
@@ -739,22 +765,107 @@ function handleQR(raw){
   });
 }
 
-// ── Car picker — shown when a member-level QR resolves to 2+ cars ──
+// ── Car picker — shown when a member-level QR resolves to 0 or 2+ cars ──
+var _carpickMemberId = null; // tracked so "+ เพิ่มรถ" knows which member to add to
+
 function _showCarPicker(result){
+  _carpickMemberId = result.memberId;
   document.getElementById("carpick-name").textContent = result.fullName || "เลือกรถ";
   var list = document.getElementById("carpick-list");
+  var emptyMsg = document.getElementById("carpick-empty");
   list.innerHTML = "";
-  result.cars.forEach(function(car){
-    var el = document.createElement("div");
-    el.className = "member-card";
-    el.style.cssText = "cursor:pointer;margin-bottom:8px";
-    el.innerHTML =
-      '<div style="font-size:16px;font-weight:700;color:#1a0000;margin-bottom:4px">' + car.carBrand + " " + car.carModel + '</div>' +
-      '<div style="font-size:13px;color:#888">ทะเบียน: ' + car.plate + ' · ' + car.carId + '</div>';
-    el.addEventListener("click", function(){ _proceedWithCar(car); });
-    list.appendChild(el);
-  });
+  document.getElementById("carpick-addcar-form").style.display = "none";
+  document.getElementById("addcar-status").textContent = "";
+
+  if (!result.cars || !result.cars.length) {
+    emptyMsg.style.display = "block";
+  } else {
+    emptyMsg.style.display = "none";
+    result.cars.forEach(function(car){
+      var el = document.createElement("div");
+      el.className = "member-card";
+      el.style.cssText = "cursor:pointer;margin-bottom:8px";
+      el.innerHTML =
+        '<div style="font-size:16px;font-weight:700;color:#1a0000;margin-bottom:4px">' + car.carBrand + " " + car.carModel + '</div>' +
+        '<div style="font-size:13px;color:#888">ทะเบียน: ' + car.plate + ' · ' + car.carId + '</div>';
+      el.addEventListener("click", function(){ _proceedWithCar(car); });
+      list.appendChild(el);
+    });
+  }
   show("s-carpick");
+}
+
+function _toggleAddCarForm(){
+  var form = document.getElementById("carpick-addcar-form");
+  var isOpen = form.style.display !== "none";
+  form.style.display = isOpen ? "none" : "block";
+  if (!isOpen) {
+    document.getElementById("addcar-brand").value = "";
+    document.getElementById("addcar-model").value = "";
+    document.getElementById("addcar-plate").value = "";
+    document.getElementById("addcar-status").textContent = "";
+  }
+}
+
+// ── Add a car for the currently-picked member. Uses the Member Portal
+//    API (GAS_URLS.memberPortalApi) since addCar lives there, not on
+//    the Warranty API this scanner otherwise talks to — both URLs are
+//    already available globally via gas-urls.js. After a successful
+//    save, re-fetches the member's car list from the Warranty API so
+//    the newly added car comes back in the same shape (with "params")
+//    the rest of this app expects, then either proceeds with it
+//    directly (if it's now the only car) or refreshes the picker. ──
+function _submitAddCar(){
+  if (!_carpickMemberId) return;
+  var brand = document.getElementById("addcar-brand").value.trim();
+  var model = document.getElementById("addcar-model").value.trim();
+  var plate = document.getElementById("addcar-plate").value.trim();
+  var statusEl = document.getElementById("addcar-status");
+  if (!brand || !model || !plate) {
+    statusEl.textContent = "กรุณากรอกข้อมูลให้ครบ";
+    return;
+  }
+  document.getElementById("addcar-save-btn").disabled = true;
+  statusEl.style.color = "#888";
+  statusEl.textContent = "⏳ กำลังบันทึก...";
+
+  jsonp(
+    GAS_URLS.memberPortalApi + "?action=addCar"
+      + "&memberId=" + encodeURIComponent(_carpickMemberId)
+      + "&carbrand=" + encodeURIComponent(brand)
+      + "&carmodel=" + encodeURIComponent(model)
+      + "&license=" + encodeURIComponent(plate),
+    function(result){
+      document.getElementById("addcar-save-btn").disabled = false;
+      if (!result || !result.success) {
+        statusEl.style.color = "#dc2626";
+        statusEl.textContent = "บันทึกไม่สำเร็จ: " + ((result && result.error === "duplicate_plate") ? "ทะเบียนนี้มีในระบบแล้ว" : ((result && result.error) || "unknown error"));
+        return;
+      }
+      // Re-fetch this member's cars from the Warranty API so the new
+      // car comes back with the "params" shape the rest of the app needs.
+      jsonp(GAS_API_URL + "?carId=" + encodeURIComponent(_carpickMemberId), function(refreshed){
+        if (refreshed && refreshed.ok && refreshed.cars) {
+          if (refreshed.cars.length === 1) {
+            _proceedWithCar(refreshed.cars[0]);
+          } else {
+            _showCarPicker(refreshed);
+          }
+        } else {
+          statusEl.style.color = "#dc2626";
+          statusEl.textContent = "บันทึกรถสำเร็จ แต่โหลดข้อมูลใหม่ไม่ได้ — กรุณาสแกนใหม่อีกครั้ง";
+        }
+      }, function(err){
+        statusEl.style.color = "#dc2626";
+        statusEl.textContent = "บันทึกรถสำเร็จ แต่โหลดข้อมูลใหม่ไม่ได้: " + err;
+      });
+    },
+    function(err){
+      document.getElementById("addcar-save-btn").disabled = false;
+      statusEl.style.color = "#dc2626";
+      statusEl.textContent = "เชื่อมต่อไม่ได้: " + err;
+    }
+  );
 }
 
 // ── Continue the normal flow (confirm/service screen) once a car has
