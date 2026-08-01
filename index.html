@@ -472,6 +472,7 @@ function _loadCarBrandData(){
       var parsed = JSON.parse(cached);
       if (parsed && parsed.brands && parsed.ts && (Date.now() - parsed.ts < CAR_BRAND_CACHE_TTL_MS)) {
         _carBrandData = parsed.brands;
+        _refreshCarPickerLogos(); // in case a picker is already showing (unlikely this fast, but safe)
         return;
       }
     }
@@ -486,6 +487,10 @@ function _loadCarBrandData(){
         _carBrandData = result.brands;
         try { localStorage.setItem(CAR_BRAND_CACHE_KEY, JSON.stringify({ brands: result.brands, ts: Date.now() })); }
         catch(e) { /* storage full/disabled — non-fatal, just won't cache */ }
+        // ── The car picker may have already rendered with fallback
+        //    icons before this (possibly slow) fetch finished — sweep
+        //    any visible cards now and swap in real logos where found. ──
+        _refreshCarPickerLogos();
       }
     },
     function(err){ _carBrandDataLoading = false; console.log("getCarData failed (logos won't show):", err); }
@@ -494,6 +499,18 @@ function _loadCarBrandData(){
 function _carBrandLogo(name){
   var found = _carBrandData.filter(function(b){ return b.name.toLowerCase() === String(name||"").toLowerCase(); })[0];
   return found ? found.imageUrl : "";
+}
+// ── Swap in real logos on any already-rendered picker cards whose logo
+//    data arrived late (see _loadCarBrandData above). Safe to call even
+//    if the picker isn't currently showing — just finds nothing to do. ──
+function _refreshCarPickerLogos(){
+  document.querySelectorAll(".cpc-icon[data-brand]").forEach(function(iconEl){
+    if (iconEl.querySelector("img")) return; // already has a real logo, skip
+    var logoUrl = _carBrandLogo(iconEl.getAttribute("data-brand"));
+    if (logoUrl) {
+      iconEl.innerHTML = '<img src="' + logoUrl + '" alt="" onerror="this.parentElement.textContent=\'🚗\'">';
+    }
+  });
 }
 // NOTE: intentionally NOT called here on page load — see pickBrand()
 // below, where it fires once a brand is picked instead.
@@ -844,7 +861,7 @@ function _showCarPicker(result){
         ? '<img src="' + logoUrl + '" alt="" onerror="this.parentElement.textContent=\'🚗\'">'
         : '🚗';
       el.innerHTML =
-        '<div class="cpc-icon">' + iconHtml + '</div>' +
+        '<div class="cpc-icon" data-brand="' + car.carBrand.replace(/"/g,'&quot;') + '">' + iconHtml + '</div>' +
         '<div class="cpc-info">' +
           '<div class="cpc-brand-model">' + car.carBrand + ' ' + car.carModel + '</div>' +
           '<div class="cpc-carid">' + car.carId + '</div>' +
