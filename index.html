@@ -228,17 +228,17 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#f5f5f5;min-height
       <div class="field" style="margin-bottom:12px">
         <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">ยี่ห้อรถ</label>
         <input type="text" id="addcar-brand" placeholder="เช่น Toyota" autocomplete="off"
-          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px">
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;-webkit-user-select:text;user-select:text">
       </div>
       <div class="field" style="margin-bottom:12px">
         <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">รุ่น</label>
         <input type="text" id="addcar-model" placeholder="เช่น Vios" autocomplete="off"
-          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px">
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;-webkit-user-select:text;user-select:text">
       </div>
       <div class="field" style="margin-bottom:12px">
         <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">ทะเบียนรถ</label>
         <input type="text" id="addcar-plate" placeholder="เช่น กข 1234" autocomplete="off"
-          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px">
+          style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;-webkit-user-select:text;user-select:text">
       </div>
       <div id="addcar-status" style="font-size:13px;color:#b40000;margin-bottom:8px;min-height:20px"></div>
       <button class="action-btn" id="addcar-save-btn" onclick="_submitAddCar()" style="margin-bottom:8px">💾 บันทึกรถ</button>
@@ -493,7 +493,7 @@ function _loadCarBrandData(){
   );
 }
 function _carBrandLogo(name){
-  var found = _carBrandData.filter(function(b){ return b.name.toLowerCase() === String(name||"").toLowerCase(); })[0];
+  var found = _carBrandData.filter(function(b){ return String(b && b.name || "").toLowerCase() === String(name||"").toLowerCase(); })[0];
   return found ? found.imageUrl : "";
 }
 // ── Swap in real logos on any already-rendered picker cards whose logo
@@ -851,21 +851,25 @@ function _showCarPicker(result){
   } else {
     emptyMsg.style.display = "none";
     result.cars.forEach(function(car){
-      var el = document.createElement("div");
-      el.className = "car-pick-card";
-      var logoUrl = _carBrandLogo(car.carBrand);
-      var iconHtml = logoUrl
-        ? '<img src="' + logoUrl + '" alt="" onerror="this.parentElement.textContent=\'🚗\'">'
-        : '🚗';
-      el.innerHTML =
-        '<div class="cpc-icon" data-brand="' + car.carBrand.replace(/"/g,'&quot;') + '">' + iconHtml + '</div>' +
-        '<div class="cpc-info">' +
-          '<div class="cpc-brand-model">' + car.carBrand + ' ' + car.carModel + '</div>' +
-          '<div class="cpc-carid">' + car.carId + '</div>' +
-        '</div>' +
-        '<span class="cpc-plate">' + car.plate + '</span>';
-      el.addEventListener("click", function(){ _proceedWithCar(car); });
-      list.appendChild(el);
+      try {
+        var el = document.createElement("div");
+        el.className = "car-pick-card";
+        var logoUrl = _carBrandLogo(car.carBrand);
+        var iconHtml = logoUrl
+          ? '<img src="' + logoUrl + '" alt="" onerror="this.parentElement.textContent=\'🚗\'">'
+          : '🚗';
+        el.innerHTML =
+          '<div class="cpc-icon" data-brand="' + String(car.carBrand||"").replace(/"/g,'&quot;') + '">' + iconHtml + '</div>' +
+          '<div class="cpc-info">' +
+            '<div class="cpc-brand-model">' + (car.carBrand||"") + ' ' + (car.carModel||"") + '</div>' +
+            '<div class="cpc-carid">' + (car.carId||"") + '</div>' +
+          '</div>' +
+          '<span class="cpc-plate">' + (car.plate||"") + '</span>';
+        el.addEventListener("click", function(){ _proceedWithCar(car); });
+        list.appendChild(el);
+      } catch(e) {
+        console.log("Skipped one car card due to render error:", e, car);
+      }
     });
   }
   show("s-carpick");
@@ -1217,25 +1221,31 @@ function loadTires(){
   );
 }
 
-// ── Manual Search ──
-function openSearch(){
-  document.getElementById("search-brand-label").textContent = selectedBrand ? selectedBrand.name : "";
-  document.getElementById("search-phone").value = "";
-  document.getElementById("search-plate").value = "";
-  document.getElementById("search-status").textContent = "";
-  document.getElementById("search-results").style.display = "none";
-  document.getElementById("search-result-list").innerHTML = "";
+// ── Inline Search — lives on the permission/action-choice screen now,
+//    no separate page navigation. ──
+function _showInlineSearch(){
+  document.getElementById("perm-main-actions").style.display = "none";
+  document.getElementById("perm-search-panel").style.display = "block";
+  document.getElementById("perm-search-phone").value = "";
+  document.getElementById("perm-search-plate").value = "";
+  document.getElementById("perm-search-status").textContent = "";
+  document.getElementById("perm-search-results").style.display = "none";
+  document.getElementById("perm-search-result-list").innerHTML = "";
   _loadCarBrandData(); // no-op if already loaded/in-flight
-  show("s-search");
 }
 
-function doSearch(){
-  var phone = document.getElementById("search-phone").value.trim();
-  var plate = document.getElementById("search-plate").value.trim().toUpperCase();
-  var statusEl = document.getElementById("search-status");
+function _hideInlineSearch(){
+  document.getElementById("perm-search-panel").style.display = "none";
+  document.getElementById("perm-main-actions").style.display = "flex";
+}
+
+function _doInlineSearch(){
+  var phone = document.getElementById("perm-search-phone").value.trim();
+  var plate = document.getElementById("perm-search-plate").value.trim().toUpperCase();
+  var statusEl = document.getElementById("perm-search-status");
   if(!phone && !plate){ statusEl.textContent = "กรุณากรอกเบอร์โทรหรือทะเบียนรถ"; return; }
   statusEl.textContent = "กำลังค้นหา...";
-  document.getElementById("search-results").style.display = "none";
+  document.getElementById("perm-search-results").style.display = "none";
   jsonp(
     GAS_API_URL + "?action=search" +
     (phone ? "&phone=" + encodeURIComponent(phone) : "") +
@@ -1244,33 +1254,40 @@ function doSearch(){
       if(result.error){ statusEl.textContent = "❌ " + result.error; return; }
       if(!result.results || result.results.length === 0){ statusEl.textContent = "ไม่พบข้อมูล"; return; }
       statusEl.textContent = "พบ " + result.results.length + " รายการ";
-      renderSearchResults(result.results);
+      _renderInlineSearchResults(result.results);
     },
     function(err){ statusEl.textContent = "❌ เชื่อมต่อไม่ได้: " + err; }
   );
 }
 
-function renderSearchResults(results){
-  var list = document.getElementById("search-result-list");
+// ── Results render ABOVE the search form (per request — "all of the
+//    info can go upper") since perm-search-results sits before the
+//    member-card form in the DOM. ──
+function _renderInlineSearchResults(results){
+  var list = document.getElementById("perm-search-result-list");
   list.innerHTML = "";
   results.forEach(function(r){
-    var el = document.createElement("div");
-    el.className = "car-pick-card";
-    var logoUrl = _carBrandLogo(r.carBrand);
-    var iconHtml = logoUrl
-      ? '<img src="' + logoUrl + '" alt="" onerror="this.parentElement.textContent=\'🚗\'">'
-      : '🚗';
-    el.innerHTML =
-      '<div class="cpc-icon" data-brand="' + String(r.carBrand||"").replace(/"/g,'&quot;') + '">' + iconHtml + '</div>' +
-      '<div class="cpc-info">' +
-        '<div class="cpc-brand-model">' + r.carBrand + ' ' + r.carModel + '</div>' +
-        '<div class="cpc-carid">' + r.fullName + ' · ' + r.phone + '</div>' +
-      '</div>' +
-      '<span class="cpc-plate">' + r.plate + '</span>';
-    el.addEventListener("click", function(){ _proceedWithCar(r); });
-    list.appendChild(el);
+    try {
+      var el = document.createElement("div");
+      el.className = "car-pick-card";
+      var logoUrl = _carBrandLogo(r.carBrand);
+      var iconHtml = logoUrl
+        ? '<img src="' + logoUrl + '" alt="" onerror="this.parentElement.textContent=\'🚗\'">'
+        : '🚗';
+      el.innerHTML =
+        '<div class="cpc-icon" data-brand="' + String(r.carBrand||"").replace(/"/g,'&quot;') + '">' + iconHtml + '</div>' +
+        '<div class="cpc-info">' +
+          '<div class="cpc-brand-model">' + (r.carBrand||"") + ' ' + (r.carModel||"") + '</div>' +
+          '<div class="cpc-carid">' + (r.fullName||"") + ' · ' + (r.phone||"") + '</div>' +
+        '</div>' +
+        '<span class="cpc-plate">' + (r.plate||"") + '</span>';
+      el.addEventListener("click", function(){ _proceedWithCar(r); });
+      list.appendChild(el);
+    } catch(e) {
+      console.log("Skipped one search result card due to render error:", e, r);
+    }
   });
-  document.getElementById("search-results").style.display = "block";
+  document.getElementById("perm-search-results").style.display = "block";
   _refreshCarPickerLogos(); // in case brand data hadn't finished loading yet when this rendered
 }
 </script>
