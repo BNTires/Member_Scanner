@@ -1288,6 +1288,7 @@ function _renderInlineSearchResults(results){
     }
   });
   document.getElementById("perm-search-results").style.display = "block";
+  document.getElementById("perm-search-results").scrollIntoView({ behavior: "smooth", block: "start" });
   _refreshCarPickerLogos(); // in case brand data hadn't finished loading yet when this rendered
 }
 </script>
