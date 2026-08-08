@@ -476,7 +476,7 @@ function _loadCarBrandData(){
 
   _carBrandDataLoading = true;
   jsonp(
-    GAS_URLS.memberPortalApi + "?action=getCarData",
+    GAS_API_URL + "?action=getCarData",
     function(result){
       _carBrandDataLoading = false;
       if (result && result.success && result.brands) {
@@ -887,14 +887,14 @@ function _toggleAddCarForm(){
   }
 }
 
-// ── Add a car for the currently-picked member. Uses the Member Portal
-//    API (GAS_URLS.memberPortalApi) since addCar lives there, not on
-//    the Warranty API this scanner otherwise talks to — both URLs are
-//    already available globally via gas-urls.js. After a successful
-//    save, re-fetches the member's car list from the Warranty API so
-//    the newly added car comes back in the same shape (with "params")
-//    the rest of this app expects, then either proceeds with it
-//    directly (if it's now the only car) or refreshes the picker. ──
+// ── Add a car for the currently-picked member. Now uses the Warranty
+//    API (GAS_API_URL) — addCar was duplicated there specifically so
+//    the scanner never has to call a second GAS deployment (fewer
+//    independent cold-start risks). After a successful save, re-fetches
+//    the member's car list so the newly added car comes back in the
+//    same shape (with "params") the rest of this app expects, then
+//    either proceeds with it directly (if it's now the only car) or
+//    refreshes the picker. ──
 function _submitAddCar(){
   if (!_carpickMemberId) return;
   var brand = document.getElementById("addcar-brand").value.trim();
@@ -910,7 +910,7 @@ function _submitAddCar(){
   statusEl.textContent = "⏳ กำลังบันทึก...";
 
   jsonp(
-    GAS_URLS.memberPortalApi + "?action=addCar"
+    GAS_API_URL + "?action=addCar"
       + "&memberId=" + encodeURIComponent(_carpickMemberId)
       + "&carbrand=" + encodeURIComponent(brand)
       + "&carmodel=" + encodeURIComponent(model)
